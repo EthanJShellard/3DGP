@@ -1,0 +1,3 @@
+﻿  main.cpp
+D:\Documents D\BU\Year 2\3DGP\Proj\src\main.cpp(178,7): warning C4102: 'https': unreferenced label
+  GLSandbox.vcxproj -> D:\Documents D\BU\Year 2\3DGP\Proj\x64\Debug\GLSandbox.exe
