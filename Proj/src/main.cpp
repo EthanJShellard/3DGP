@@ -36,8 +36,28 @@ int main(int argc, char* argv[])
 		0.5f, -0.5f, 0.0f
 	};
 
+	const GLfloat colors[] = 
+	{
+		1.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f,
+	};
+
+	/*----------------------------------------------------------------*/
+	//SET UP  VAO
 	/*-----------------------------------------------------------------*/
-	//SET UP VBO
+	GLuint vaoId = 0;
+
+	// Create a new VAO on the GPU and bind it
+	glGenVertexArrays(1, &vaoId);
+
+	if (!vaoId)
+	{
+		throw std::exception();
+	}
+
+	/*-----------------------------------------------------------------*/
+	//SET UP POSITIONS VBO
 	/*-----------------------------------------------------------------*/
 	GLuint positionsVboId = 0;
 
@@ -59,47 +79,59 @@ int main(int argc, char* argv[])
 	// Reset the state
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	/*----------------------------------------------------------------*/
-	//SET UP  VAO
 	/*-----------------------------------------------------------------*/
-	GLuint vaoId = 0;
+	//SET UP COLORS VBO
+	/*-----------------------------------------------------------------*/
+	GLuint colorsVboId = 0;
 
-	// Create a new VAO on the GPU and bind it
-	glGenVertexArrays(1, &vaoId);
+	//Create a volors VBO on the GPU and bind it
+	glGenBuffers(1, &colorsVboId);
 
-	if (!vaoId)
+	if (!colorsVboId)
 	{
 		throw std::exception();
 	}
 
+	glBindBuffer(GL_ARRAY_BUFFER, colorsVboId);
+
+	//Upload a copy of the data from memory into the new VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+	//Reset the state
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	/*-----------------------------------------------------------------*/
+	//BIND VBOS TO VAOS
+	/*-----------------------------------------------------------------*/
 	glBindVertexArray(vaoId);
 
-	// Bind the position VBO, assign it to position 0 on the bound VAO
-	// and flag it to be used
 	glBindBuffer(GL_ARRAY_BUFFER, positionsVboId);
 
-	// 0 = position in VAO, 3 = number of values (i.e. vec3, vec4), GL_FLOAT = data type
-	// GL_FALSE = don't normalise (mostly legacy), 3 * sizeof(GLFloat) = size of each block we're streaming in at once
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-
-	//Allows streaming the data of the array instead of just copying the first value
-	//REMEMBER TO DO THIS
 	glEnableVertexAttribArray(0);
 
-	// Reset the state
+	glBindBuffer(GL_ARRAY_BUFFER, colorsVboId);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)0);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
 	/*-----------------------------------------------------------------*/
 	//CREATE SHADERS \/\/\/
 	/*-----------------------------------------------------------------*/
 
 	const GLchar* vertexShaderSrc =
-		"attribute vec3 in_Position;            " \
+		"attribute vec3 a_Position;             " \
+		"attribute vec4 a_Color;                " \
+		"                                       " \
+		"varying vec4 v_Color;                  " \
 		"                                       " \
 		"void main()                            " \
 		"{                                      " \
-		" gl_Position = vec4(in_Position, 1.0); " \
+		" gl_Position = vec4(a_Position, 1.0); " \
+		" v_Color = a_Color;                    " \
 		"}                                      ";
 
 	// Create a new vertex shader, attach source code, compile it and
@@ -116,9 +148,11 @@ int main(int argc, char* argv[])
 	}
 
 	const GLchar* fragmentShaderSrc =
+		"varying vec4 v_Color;             " \
+		"                                  " \
 		"void main()                       " \
 		"{                                 " \
-		" gl_FragColor = vec4(0, 0, 1, 1); " \
+		" gl_FragColor = v_Color;          " \
 		"}                                 ";
 
 	// Create a new fragment shader, attach source code, compile it and
@@ -134,6 +168,8 @@ int main(int argc, char* argv[])
 	}
 
 	/*-----------------------------------------------------------------*/
+	//CREATE PROGRAM AND ATTACH SHADER OBJECTS
+	/*-----------------------------------------------------------------*/
 	
 	// Create new shader program and attach our shader objects
 	GLuint programId = glCreateProgram();
@@ -142,7 +178,8 @@ int main(int argc, char* argv[])
 
 	// Ensure the VAO "position" attribute stream gets set as the first position
 	// during the link.
-	glBindAttribLocation(programId, 0, "in_Position");
+	glBindAttribLocation(programId, 0, "a_Position");
+	glBindAttribLocation(programId, 1, "a_Color");
 
 	// Perform the link and check for failure
 	glLinkProgram(programId);
@@ -153,6 +190,7 @@ int main(int argc, char* argv[])
 		throw std::exception();
 	}
 
+
 	// Detach and destroy the shader objects. These are no longer needed
 	// because we now have a complete shader program.
 	glDetachShader(programId, vertexShaderId);
@@ -161,6 +199,13 @@ int main(int argc, char* argv[])
 	glDeleteShader(fragmentShaderId);
 
 	/*-----------------------------------------------------------------*/
+	//BIND SHADER PROGRAM AND DRAW TRIANGLE
+	/*-----------------------------------------------------------------*/
+
+	// Bind the shader to change the uniform, set the uniform and reset state
+	glUseProgram(programId);
+	glUseProgram(0);
+
 
 	// Instruct OpenGL to use our shader program and our VAO
 	glUseProgram(programId);
@@ -173,10 +218,6 @@ int main(int argc, char* argv[])
 	glBindVertexArray(0);
 	glUseProgram(0);
 
-	/*-----------------------------------------------------------------*/
-
-	https://brightspace.bournemouth.ac.uk/d2l/le/content/144386/viewContent/1323186/View
-	/*-----------------------------------------------------------------*/
 	while (!quit)
 	{
 		SDL_Event event = { 0 };

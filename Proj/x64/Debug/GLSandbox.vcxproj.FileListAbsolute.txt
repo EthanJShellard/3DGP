@@ -1,2 +1,4 @@
 D:\Documents D\BU\Year 2\3DGP\Proj\x64\Debug\GLSandbox.exe
 D:\Documents D\BU\Year 2\3DGP\Proj\x64\Debug\GLSandbox.pdb
+D:\Documents D\BU\Year 2\3DGP\3DGP\Proj\x64\Debug\GLSandbox.exe
+D:\Documents D\BU\Year 2\3DGP\3DGP\Proj\x64\Debug\GLSandbox.pdb
