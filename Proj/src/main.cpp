@@ -202,11 +202,6 @@ int main(int argc, char* argv[])
 	//BIND SHADER PROGRAM AND DRAW TRIANGLE
 	/*-----------------------------------------------------------------*/
 
-	// Bind the shader to change the uniform, set the uniform and reset state
-	glUseProgram(programId);
-	glUseProgram(0);
-
-
 	// Instruct OpenGL to use our shader program and our VAO
 	glUseProgram(programId);
 	glBindVertexArray(vaoId);
