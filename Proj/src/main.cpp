@@ -149,10 +149,11 @@ int main(int argc, char* argv[])
 
 	const GLchar* fragmentShaderSrc =
 		"varying vec4 v_Color;             " \
+		"uniform float u_Pulse;            " \
 		"                                  " \
 		"void main()                       " \
 		"{                                 " \
-		" gl_FragColor = v_Color;          " \
+		" gl_FragColor = v_Color * u_Pulse;" \
 		"}                                 ";
 
 	// Create a new fragment shader, attach source code, compile it and
@@ -177,7 +178,7 @@ int main(int argc, char* argv[])
 	glAttachShader(programId, fragmentShaderId);
 
 	// Ensure the VAO "position" attribute stream gets set as the first position
-	// during the link.
+	// during the link and the VAO color attribute gets set as the second.
 	glBindAttribLocation(programId, 0, "a_Position");
 	glBindAttribLocation(programId, 1, "a_Color");
 
@@ -198,6 +199,14 @@ int main(int argc, char* argv[])
 	glDetachShader(programId, fragmentShaderId);
 	glDeleteShader(fragmentShaderId);
 
+	// Store location of the pulse uniform and check if successfully found
+	GLint pulseUniformId = glGetUniformLocation(programId, "u_Pulse");
+
+	if (pulseUniformId == -1)
+	{
+		throw std::exception();
+	}
+
 	/*-----------------------------------------------------------------*/
 	//BIND SHADER PROGRAM AND DRAW TRIANGLE
 	/*-----------------------------------------------------------------*/
@@ -213,6 +222,9 @@ int main(int argc, char* argv[])
 	glBindVertexArray(0);
 	glUseProgram(0);
 
+	float pulse = 0;
+	float delta = 0.0001f;
+
 	while (!quit)
 	{
 		SDL_Event event = { 0 };
@@ -224,6 +236,13 @@ int main(int argc, char* argv[])
 				quit = true;
 			}
 		}
+
+		//Handle pulse uniform
+		pulse += delta;
+		if (pulse > 1.0f || pulse < 0.0f) delta = -delta;
+		glUseProgram(programId);
+		glUniform1f(pulseUniformId, pulse);
+		glUseProgram(0);
 
 		//Set clear colour to red
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
