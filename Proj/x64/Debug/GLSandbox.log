@@ -1,2 +1,5 @@
-﻿  main.cpp
-  GLSandbox.vcxproj -> D:\Documents D\BU\Year 2\3DGP\3DGP\Proj\x64\Debug\GLSandbox.exe
+﻿  Engine.cpp
+D:\Documents D\BU\Year 2\3DGP\3DGP\Proj\Engine.h(18,1): error C2011: 'Engine': 'class' type redefinition
+D:\Documents D\BU\Year 2\3DGP\3DGP\Proj\Engine.h(7): message : see declaration of 'Engine'
+D:\Documents D\BU\Year 2\3DGP\3DGP\Proj\Engine.cpp(3,13): error C2027: use of undefined type 'Engine'
+D:\Documents D\BU\Year 2\3DGP\3DGP\Proj\Engine.h(7): message : see declaration of 'Engine'

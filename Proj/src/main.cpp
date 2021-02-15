@@ -239,7 +239,7 @@ int main(int argc, char* argv[])
 
 		//Handle pulse uniform
 		pulse += delta;
-		if (pulse > 1.0f || pulse < 0.0f) delta = -delta;
+		if (pulse > 1.0f || pulse <= 0.0f) delta = -delta;
 		glUseProgram(programId);
 		glUniform1f(pulseUniformId, pulse);
 		glUseProgram(0);
