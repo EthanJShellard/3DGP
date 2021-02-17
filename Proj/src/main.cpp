@@ -1,12 +1,16 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
+#include "glm/glm.hpp";
+#include "glm/ext.hpp";
+
+#include "Engine.h"
 
 #include <exception>
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
-int main(int argc, char* argv[])
+void AllInOne()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -36,7 +40,7 @@ int main(int argc, char* argv[])
 		0.5f, -0.5f, 0.0f
 	};
 
-	const GLfloat colors[] = 
+	const GLfloat colors[] =
 	{
 		1.0f, 0.0f, 0.0f, 1.0f,
 		0.0f, 1.0f, 0.0f, 1.0f,
@@ -74,7 +78,7 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_ARRAY_BUFFER, positionsVboId);
 
 	// Upload a copy of the data from memory into the new VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions) * 9, positions, GL_STATIC_DRAW);
 
 	// Reset the state
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -95,7 +99,7 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_ARRAY_BUFFER, colorsVboId);
 
 	//Upload a copy of the data from memory into the new VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors) * 12, colors, GL_STATIC_DRAW);
 
 	//Reset the state
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -123,6 +127,8 @@ int main(int argc, char* argv[])
 	/*-----------------------------------------------------------------*/
 
 	const GLchar* vertexShaderSrc =
+		"uniform mat4 u_Projection;           " \
+		"uniform mat4 u_Model;                " \
 		"attribute vec3 a_Position;             " \
 		"attribute vec4 a_Color;                " \
 		"                                       " \
@@ -130,8 +136,8 @@ int main(int argc, char* argv[])
 		"                                       " \
 		"void main()                            " \
 		"{                                      " \
-		" gl_Position = vec4(a_Position, 1.0); " \
-		" v_Color = a_Color;                    " \
+		" gl_Position = u_Projection * u_Model * vec4(a_Position, 1.0); " \
+		" v_Color = a_Color;                   " \
 		"}                                      ";
 
 	// Create a new vertex shader, attach source code, compile it and
@@ -171,14 +177,12 @@ int main(int argc, char* argv[])
 	/*-----------------------------------------------------------------*/
 	//CREATE PROGRAM AND ATTACH SHADER OBJECTS
 	/*-----------------------------------------------------------------*/
-	
+
 	// Create new shader program and attach our shader objects
 	GLuint programId = glCreateProgram();
 	glAttachShader(programId, vertexShaderId);
 	glAttachShader(programId, fragmentShaderId);
 
-	// Ensure the VAO "position" attribute stream gets set as the first position
-	// during the link and the VAO color attribute gets set as the second.
 	glBindAttribLocation(programId, 0, "a_Position");
 	glBindAttribLocation(programId, 1, "a_Color");
 
@@ -199,10 +203,11 @@ int main(int argc, char* argv[])
 	glDetachShader(programId, fragmentShaderId);
 	glDeleteShader(fragmentShaderId);
 
-	// Store location of the pulse uniform and check if successfully found
+	// Store location of uniforms and check if successfully found
 	GLint pulseUniformId = glGetUniformLocation(programId, "u_Pulse");
-
-	if (pulseUniformId == -1)
+	GLint modelLoc = glGetUniformLocation(programId, "u_Model");
+	GLint projectionLoc = glGetUniformLocation(programId, "u_Projection");
+	if (pulseUniformId == -1 || modelLoc == -1 || projectionLoc == -1)
 	{
 		throw std::exception();
 	}
@@ -224,6 +229,8 @@ int main(int argc, char* argv[])
 
 	float pulse = 0;
 	float delta = 0.0001f;
+	float angle = 0;
+
 
 	while (!quit)
 	{
@@ -237,12 +244,40 @@ int main(int argc, char* argv[])
 			}
 		}
 
+		//Handle window resizing
+		int width = 0;
+		int height = 0;
+		SDL_GetWindowSize(window, &width, &height);
+		glViewport(0,0,width,height);
+
 		//Handle pulse uniform
 		pulse += delta;
 		if (pulse > 1.0f || pulse <= 0.0f) delta = -delta;
 		glUseProgram(programId);
 		glUniform1f(pulseUniformId, pulse);
 		glUseProgram(0);
+
+		// Prepare the perspective projection matrix
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
+			(float)width / (float)height, 0.1f, 100.f);
+
+		// Prepare the model matrix
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, glm::vec3(glm::sin(glm::radians(angle)), glm::cos(glm::radians(angle)), -4.5f));
+		model = glm::rotate(model, glm::radians(angle), glm::vec3(0, 1, 0));
+
+		// Increase the float angle so next frame the triangle rotates further
+		angle += 0.02f;
+
+		// Make sure the current program is bound
+		glUseProgram(programId);
+
+		// Upload the model matrix
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		// Upload the projection matrix
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE,
+			glm::value_ptr(projection));
 
 		//Set clear colour to red
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -266,6 +301,10 @@ int main(int argc, char* argv[])
 
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
 
+int main(int argc, char* argv[])
+{
+	(new Engine())->Run();
 	return 0;
 }
