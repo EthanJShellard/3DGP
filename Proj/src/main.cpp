@@ -1,10 +1,5 @@
-#include <SDL2/SDL.h>
-#include <GL/glew.h>
-#include "glm/glm.hpp";
-#include "glm/ext.hpp";
-
+#pragma once
 #include "Engine.h"
-
 #include <exception>
 
 #define WINDOW_WIDTH 640
