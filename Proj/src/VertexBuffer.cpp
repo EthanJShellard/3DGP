@@ -90,3 +90,8 @@ VertexBuffer::VertexBuffer()
 	//Data yet to be uploaded
 	dirty = true;
 }
+
+VertexBuffer::~VertexBuffer()
+{
+	glDeleteBuffers(1, &id);
+}

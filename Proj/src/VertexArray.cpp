@@ -47,3 +47,8 @@ VertexArray::VertexArray()
 
 	dirty = true;
 }
+
+VertexArray::~VertexArray()
+{
+	glDeleteVertexArrays(1, &id);
+}

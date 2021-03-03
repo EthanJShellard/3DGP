@@ -16,6 +16,7 @@ public:
 	GLuint GetID();
 
 	VertexArray();
+	~VertexArray();
 private:
 	GLuint id;
 	bool dirty;

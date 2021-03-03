@@ -15,7 +15,7 @@ public:
 	GLuint GetID();
 
 	VertexBuffer();
-
+	~VertexBuffer();
 private:
 	GLuint id;
 	int components;
