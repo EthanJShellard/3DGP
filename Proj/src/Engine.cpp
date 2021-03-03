@@ -1,9 +1,19 @@
-#include "Engine.h"
+#pragma once
+#include <SDL2/SDL.h>
+#include <GL/glew.h>
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
 #define STB_IMAGE_IMPLEMENTATION //Needs to be defined before the include in exacly one compilation unit
 #include <stb_image.h>
+
 #include <iostream>
 #include <vector>
 #include <exception>
+#include <memory>
+
+#include "Engine.h"
+#include "VertexBuffer.h"
+#include "VertexArray.h"
 
 void Engine::Initialise()
 {
@@ -39,31 +49,6 @@ GLuint Engine::CreateVAO()
 	}
 
 	return vaoId;
-}
-
-GLuint Engine::CreateVBO(const GLfloat * data, int length)
-{
-	GLuint VBOId = 0;
-
-	//Create a new VBO on the GPU and bind it (Gives us a 'reference' in positionsVboId)
-	//1 is number of buffers to initialise - usually just use 1
-	glGenBuffers(1, &VBOId);
-
-	if (!VBOId)
-	{
-		throw std::exception();
-	}
-
-	//Now when we operate, we operate on this buffer
-	glBindBuffer(GL_ARRAY_BUFFER, VBOId);
-
-	// Upload a copy of the data from memory into the new VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(data) * length, data, GL_STATIC_DRAW);
-
-	// Reset the state
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	return VBOId;
 }
 
 GLuint Engine::CreateExampleVertexShader()
@@ -114,14 +99,14 @@ GLuint Engine::CreateExampleFragmentShader()
 		"}                                 ";*/
 
 	const GLchar* fragmentShaderSrc =
-	"uniform sampler2D u_Texture;      " \
-	"varying vec2 v_TexCoord;           " \
-	"                                  " \
-	"void main()                       " \
-	"{                                 " \
-	" vec4 tex = texture2D(u_Texture, v_TexCoord);" \
-	" gl_FragColor = tex;" \
-	"}                                 ";
+		"uniform sampler2D u_Texture;      " \
+		"varying vec2 v_TexCoord;           " \
+		"                                  " \
+		"void main()                       " \
+		"{                                 " \
+		" vec4 tex = texture2D(u_Texture, v_TexCoord);" \
+		" gl_FragColor = tex;" \
+		"}                                 ";
 
 	// Create a new fragment shader, attach source code, compile it and
 	// check for errors.
@@ -136,7 +121,7 @@ GLuint Engine::CreateExampleFragmentShader()
 		GLint maxLength = 0; glGetShaderiv(fragmentShaderId, GL_INFO_LOG_LENGTH, &maxLength);
 		std::vector<GLchar> errorLog(maxLength);
 		glGetShaderInfoLog(fragmentShaderId, maxLength, &maxLength, &errorLog[0]);
-		std::cout << &errorLog.at(0) << std::endl; 
+		std::cout << &errorLog.at(0) << std::endl;
 		throw std::exception();
 	}
 
@@ -149,7 +134,7 @@ GLuint Engine::CreateTexture(unsigned char* data, int width, int height)
 	GLuint texID = 0;
 	glGenTextures(1, &texID);
 
-	if (!texID) 
+	if (!texID)
 	{
 		throw std::exception();
 	}
@@ -189,46 +174,27 @@ int Engine::Run()
 {
 	Initialise();
 
-	const GLfloat positions[] =
-	{
-		0.0f, 0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f
-	};
-
-	const GLfloat texCoords[] =
-	{
-		0.5f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-	};
-
 	int width = 0;
 	int height = 0;
 	unsigned char* data = LoadTextureData("assets/textures/potato.jpg", &width, &height);
-
-	GLint vaoID = CreateVAO();
-	GLint coloursVBOID = CreateVBO(texCoords, 12);
-	GLint positionsVBOID = CreateVBO(positions, 6);
 	GLint textureID = CreateTexture(data, width, height);
 
-	//Bind VBOS to VAOS////////////////////////////////
-	glBindVertexArray(vaoID);
+	GLint vaoID = CreateVAO();
 
-	glBindBuffer(GL_ARRAY_BUFFER, positionsVBOID);
+	std::shared_ptr<VertexBuffer> textureCoordsVBO = std::make_shared<VertexBuffer>();
+	textureCoordsVBO->Add(glm::vec2(0.5f, 1.0f));
+	textureCoordsVBO->Add(glm::vec2(0.0f, 0.0f));
+	textureCoordsVBO->Add(glm::vec2(1.0f, 0.0f));
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-	glEnableVertexAttribArray(0);
+	std::shared_ptr<VertexBuffer> positionsVBO = std::make_shared<VertexBuffer>();
+	positionsVBO->Add(glm::vec3(0.0f, 0.5f, 0.0f));
+	positionsVBO->Add(glm::vec3(-0.5f, -0.5f, 0.0f));
+	positionsVBO->Add(glm::vec3(0.5f, -0.5f, 0.0f));
 
-	glBindBuffer(GL_ARRAY_BUFFER, coloursVBOID);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void*)0);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	//////////////////////////////////////////////////
+	//Create VAO and set buffers in VAO
+	std::shared_ptr<VertexArray> VAO = std::make_shared<VertexArray>();
+	VAO->SetBuffer(positionsVBO, 0);
+	VAO->SetBuffer(textureCoordsVBO, 1);
 
 	GLuint vertexShaderID = CreateExampleVertexShader();
 	GLuint fragmentShaderID = CreateExampleFragmentShader();
@@ -253,8 +219,8 @@ int Engine::Run()
 	if (!success)
 	{
 		GLint maxLength = 0; glGetShaderiv(programID, GL_INFO_LOG_LENGTH, &maxLength);
-		std::vector<GLchar> errorLog(maxLength); 
-		glGetShaderInfoLog(programID, maxLength, &maxLength, &errorLog[0]); 
+		std::vector<GLchar> errorLog(maxLength);
+		glGetShaderInfoLog(programID, maxLength, &maxLength, &errorLog[0]);
 		std::cout << &errorLog.at(0) << std::endl; throw std::exception();
 	}
 
@@ -278,7 +244,7 @@ int Engine::Run()
 
 	// Instruct OpenGL to use our shader program and our VAO
 	glUseProgram(programID);
-	glBindVertexArray(vaoID);
+	glBindVertexArray(VAO->GetID());
 
 	// Reset the state
 	glBindVertexArray(0);
@@ -350,7 +316,7 @@ int Engine::Run()
 
 		// Instruct OpenGL to use our shader program and our VAO
 		glUseProgram(programID);
-		glBindVertexArray(vaoID);
+		glBindVertexArray(VAO->GetID());
 
 		// Draw 3 vertices (a triangle)
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -360,23 +326,23 @@ int Engine::Run()
 		projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f,
 			(float)WINDOW_HEIGHT, 0.0f, 1.0f);
 
-			// Prepare model matrix. The scale is important because now our triangle
-			// would be the size of a single pixel when mapped to an orthographic
-			// projection.
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(100, WINDOW_HEIGHT - 100, 0));
-			model = glm::scale(model, glm::vec3(100, 100, 1));
+		// Prepare model matrix. The scale is important because now our triangle
+		// would be the size of a single pixel when mapped to an orthographic
+		// projection.
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(100, WINDOW_HEIGHT - 100, 0));
+		model = glm::scale(model, glm::vec3(100, 100, 1));
 
-			// Upload the model matrix
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		// Upload the model matrix
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-			// Upload the projection matrix
-			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE,
-				glm::value_ptr(projection));
+		// Upload the projection matrix
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE,
+			glm::value_ptr(projection));
 
-			// Draw shape as before
+		// Draw shape as before
 
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		//############################################################################
 
 		// Reset the state
