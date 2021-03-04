@@ -3,6 +3,8 @@
 
 void VertexBuffer::Add(glm::vec2 value)
 {
+	if (components != 2 && components != 0) throw std::exception();
+
 	//Flatten data
 	data.push_back(value.x);
 	data.push_back(value.y);
@@ -14,6 +16,8 @@ void VertexBuffer::Add(glm::vec2 value)
 
 void VertexBuffer::Add(glm::vec3 value)
 {
+	if (components != 3 && components != 0) throw std::exception();
+
 	//Flatten data
 	data.push_back(value.x);
 	data.push_back(value.y);
@@ -26,6 +30,8 @@ void VertexBuffer::Add(glm::vec3 value)
 
 void VertexBuffer::Add(glm::vec4 value)
 {
+	if (components != 4 && components != 0) throw std::exception();
+
 	//Flatten data
 	data.push_back(value.x);
 	data.push_back(value.y);
@@ -39,6 +45,8 @@ void VertexBuffer::Add(glm::vec4 value)
 
 void VertexBuffer::Add(GLfloat value)
 {
+	if (components != 1 && components != 0) throw std::exception();
+
 	//Flatten data
 	data.push_back(value);
 

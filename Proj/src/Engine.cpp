@@ -36,21 +36,6 @@ void Engine::Initialise()
 	}
 }
 
-GLuint Engine::CreateVAO()
-{
-	GLuint vaoId = 0;
-
-	// Create a new VAO on the GPU and bind it
-	glGenVertexArrays(1, &vaoId);
-
-	if (!vaoId)
-	{
-		throw std::exception();
-	}
-
-	return vaoId;
-}
-
 GLuint Engine::CreateExampleVertexShader()
 {
 	const GLchar* vertexShaderSrc =
@@ -178,8 +163,6 @@ int Engine::Run()
 	int height = 0;
 	unsigned char* data = LoadTextureData("assets/textures/potato.jpg", &width, &height);
 	GLint textureID = CreateTexture(data, width, height);
-
-	GLint vaoID = CreateVAO();
 
 	std::shared_ptr<VertexBuffer> textureCoordsVBO = std::make_shared<VertexBuffer>();
 	textureCoordsVBO->Add(glm::vec2(0.5f, 1.0f));
