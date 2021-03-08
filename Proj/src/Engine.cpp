@@ -14,6 +14,7 @@
 #include "Engine.h"
 #include "VertexBuffer.h"
 #include "VertexArray.h"
+#include "Shader.h";
 
 void Engine::Initialise()
 {
@@ -179,55 +180,20 @@ int Engine::Run()
 	VAO->SetBuffer(positionsVBO, 0);
 	VAO->SetBuffer(textureCoordsVBO, 1);
 
-	GLuint vertexShaderID = CreateExampleVertexShader();
-	GLuint fragmentShaderID = CreateExampleFragmentShader();
-
-	//////////////////////////////////////////////////
-	//Create Program and Attach Shader Objects
-	// Create new shader program and attach our shader objects
-
-	GLint success = 0;
-
-	GLuint programID = glCreateProgram();
-	glAttachShader(programID, vertexShaderID);
-	glAttachShader(programID, fragmentShaderID);
-
-	glBindAttribLocation(programID, 0, "a_Position");
-	glBindAttribLocation(programID, 1, "a_TexCoord");
-
-	// Perform the link and check for failure
-	glLinkProgram(programID);
-	glGetProgramiv(programID, GL_LINK_STATUS, &success);
-
-	if (!success)
-	{
-		GLint maxLength = 0; glGetShaderiv(programID, GL_INFO_LOG_LENGTH, &maxLength);
-		std::vector<GLchar> errorLog(maxLength);
-		glGetShaderInfoLog(programID, maxLength, &maxLength, &errorLog[0]);
-		std::cout << &errorLog.at(0) << std::endl; throw std::exception();
-	}
-
-
-	// Detach and destroy the shader objects. These are no longer needed
-	// because we now have a complete shader program.
-	glDetachShader(programID, vertexShaderID);
-	glDeleteShader(vertexShaderID);
-	glDetachShader(programID, fragmentShaderID);
-	glDeleteShader(fragmentShaderID);
+	//Create Shader program
+	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/test/vert.txt", "assets/shaders/test/frag.txt");
+	program->BindAttribute(0, "a_Position");
+	program->BindAttribute(1, "a_TexCoord");
 
 	// Store location of uniforms and check if successfully found
-	GLint texLoc = glGetUniformLocation(programID, "u_Texture");
-	GLint modelLoc = glGetUniformLocation(programID, "u_Model");
-	GLint projectionLoc = glGetUniformLocation(programID, "u_Projection");
+	GLint texLoc = glGetUniformLocation(program->GetID(), "u_Texture");
+	GLint modelLoc = glGetUniformLocation(program->GetID(), "u_Model");
+	GLint projectionLoc = glGetUniformLocation(program->GetID(), "u_Projection");
 	if (texLoc == -1 || modelLoc == -1 || projectionLoc == -1)
 	{
 		throw std::exception();
 	}
 	/////////////////////////////////////////////////////////////////////////
-
-	// Instruct OpenGL to use our shader program and our VAO
-	glUseProgram(programID);
-	glBindVertexArray(VAO->GetID());
 
 	// Reset the state
 	glBindVertexArray(0);
@@ -282,7 +248,7 @@ int Engine::Run()
 		angle += 0.02f;
 
 		// Make sure the current program is bound
-		glUseProgram(programID);
+		glUseProgram(program->GetID());
 
 		// Upload the model matrix
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -298,7 +264,7 @@ int Engine::Run()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Instruct OpenGL to use our shader program and our VAO
-		glUseProgram(programID);
+		glUseProgram(program->GetID());
 		glBindVertexArray(VAO->GetID());
 
 		// Draw 3 vertices (a triangle)
