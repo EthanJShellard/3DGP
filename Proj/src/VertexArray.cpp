@@ -1,3 +1,4 @@
+#include <bugl.h>
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 
@@ -34,6 +35,11 @@ GLuint VertexArray::GetID()
 	return id;
 }
 
+size_t VertexArray::GetVertCount()
+{
+	return vertCount;
+}
+
 VertexArray::VertexArray()
 {
 	// Create a new VAO on the GPU and bind it
@@ -45,7 +51,14 @@ VertexArray::VertexArray()
 
 	buffers.resize(20);
 
+	vertCount = 0;
 	dirty = true;
+}
+
+VertexArray::VertexArray(std::string pathToModel)
+{
+	id = buLoadModel(pathToModel, &vertCount);
+	dirty = false;
 }
 
 VertexArray::~VertexArray()

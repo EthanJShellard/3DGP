@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
+#include <bugl.h>
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #define STB_IMAGE_IMPLEMENTATION //Needs to be defined before the include in exacly one compilation unit
@@ -35,83 +36,6 @@ void Engine::Initialise()
 	{
 		throw std::exception();
 	}
-}
-
-GLuint Engine::CreateExampleVertexShader()
-{
-	const GLchar* vertexShaderSrc =
-		"uniform mat4 u_Projection;           " \
-		"uniform mat4 u_Model;                " \
-		"attribute vec3 a_Position;             " \
-		"attribute vec2 a_TexCoords;             " \
-		"                                       " \
-		"varying vec2 v_TexCoord;               " \
-		"                                       " \
-		"void main()                            " \
-		"{                                      " \
-		" gl_Position = u_Projection * u_Model * vec4(a_Position, 1.0); " \
-		" v_TexCoord = a_TexCoords;             " \
-		"}                                      ";
-
-	// Create a new vertex shader, attach source code, compile it and
-	// check for errors.
-	GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShaderId, 1, &vertexShaderSrc, NULL);
-	glCompileShader(vertexShaderId);
-	GLint success = 0;
-	glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		GLint maxLength = 0; glGetShaderiv(vertexShaderId, GL_INFO_LOG_LENGTH, &maxLength);
-		std::vector<GLchar> errorLog(maxLength);
-		glGetShaderInfoLog(vertexShaderId, maxLength, &maxLength, &errorLog[0]);
-		std::cout << &errorLog.at(0) << std::endl;
-		throw std::exception();
-	}
-
-	return vertexShaderId;
-}
-
-GLuint Engine::CreateExampleFragmentShader()
-{
-	/*const GLchar* fragmentShaderSrc =
-		"varying vec4 v_Color;             " \
-		"uniform float u_Pulse;            " \
-		"                                  " \
-		"void main()                       " \
-		"{                                 " \
-		" gl_FragColor = v_Color * u_Pulse;" \
-		"}                                 ";*/
-
-	const GLchar* fragmentShaderSrc =
-		"uniform sampler2D u_Texture;      " \
-		"varying vec2 v_TexCoord;           " \
-		"                                  " \
-		"void main()                       " \
-		"{                                 " \
-		" vec4 tex = texture2D(u_Texture, v_TexCoord);" \
-		" gl_FragColor = tex;" \
-		"}                                 ";
-
-	// Create a new fragment shader, attach source code, compile it and
-	// check for errors.
-	GLuint fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaderId, 1, &fragmentShaderSrc, NULL);
-	glCompileShader(fragmentShaderId);
-	GLint success = 0;
-	glGetShaderiv(fragmentShaderId, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		GLint maxLength = 0; glGetShaderiv(fragmentShaderId, GL_INFO_LOG_LENGTH, &maxLength);
-		std::vector<GLchar> errorLog(maxLength);
-		glGetShaderInfoLog(fragmentShaderId, maxLength, &maxLength, &errorLog[0]);
-		std::cout << &errorLog.at(0) << std::endl;
-		throw std::exception();
-	}
-
-	return fragmentShaderId;
 }
 
 GLuint Engine::CreateTexture(unsigned char* data, int width, int height)
@@ -162,7 +86,7 @@ int Engine::Run()
 
 	int width = 0;
 	int height = 0;
-	unsigned char* data = LoadTextureData("assets/textures/potato.jpg", &width, &height);
+	unsigned char* data = LoadTextureData("assets/models/curuthers/Whiskers_diffuse.png", &width, &height);
 	GLint textureID = CreateTexture(data, width, height);
 
 	std::shared_ptr<VertexBuffer> textureCoordsVBO = std::make_shared<VertexBuffer>();
@@ -179,6 +103,9 @@ int Engine::Run()
 	std::shared_ptr<VertexArray> VAO = std::make_shared<VertexArray>();
 	VAO->SetBuffer(positionsVBO, 0);
 	VAO->SetBuffer(textureCoordsVBO, 1);
+
+	//CREATE CAT
+	std::shared_ptr<VertexArray> cat = std::make_shared<VertexArray>("assets/models/curuthers/curuthers.obj");
 
 	//Create Shader program
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/test/vert.txt", "assets/shaders/test/frag.txt");
@@ -237,11 +164,11 @@ int Engine::Run()
 
 		// Prepare the perspective projection matrix
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-			(float)width / (float)height, 0.1f, 100.f);
+			(float)width / (float)height, 0.1f, 20.f);
 
 		// Prepare the model matrix
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(glm::sin(glm::radians(angle)), glm::cos(glm::radians(angle)), -4.5f));
+		model = glm::translate(model, glm::vec3(glm::sin(glm::radians(angle)), glm::cos(glm::radians(angle)), -10.0f));
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(0, 1, 0));
 
 		// Increase the float angle so next frame the triangle rotates further
@@ -265,33 +192,33 @@ int Engine::Run()
 
 		// Instruct OpenGL to use our shader program and our VAO
 		glUseProgram(program->GetID());
-		glBindVertexArray(VAO->GetID());
+		glBindVertexArray(cat->GetID());
 
-		// Draw 3 vertices (a triangle)
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// Draw model
+		glDrawArrays(GL_TRIANGLES, 0, cat->GetVertCount());
 
 		//ORTHOGRAPHIC DEMO#####################################################
-		// Prepare the orthographic projection matrix (reusing the variable)
-		projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f,
-			(float)WINDOW_HEIGHT, 0.0f, 1.0f);
+		//// Prepare the orthographic projection matrix (reusing the variable)
+		//projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f,
+		//	(float)WINDOW_HEIGHT, 0.0f, 1.0f);
 
-		// Prepare model matrix. The scale is important because now our triangle
-		// would be the size of a single pixel when mapped to an orthographic
-		// projection.
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(100, WINDOW_HEIGHT - 100, 0));
-		model = glm::scale(model, glm::vec3(100, 100, 1));
+		//// Prepare model matrix. The scale is important because now our triangle
+		//// would be the size of a single pixel when mapped to an orthographic
+		//// projection.
+		//model = glm::mat4(1.0f);
+		//model = glm::translate(model, glm::vec3(100, WINDOW_HEIGHT - 100, 0));
+		//model = glm::scale(model, glm::vec3(100, 100, 1));
 
-		// Upload the model matrix
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//// Upload the model matrix
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		// Upload the projection matrix
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE,
-			glm::value_ptr(projection));
+		//// Upload the projection matrix
+		//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE,
+		//	glm::value_ptr(projection));
 
-		// Draw shape as before
+		//// Draw shape as before
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		//############################################################################
 
 		// Reset the state
