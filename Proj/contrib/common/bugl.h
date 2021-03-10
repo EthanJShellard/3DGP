@@ -237,8 +237,8 @@ GLuint loadModel(const std::string& path, size_t *vertexCount,
     glEnableVertexAttribArray(0);
     glBindVertexArray(0);
 
-    // TODO
-    //glDeleteBuffers(1, &vboId);
+    
+    glDeleteBuffers(1, &vboId);
   }
 
   if(tcs.size() > 0)
@@ -270,8 +270,8 @@ GLuint loadModel(const std::string& path, size_t *vertexCount,
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 
-    // TODO
-    //glDeleteBuffers(1, &vboId);
+    
+    glDeleteBuffers(1, &vboId);
   }
 
   if(normals.size() > 0)
@@ -303,8 +303,8 @@ GLuint loadModel(const std::string& path, size_t *vertexCount,
     glEnableVertexAttribArray(2);
     glBindVertexArray(0);
 
-    // TODO
-    //glDeleteBuffers(1, &vboId);
+    
+    glDeleteBuffers(1, &vboId);
   }
 
   if(lmcs.size() > 0)
