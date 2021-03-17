@@ -26,7 +26,7 @@ void Engine::Initialise()
 
 	window = SDL_CreateWindow("OpenGL Template",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+		DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
 	if (!SDL_GL_CreateContext(window))
 	{
@@ -74,10 +74,31 @@ unsigned char* Engine::LoadTextureData(const char* file, int* width, int* height
 
 void Engine::Update()
 {
+	input->Update();
+
+	//Handle delta time
+	float currTime = SDL_GetTicks(); //store current time ms
+	float diffTime = currTime - lastTime; //get diff between now and previous
+	lastTime = currTime;
+	deltaTime = diffTime / 1000; //convert to s
+	//////////////////////
+
+	//Handle window resizing
+	int width = 0;
+	int height = 0;
+	SDL_GetWindowSize(window, &width, &height);
+	glViewport(0, 0, width, height);
+	windowWidth = width;
+	windowHeight = height;
+	/////////////////////////
+
+
+
 }
 
-void Engine::Render()
+void Engine::Draw()
 {
+
 }
 
 int Engine::Run()
@@ -128,6 +149,8 @@ int Engine::Run()
 	glBindVertexArray(0);
 	glUseProgram(0);
 
+	glm::vec3 position = glm::vec3(0);
+
 	float delta = 0.0001f;
 	float angle = 0;
 	glm::mat4 view = glm::mat4(1.0f);
@@ -150,37 +173,17 @@ int Engine::Run()
 	bool quit = false;
 
 	//UPDATE
-	while (!quit)
+	while (!input->quit)
 	{
-		SDL_Event event = { 0 };
-
-		while (SDL_PollEvent(&event))
-		{
-			if (event.type == SDL_QUIT)
-			{
-				quit = true;
-			}
-		}
-
-		//Handle delta time
-		float currTime = SDL_GetTicks(); //store current time ms
-		float diffTime = currTime - lastTime; //get diff between now and previous
-		lastTime = currTime;
-		deltaTime = diffTime / 1000; //convert to s
-
-		//Handle window resizing
-		int width = 0;
-		int height = 0;
-		SDL_GetWindowSize(window, &width, &height);
-		glViewport(0, 0, width, height);
+		Update();
 
 		// Prepare the perspective projection matrix
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-			(float)width / (float)height, 0.1f, 15.f);
+			(float)windowWidth / (float)windowHeight, 0.1f, 50.f);
 
 		// Prepare the model matrix
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(glm::sin(glm::radians(angle)), glm::cos(glm::radians(angle)), -10.0f));
+		model = glm::translate(model, glm::vec3(/*glm::sin(glm::radians(angle))*/ 0, glm::cos(glm::radians(angle)), -10.0f));
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(0, 1, 0));
 
 		// Increase the float angle so next frame the model rotates further
@@ -192,7 +195,13 @@ int Engine::Run()
 		// Upload the model matrix
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		//Upload the view matrix
+		//Upload the view matrix after movement
+		view = glm::mat4(1);
+		if (input->GetKey(SDLK_w)) position.z -= 10 * deltaTime;
+		if (input->GetKey(SDLK_s)) position.z += 10 * deltaTime;
+		if (input->GetKey(SDLK_a)) position.x -= 10 * deltaTime;
+		if (input->GetKey(SDLK_d)) position.x += 10 * deltaTime;
+		view = glm::translate(view, position);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(glm::inverse(view)));
 
 		// Upload the projection matrix
@@ -200,7 +209,7 @@ int Engine::Run()
 			glm::value_ptr(projection));
 
 
-		//Set clear colour to red
+		//Set clear colour to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		//clear
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -214,8 +223,8 @@ int Engine::Run()
 
 		//ORTHOGRAPHIC DEMO#####################################################
 		// Prepare the orthographic projection matrix (reusing the variable)
-		projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f,
-			(float)WINDOW_HEIGHT, 0.0f, 1.0f);
+		projection = glm::ortho(0.0f, (float)DEFAULT_WINDOW_WIDTH, 0.0f,
+			(float)DEFAULT_WINDOW_HEIGHT, 0.0f, 1.0f);
 
 		//// Prepare model matrix. The scale is important because now our triangle
 		//// would be the size of a single pixel when mapped to an orthographic
@@ -254,6 +263,9 @@ Engine::Engine()
 	window = nullptr;
 	lastTime = 0;
 	deltaTime = 0;
+	input = std::make_shared<Input>();
+	windowWidth = DEFAULT_WINDOW_WIDTH;
+	windowHeight = DEFAULT_WINDOW_HEIGHT;
 }
 
 Engine::~Engine()

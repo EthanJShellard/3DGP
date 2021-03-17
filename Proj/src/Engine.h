@@ -2,36 +2,26 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#include <memory>
+
+#include "Input.h"
+
+#define DEFAULT_WINDOW_WIDTH 640
+#define DEFAULT_WINDOW_HEIGHT 480
 
 class Engine
 {
 private:
 	SDL_Window* window;
+	int windowWidth;
+	int windowHeight;
+
+	std::shared_ptr<Input> input;
 
 	float lastTime;
 	float deltaTime;
 
 	void Initialise();
-
-	/// <summary>
-	/// Generate a Vertex Array Object on the GPU.
-	/// </summary>
-	/// <returns>VAO ID</returns>
-	GLuint CreateVAO();
-
-	/// <summary>
-	/// Creates an example vertex shader, purely for testing.
-	/// </summary>
-	/// <returns>Example Vertex Shader ID</returns>
-	GLuint CreateExampleVertexShader();
-
-	/// <summary>
-	/// Creates an example fragment shader, purely for testing.
-	/// </summary>
-	/// <returns>Example Fragment Shader ID</returns>
-	GLuint CreateExampleFragmentShader();
 
 	/// <summary>
 	/// Upload texture data to the GPU in RGBA format
@@ -52,7 +42,7 @@ private:
 	unsigned char* LoadTextureData(const char* file,  int* width, int* height);
 
 	void Update();
-	void Render();
+	void Draw();
 public:
 	int Run();
 

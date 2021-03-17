@@ -12,6 +12,9 @@ public:
 	void SetScale(glm::vec3 newScale);
 	void SetScale(float x, float y, float z);
 
+	void Update(float deltaTime);
+	void Draw(glm::vec4);
+
 	glm::vec3 GetPosition();
 	glm::vec3 GetRotation();
 	glm::vec3 GetScale();
