@@ -10,6 +10,9 @@ class Engine
 private:
 	SDL_Window* window;
 
+	float lastTime;
+	float deltaTime;
+
 	void Initialise();
 
 	/// <summary>

@@ -116,7 +116,8 @@ int Engine::Run()
 	GLint texLoc = glGetUniformLocation(program->GetID(), "u_Texture");
 	GLint modelLoc = glGetUniformLocation(program->GetID(), "u_Model");
 	GLint projectionLoc = glGetUniformLocation(program->GetID(), "u_Projection");
-	if (texLoc == -1 || modelLoc == -1 || projectionLoc == -1)
+	GLint viewLoc = glGetUniformLocation(program->GetID(), "u_View");
+	if (texLoc == -1 || modelLoc == -1 || projectionLoc == -1 || viewLoc == -1)
 	{
 		throw std::exception();
 	}
@@ -128,6 +129,8 @@ int Engine::Run()
 
 	float delta = 0.0001f;
 	float angle = 0;
+	glm::mat4 view = glm::mat4(1.0f);
+	
 
 	//Bind the texture we loaded in
 	glActiveTexture(GL_TEXTURE0);
@@ -144,6 +147,7 @@ int Engine::Run()
 
 	bool quit = false;
 
+	//UPDATE
 	while (!quit)
 	{
 		SDL_Event event = { 0 };
@@ -156,6 +160,12 @@ int Engine::Run()
 			}
 		}
 
+		//Handle delta time
+		float currTime = SDL_GetTicks(); //store current time ms
+		float diffTime = currTime - lastTime; //get diff between now and previous
+		lastTime = currTime;
+		deltaTime = diffTime / 1000; //convert to s
+
 		//Handle window resizing
 		int width = 0;
 		int height = 0;
@@ -164,7 +174,7 @@ int Engine::Run()
 
 		// Prepare the perspective projection matrix
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-			(float)width / (float)height, 0.1f, 20.f);
+			(float)width / (float)height, 0.1f, 15.f);
 
 		// Prepare the model matrix
 		glm::mat4 model(1.0f);
@@ -179,6 +189,9 @@ int Engine::Run()
 
 		// Upload the model matrix
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		//Upload the view matrix
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(glm::inverse(view)));
 
 		// Upload the projection matrix
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE,
@@ -198,9 +211,9 @@ int Engine::Run()
 		glDrawArrays(GL_TRIANGLES, 0, cat->GetVertCount());
 
 		//ORTHOGRAPHIC DEMO#####################################################
-		//// Prepare the orthographic projection matrix (reusing the variable)
-		//projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f,
-		//	(float)WINDOW_HEIGHT, 0.0f, 1.0f);
+		// Prepare the orthographic projection matrix (reusing the variable)
+		projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f,
+			(float)WINDOW_HEIGHT, 0.0f, 1.0f);
 
 		//// Prepare model matrix. The scale is important because now our triangle
 		//// would be the size of a single pixel when mapped to an orthographic
@@ -217,9 +230,9 @@ int Engine::Run()
 		//	glm::value_ptr(projection));
 
 		//// Draw shape as before
-
+		//glBindVertexArray(VAO->GetID());
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		//############################################################################
+		////############################################################################
 
 		// Reset the state
 		glBindVertexArray(0);
@@ -237,6 +250,8 @@ int Engine::Run()
 Engine::Engine()
 {
 	window = nullptr;
+	lastTime = 0;
+	deltaTime = 0;
 }
 
 Engine::~Engine()
