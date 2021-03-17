@@ -111,6 +111,7 @@ int Engine::Run()
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/test/vert.txt", "assets/shaders/test/frag.txt");
 	program->BindAttribute(0, "a_Position");
 	program->BindAttribute(1, "a_TexCoord");
+	program->BindAttribute(2, "a_Normal");
 
 	// Store location of uniforms and check if successfully found
 	GLint texLoc = glGetUniformLocation(program->GetID(), "u_Texture");
@@ -130,6 +131,7 @@ int Engine::Run()
 	float delta = 0.0001f;
 	float angle = 0;
 	glm::mat4 view = glm::mat4(1.0f);
+	
 	
 
 	//Bind the texture we loaded in
@@ -181,8 +183,8 @@ int Engine::Run()
 		model = glm::translate(model, glm::vec3(glm::sin(glm::radians(angle)), glm::cos(glm::radians(angle)), -10.0f));
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(0, 1, 0));
 
-		// Increase the float angle so next frame the triangle rotates further
-		angle += 0.02f;
+		// Increase the float angle so next frame the model rotates further
+		angle += 0.01f;
 
 		// Make sure the current program is bound
 		glUseProgram(program->GetID());
