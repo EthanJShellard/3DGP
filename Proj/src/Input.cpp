@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include "Input.h"
+#include <iostream>
 
 Input::Input()
 {
@@ -21,13 +22,14 @@ void Input::Update()
 	{
 		if (event.type == SDL_KEYDOWN) 
 		{
-			if (keys.find(event.key.keysym.sym) == keys.end()) //Key is not present in map
+			std::unordered_map<int, bool>::iterator entry = keys.find(event.key.keysym.sym);
+			if (entry == keys.end()) //Key is not present in map
 			{
 				keys.insert( std::pair<int, bool>(event.key.keysym.sym, true));
 			}
 			else 
 			{
-				keys.find(event.key.keysym.sym)->second = true;
+				entry->second = true;
 			}
 		}
 		else if (event.type == SDL_KEYUP)
@@ -86,7 +88,7 @@ void Input::Update()
 
 bool Input::GetKey(SDL_Keycode key)
 {
-	std::map<int, bool>::iterator itr = keys.find(key);
+	std::unordered_map<int, bool>::iterator itr = keys.find(key);
 	if (itr == keys.end()) return false;
 	else return itr->second;
 

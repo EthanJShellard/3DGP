@@ -2,7 +2,7 @@
 #include <SDL2/SDL_keycode.h>
 #include <glm/glm.hpp>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 class Input 
 {
@@ -29,5 +29,7 @@ private:
 	bool mouse2;
 	bool mouse3;
 	
-	std::map<int, bool> keys;
+	//Unordered map is used as it has O(1) time complexity [std::map has worst case O(log n)]
+	std::unordered_map<int, bool> keys;
+
 };
