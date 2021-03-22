@@ -9,14 +9,6 @@
 
 void Shader::LoadNewVertexShader(const char* path)
 {
-	//Clean up old shader
-	if(fragID)glDetachShader(id, fragID);
-	if (vertID) 
-	{
-		glDetachShader(id, vertID);
-		glDeleteShader(vertID);
-	}
-
 	std::ifstream fileRead;
 	std::stringstream strStream;
 	std::string stringSrc;
@@ -50,14 +42,6 @@ void Shader::LoadNewVertexShader(const char* path)
 
 void Shader::LoadNewFragmentShader(const char* path)
 {
-	//Clean up old shader
-	if(vertID)glDetachShader(id, vertID);
-	if (fragID) 
-	{
-		glDetachShader(id, fragID);
-		glDeleteShader(fragID);
-	}
-
 	std::ifstream fileRead;
 	std::stringstream strStream;
 	std::string stringSrc;
