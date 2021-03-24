@@ -83,7 +83,7 @@ void Input::Update()
 		}
 	}
 
-	mousePrevious = mouseDelta;
+	mousePrevious += mouseDelta;
 }
 
 bool Input::GetKey(SDL_Keycode key)
@@ -117,4 +117,9 @@ bool Input::Mouse2Down()
 bool Input::Mouse3Down()
 {
 	return mouse3;
+}
+
+void Input::ClearMousePrevious(int width, int height)
+{
+	mousePrevious = glm::vec2(width / 2, height / 2);
 }

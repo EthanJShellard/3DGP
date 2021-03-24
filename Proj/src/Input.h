@@ -17,11 +17,13 @@ public:
 	bool Mouse1Down();
 	bool Mouse2Down();
 	bool Mouse3Down();
+	void ClearMousePrevious(int width, int height);
 
 	bool quit;
 
 private:
 	glm::vec2 mousePrevious;
+	glm::vec2 mousePos;
 	glm::vec2 mouseDelta;
 	glm::vec2 scroll;
 

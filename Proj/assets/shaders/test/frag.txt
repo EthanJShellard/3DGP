@@ -1,6 +1,7 @@
 #version 410
 uniform sampler2D u_Texture;
 uniform mat4 u_View;
+uniform vec3 u_camPos;
 
 varying vec2 v_TexCoord;
 varying vec3 v_Normal;
@@ -27,7 +28,7 @@ void main()
     
     //Specular lighting
     //Temporary before we add in actual camera position
-    vec3 viewDir = normalize(vec3(u_View) - v_FragPos);
+    vec3 viewDir = normalize(u_camPos - v_FragPos);
     //Phong reflect
     vec3 reflectDir = reflect(-lightDir, norm);
     

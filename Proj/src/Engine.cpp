@@ -36,6 +36,12 @@ void Engine::Initialise()
 	{
 		throw std::exception();
 	}
+
+	SDL_MaximizeWindow(window);
+
+	//Done to prevent initial flick
+	SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
+	input->Update();
 }
 
 GLuint Engine::CreateTexture(unsigned char* data, int width, int height)
@@ -74,8 +80,6 @@ unsigned char* Engine::LoadTextureData(const char* file, int* width, int* height
 
 void Engine::Update()
 {
-	input->Update();
-
 	//Handle delta time
 	float currTime = SDL_GetTicks(); //store current time ms
 	float diffTime = currTime - lastTime; //get diff between now and previous
@@ -92,7 +96,10 @@ void Engine::Update()
 	windowHeight = height;
 	/////////////////////////
 
-
+	SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
+	input->ClearMousePrevious(windowWidth, windowHeight);
+	input->Update();
+	if (input->GetKey(SDLK_ESCAPE)) input->quit = true;
 
 }
 
@@ -139,7 +146,8 @@ int Engine::Run()
 	GLint modelLoc = glGetUniformLocation(program->GetID(), "u_Model");
 	GLint projectionLoc = glGetUniformLocation(program->GetID(), "u_Projection");
 	GLint viewLoc = glGetUniformLocation(program->GetID(), "u_View");
-	if (texLoc == -1 || modelLoc == -1 || projectionLoc == -1 || viewLoc == -1)
+	GLint camPosLoc = glGetUniformLocation(program->GetID(), "u_camPos");
+	if (texLoc == -1 || modelLoc == -1 || projectionLoc == -1 || viewLoc == -1 || camPosLoc == -1)
 	{
 		throw std::exception();
 	}
@@ -150,8 +158,11 @@ int Engine::Run()
 	glUseProgram(0);
 
 	glm::vec3 position = glm::vec3(0);
+	glm::mat4 camRot = glm::mat4(1);
+	glm::vec3 rot = glm::vec3(0);
+	GLfloat camSens = 0.1f;
 
-	float delta = 0.0001f;
+	float delta = 0.01f;
 	float angle = 0;
 	glm::mat4 view = glm::mat4(1.0f);
 	
@@ -195,13 +206,22 @@ int Engine::Run()
 		// Upload the model matrix
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		//Upload the view matrix after movement
+		//Upload the view matrix after movement and rotation
 		view = glm::mat4(1);
+
 		if (input->GetKey(SDLK_w)) position.z -= 10 * deltaTime;
 		if (input->GetKey(SDLK_s)) position.z += 10 * deltaTime;
 		if (input->GetKey(SDLK_a)) position.x -= 10 * deltaTime;
 		if (input->GetKey(SDLK_d)) position.x += 10 * deltaTime;
+		
 		view = glm::translate(view, position);
+		rot.x -= input->GetMouseDelta().x * camSens;
+		rot.y -= input->GetMouseDelta().y * camSens;
+		view = glm::rotate(view, glm::radians(rot.x), glm::vec3(0, 1, 0));
+		view = glm::rotate(view, glm::radians(rot.y), glm::vec3(1, 0, 0));
+
+
+		glUniform3f(camPosLoc, position.x, position.y, position.z);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(glm::inverse(view)));
 
 		// Upload the projection matrix
