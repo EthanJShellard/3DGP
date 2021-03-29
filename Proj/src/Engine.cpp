@@ -197,11 +197,11 @@ int Engine::Run()
 
 		// Prepare the perspective projection matrix
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-			(float)windowWidth / (float)windowHeight, 0.1f, 50.f);
+			(float)windowWidth / (float)windowHeight, 0.1f, 100.f);
 
 		// Prepare the model matrix
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(/*glm::sin(glm::radians(angle))*/ 0, glm::cos(glm::radians(angle)), -10.0f));
+		model = glm::translate(model, glm::vec3(/*glm::sin(glm::radians(angle))*/ 0, glm::cos(glm::radians(angle)) -5, -10.0f));
 		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1,0,0));
 		model = glm::rotate(model, glm::radians(angle * 0), glm::vec3(0, 1, 0));
 
