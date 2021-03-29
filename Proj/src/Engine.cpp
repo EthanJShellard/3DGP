@@ -16,6 +16,7 @@
 #include "VertexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h";
+#include "OBJModel.h"
 
 void Engine::Initialise()
 {
@@ -117,6 +118,12 @@ int Engine::Run()
 	unsigned char* data = LoadTextureData("assets/models/curuthers/Whiskers_diffuse.png", &width, &height);
 	GLint textureID = CreateTexture(data, width, height);
 
+	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/Dust 2/Triangulated.obj");
+	for (int i = 0; i < dust2->objects.size(); i++)
+	{
+		std::cout << dust2->objects.at(i)->vertexCount << std::endl;
+	}
+
 	std::shared_ptr<VertexBuffer> textureCoordsVBO = std::make_shared<VertexBuffer>();
 	textureCoordsVBO->Add(glm::vec2(0.5f, 1.0f));
 	textureCoordsVBO->Add(glm::vec2(0.0f, 0.0f));
@@ -195,7 +202,8 @@ int Engine::Run()
 		// Prepare the model matrix
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(/*glm::sin(glm::radians(angle))*/ 0, glm::cos(glm::radians(angle)), -10.0f));
-		model = glm::rotate(model, glm::radians(angle), glm::vec3(0, 1, 0));
+		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1,0,0));
+		model = glm::rotate(model, glm::radians(angle * 0), glm::vec3(0, 1, 0));
 
 		// Increase the float angle so next frame the model rotates further
 		angle += 10 * deltaTime;
@@ -240,7 +248,14 @@ int Engine::Run()
 		glBindVertexArray(cat->GetID());
 
 		// Draw model
-		glDrawArrays(GL_TRIANGLES, 0, cat->GetVertCount());
+		//glDrawArrays(GL_TRIANGLES, 0, cat->GetVertCount());
+
+		for (int i = 0; i < dust2->objects.size(); i++) 
+		{
+			glBindVertexArray(dust2->objects.at(i)->vao);
+			glBindTexture(GL_TEXTURE_2D, dust2->objects.at(i)->material->texture);
+			glDrawArrays(GL_TRIANGLES, 0, dust2->objects.at(i)->vertexCount);
+		}
 
 		//ORTHOGRAPHIC DEMO#####################################################
 		// Prepare the orthographic projection matrix (reusing the variable)

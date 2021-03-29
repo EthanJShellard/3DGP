@@ -10,7 +10,7 @@ varying vec3 v_FragPos;
 void main()
 {
     //Light setup
-    vec3 lightPos = vec3(0, 0, 5);
+    vec3 lightPos = vec3(5, 0, 5);
     vec3 lightColor = vec3(1, 1, 1);
     vec3 light;
 
@@ -23,7 +23,7 @@ void main()
     vec3 diffuse = diff * lightColor;
 
     //Ambient lighting setup
-    float ambientStrength = 0.2;
+    float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * lightColor;
     
     //Specular lighting
@@ -33,7 +33,7 @@ void main()
     vec3 reflectDir = reflect(-lightDir, norm);
     
     //Calculate specular strength
-    //Last parameter is shininess
+    //Last parameter is shininess, specular highlight
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
     //Add colour
     vec3 specular = spec * vec3(1, 1, 1);

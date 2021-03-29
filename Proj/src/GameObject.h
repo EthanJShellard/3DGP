@@ -1,6 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
+#include "GL/glew.h"
 
 class GameObject
 {
@@ -19,10 +20,13 @@ public:
 	glm::vec3 GetRotation();
 	glm::vec3 GetScale();
 protected:
+	
 	glm::mat4 model;
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::vec3 rotation;
 
+	GLuint mesh;
+	GLint texture;
 };
 
