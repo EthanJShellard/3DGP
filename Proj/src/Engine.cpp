@@ -198,7 +198,7 @@ int Engine::Run()
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(0, 1, 0));
 
 		// Increase the float angle so next frame the model rotates further
-		angle += 0.01f;
+		angle += 10 * deltaTime;
 
 		// Make sure the current program is bound
 		glUseProgram(program->GetID());
@@ -215,6 +215,7 @@ int Engine::Run()
 		if (input->GetKey(SDLK_d)) position.x += 10 * deltaTime;
 		
 		view = glm::translate(view, position);
+
 		rot.x -= input->GetMouseDelta().x * camSens;
 		rot.y -= input->GetMouseDelta().y * camSens;
 		view = glm::rotate(view, glm::radians(rot.x), glm::vec3(0, 1, 0));
