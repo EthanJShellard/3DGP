@@ -374,6 +374,125 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 			currentMaterial = materials.find(tokens.at(1))->second;
 		}
 	}
+	//Collect final object
+	if (currentMaterial) //If this marks the end of one material group/ object 
+	{
+		std::shared_ptr<Object> object = std::make_shared<Object>();
+		object->material = currentMaterial;
+
+		glGenVertexArrays(1, &object->vao);
+
+		if (!object->vao)
+		{
+			throw std::exception();
+		}
+
+		GLuint vboId;
+
+		if (faces.size() > 0)
+		{
+			object->vertexCount += faces.size() * 3; //3 vertices for each triangulated face
+
+			std::vector<float> b;
+
+			for (std::vector<Face>::iterator fit = faces.begin();
+				fit != faces.end(); fit++)
+			{
+				b.push_back(fit->pa.x); b.push_back(fit->pa.y); b.push_back(fit->pa.z);
+				b.push_back(fit->pb.x); b.push_back(fit->pb.y); b.push_back(fit->pb.z);
+				b.push_back(fit->pc.x); b.push_back(fit->pc.y); b.push_back(fit->pc.z);
+			}
+
+			glGenBuffers(1, &vboId);
+
+			if (!vboId)
+			{
+				throw std::exception();
+			}
+
+			glBindBuffer(GL_ARRAY_BUFFER, vboId);
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
+				GL_STATIC_DRAW);
+
+			glBindVertexArray(object->vao);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glEnableVertexAttribArray(0);
+			glBindVertexArray(0);
+
+
+			glDeleteBuffers(1, &vboId);
+
+		} //End if faces > 0
+
+		if (tcs.size() > 0)
+		{
+			std::vector<float> b;
+
+			for (std::vector<Face>::iterator fit = faces.begin();
+				fit != faces.end(); fit++)
+			{
+				b.push_back(fit->tca.x); b.push_back(fit->tca.y);
+				b.push_back(fit->tcb.x); b.push_back(fit->tcb.y);
+				b.push_back(fit->tcc.x); b.push_back(fit->tcc.y);
+			}
+
+			glGenBuffers(1, &vboId);
+
+			if (!vboId)
+			{
+				throw std::exception();
+			}
+
+			glBindBuffer(GL_ARRAY_BUFFER, vboId);
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
+				GL_STATIC_DRAW);
+
+			glBindVertexArray(object->vao);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glEnableVertexAttribArray(1);
+			glBindVertexArray(0);
+
+
+			glDeleteBuffers(1, &vboId);
+		}
+
+		if (normals.size() > 0)
+		{
+			std::vector<float> b;
+
+			for (std::vector<Face>::iterator fit = faces.begin();
+				fit != faces.end(); fit++)
+			{
+				b.push_back(fit->na.x); b.push_back(fit->na.y); b.push_back(fit->na.z);
+				b.push_back(fit->nb.x); b.push_back(fit->nb.y); b.push_back(fit->nb.z);
+				b.push_back(fit->nc.x); b.push_back(fit->nc.y); b.push_back(fit->nc.z);
+			}
+
+			glGenBuffers(1, &vboId);
+
+			if (!vboId)
+			{
+				throw std::exception();
+			}
+
+			glBindBuffer(GL_ARRAY_BUFFER, vboId);
+
+			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
+				GL_STATIC_DRAW);
+
+			glBindVertexArray(object->vao);
+			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glEnableVertexAttribArray(2);
+			glBindVertexArray(0);
+
+
+			glDeleteBuffers(1, &vboId);
+		}
+		objects.push_back(object);
+	}//End creation of object
+
 }
 
 void OBJModel::loadModel(const std::string& path)
