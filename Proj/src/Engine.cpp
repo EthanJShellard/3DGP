@@ -118,7 +118,7 @@ int Engine::Run()
 	unsigned char* data = LoadTextureData("assets/models/curuthers/Whiskers_diffuse.png", &width, &height);
 	GLint textureID = CreateTexture(data, width, height);
 
-	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/Dust 2/Triangulated.obj");
+	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/Skull/12140_Skull_v3_L2.obj");
 	for (int i = 0; i < dust2->objects.size(); i++)
 	{
 		std::cout << dust2->objects.at(i)->vertexCount << std::endl;
