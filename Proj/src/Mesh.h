@@ -2,7 +2,9 @@
 #include "Material.h"
 #include <memory>
 
-
+/// <summary>
+/// Class containing mesh information and the material relevant to rendering
+/// </summary>
 struct Mesh
 {
 	GLuint vao;

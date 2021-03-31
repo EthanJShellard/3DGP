@@ -2,6 +2,8 @@
 uniform sampler2D u_Texture;
 uniform mat4 u_View;
 uniform vec3 u_camPos;
+uniform vec3 u_lightPos;
+uniform float u_dissolve;
 
 varying vec2 v_TexCoord;
 varying vec3 v_Normal;
@@ -10,13 +12,12 @@ varying vec3 v_FragPos;
 void main()
 {
     //Light setup
-    vec3 lightPos = vec3(5, 500, 5);
     vec3 lightColor = vec3(1, 1, 1);
     vec3 light;
 
     //Normal setup
     vec3 norm = normalize(v_Normal);
-    vec3 lightDir = normalize(lightPos - v_FragPos);
+    vec3 lightDir = normalize(u_lightPos - v_FragPos);
     
     //Diffuse lighting setup
     float diff = max(dot(norm, lightDir), 0.0);
@@ -27,7 +28,6 @@ void main()
     vec3 ambient = ambientStrength * lightColor;
     
     //Specular lighting
-    //Temporary before we add in actual camera position
     vec3 viewDir = normalize(u_camPos - v_FragPos);
     //Phong reflect
     vec3 reflectDir = reflect(-lightDir, norm);
@@ -46,5 +46,5 @@ void main()
     light = ambient;
     light += diff;
     light += specular;
-    gl_FragColor = vec4(light, 1.0) * tex;
+    gl_FragColor = vec4(light, u_dissolve) * tex;
 }

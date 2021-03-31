@@ -17,26 +17,34 @@ public:
 	void SetScale(glm::vec3 newScale);
 	void SetScale(float x, float y, float z);
 
+	void Rotate(float angle, glm::vec3 axis);
+	void Translate(glm::vec3 move);
+
 	glm::vec3 GetPosition();
 	glm::vec3 GetRotation();
 	glm::vec3 GetScale();
 
 	/// <summary>
-	/// Ensure matrices are up to date and perform any update functionality here.
+	/// Perform any update functionality here.
 	/// </summary>
 	/// <param name="deltaTime">Time since previous frame</param>
-	virtual void Update(float deltaTime) = 0;
+	virtual void Update(float deltaTime);
 
 	/// <summary>
-	/// Draw the the renderable component of your implementation
+	/// Update matrices and draw the renderable components of the object
 	/// </summary>
-	virtual void Draw(glm::mat4 perspective, glm::mat4 invView) = 0;
+	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector<glm::vec3>lightPositions);
 
+	void SetModel(std::shared_ptr<OBJModel> newModel);
+
+	GameObject();
 protected:
 	
 	glm::mat4 modelMatrix;
 	glm::vec3 position;
 	glm::vec3 scale;
-	glm::vec3 rotation;
+	glm::quat rotation;
+
+	std::shared_ptr<OBJModel> model;
 };
 

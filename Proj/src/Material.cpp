@@ -1,6 +1,33 @@
+#include "glm/ext.hpp"
 #include "Material.h"
 #include <stb_image.h>
 #include <exception>
+
+void Material::SetShader(std::shared_ptr<Shader> newShader)
+{
+	shader = newShader;
+
+	// Store location of uniforms and check if successfully found
+	textureLocation = glGetUniformLocation(shader->GetID(), "u_Texture");
+	modelMatLocation = glGetUniformLocation(shader->GetID(), "u_Model");
+	projMatLocation = glGetUniformLocation(shader->GetID(), "u_Projection");
+	viewMatLocation = glGetUniformLocation(shader->GetID(), "u_View");
+
+	camPositionLocation = glGetUniformLocation(shader->GetID(), "u_camPos");
+	lightPositonLocation = glGetUniformLocation(shader->GetID(), "u_lightPos");
+	dissolveLocation = glGetUniformLocation(shader->GetID(), "u_dissolve");
+	if (
+		textureLocation == -1 ||
+		modelMatLocation == -1 ||
+		projMatLocation == -1 ||
+		viewMatLocation== -1 ||
+		camPositionLocation == -1 ||
+		lightPositonLocation == -1)
+	{
+		throw std::exception();
+	}
+
+}
 
 void Material::SetTextureFromFile(const char* path)
 {
@@ -16,6 +43,26 @@ void Material::SetTextureFromFile(const char* path)
 	unsigned char* data = LoadTextureData(path, &width, &height);
 	//Create texture in opengl
 	texture = CreateTexture(data, width, height);
+}
+
+void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm::vec3 camPos, std::vector<glm::vec3> lightPositions)
+{
+	//Bind shader program
+	glUseProgram(shader->GetID());
+	//Bind texture
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	//Upload matrices
+	glUniformMatrix4fv(modelMatLocation, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(projMatLocation, 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(iView));
+
+	glUniform3f(camPositionLocation, camPos.x, camPos.y, camPos.z);
+	//If we include a uniform for number of lights, we can have multiple light sources
+	glUniform3f(lightPositonLocation, lightPositions.at(0).x, lightPositions.at(0).y, lightPositions.at(0).z);
+
+	glUniform1f(dissolveLocation, dissolve);
 }
 
 unsigned char* Material::LoadTextureData(const char* file, int* width, int* height)

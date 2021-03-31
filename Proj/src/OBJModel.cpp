@@ -531,8 +531,13 @@ void OBJModel::loadModel(const std::string& path)
 	}
 }
 
-OBJModel::OBJModel(std::string objPath)
+OBJModel::OBJModel(std::string objPath, std::shared_ptr<Shader> defaultShader)
 {
 	loadModel(objPath);
+
+	for (int i = 0; i < meshes.size(); i++) 
+	{
+		meshes.at(i)->material->SetShader(defaultShader);
+	}
 }
 

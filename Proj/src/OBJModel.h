@@ -8,8 +8,6 @@
 #include "Material.h"
 #include "Mesh.h"
 
-
-
 /// <summary>
 /// Class extending the provided bugl file to allow the loading objects with multiple textures
 /// 
@@ -31,6 +29,6 @@ public:
 	std::vector< std::shared_ptr<Mesh> > meshes;
 	
 
-	OBJModel(std::string objPath);
+	OBJModel(std::string objPath, std::shared_ptr<Shader> shader);
 
 };

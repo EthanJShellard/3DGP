@@ -17,6 +17,7 @@
 #include "VertexArray.h"
 #include "Shader.h";
 #include "OBJModel.h"
+#include "GameObject.h"
 
 void Engine::Initialise()
 {
@@ -120,12 +121,6 @@ int Engine::Run()
 	int height = 0;
 	//unsigned char* data = LoadTextureData("assets/models/curuthers/Whiskers_diffuse.png", &width, &height);
 	//GLint textureID = CreateTexture(data, width, height);
-
-	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/Dust 2/Triangulated.obj");
-	for (int i = 0; i < dust2->meshes.size(); i++)
-	{
-		std::cout << dust2->meshes.at(i)->vertexCount << std::endl;
-	}
 	
 	//std::shared_ptr<VertexBuffer> textureCoordsVBO = std::make_shared<VertexBuffer>();
 	//textureCoordsVBO->Add(glm::vec2(0.5f, 1.0f));
@@ -150,6 +145,17 @@ int Engine::Run()
 	program->BindAttribute(0, "a_Position");
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
+
+	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/Dust 2/Triangulated.obj", program);
+	for (int i = 0; i < dust2->meshes.size(); i++)
+	{
+		std::cout << dust2->meshes.at(i)->vertexCount << std::endl;
+	}
+	std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
+	go->SetModel(dust2);
+	go->Rotate(-90.0f, glm::vec3(1,0,0));
+	go->SetPosition(.0f, -10.0f, .0f);
+	go->SetScale(0.5f, 0.5f, 0.5f);
 
 	// Store location of uniforms and check if successfully found
 	GLint texLoc = glGetUniformLocation(program->GetID(), "u_Texture");
@@ -176,7 +182,8 @@ int Engine::Run()
 	float angle = 0;
 	glm::mat4 view = glm::mat4(1.0f);
 	
-	
+	std::vector<glm::vec3> lightPositions;
+	lightPositions.push_back(glm::vec3(0,50,0));
 
 	//Bind the texture we loaded in
 	glActiveTexture(GL_TEXTURE0);
@@ -203,19 +210,19 @@ int Engine::Run()
 			(float)windowWidth / (float)windowHeight, 0.1f, 100.f);
 
 		// Prepare the model matrix
-		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(/*glm::sin(glm::radians(angle))*/ 0, glm::cos(glm::radians(angle)) -5, -10.0f));
-		model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1,0,0));
-		model = glm::rotate(model, glm::radians(angle * 0), glm::vec3(0, 1, 0));
+		//glm::mat4 model(1.0f);
+		//model = glm::translate(model, glm::vec3(/*glm::sin(glm::radians(angle))*/ 0, glm::cos(glm::radians(angle)) -5, -10.0f));
+		//model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1,0,0));
+		//model = glm::rotate(model, glm::radians(angle * 0), glm::vec3(0, 1, 0));
 
 		// Increase the float angle so next frame the model rotates further
 		angle += 10 * deltaTime;
 
 		// Make sure the current program is bound
-		glUseProgram(program->GetID());
+		//glUseProgram(program->GetID());
 
 		// Upload the model matrix
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 		//Upload the view matrix after movement and rotation
 		view = glm::mat4(1);
@@ -224,6 +231,15 @@ int Engine::Run()
 		if (input->GetKey(SDLK_s)) position.z += 10 * deltaTime;
 		if (input->GetKey(SDLK_a)) position.x -= 10 * deltaTime;
 		if (input->GetKey(SDLK_d)) position.x += 10 * deltaTime;
+
+		if (input->GetKey(SDLK_MINUS)) go->SetScale(go->GetScale() * (1 - deltaTime));
+		if (input->GetKey(SDLK_EQUALS)) go->SetScale(go->GetScale() * (1 + deltaTime));
+
+		//if (input->GetKey(SDLK_DOWN)) go->Translate(glm::vec3(0.0f, -deltaTime, 0.0f));
+		if (input->GetKey(SDLK_DOWN)) go->Rotate(deltaTime * 90.0f, glm::vec3(1,0,0));
+		if (input->GetKey(SDLK_UP)) go->Translate(glm::vec3(0.0f, deltaTime, 0.0f));
+		if (input->GetKey(SDLK_RIGHT)) go->Translate(glm::vec3(deltaTime, 0.0f, 0.0f));
+		if (input->GetKey(SDLK_LEFT)) go->Translate(glm::vec3(-deltaTime, 0.0f, 0.0f));
 		
 		view = glm::translate(view, position);
 
@@ -246,21 +262,24 @@ int Engine::Run()
 		//clear
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		//DRAW
+		go->Draw(projection, glm::inverse(view), position, lightPositions);
+
 		// Instruct OpenGL to use our shader program and our VAO
-		glUseProgram(program->GetID());
+		//glUseProgram(program->GetID());
 		//glBindVertexArray(cat->GetID());
 
 		// Draw model
 		//glDrawArrays(GL_TRIANGLES, 0, cat->GetVertCount());
 		
-		//Iterate through subObjects and draw them with correct materials
+		/*Iterate through subObjects and draw them with correct materials
 		for (int i = 0; i < dust2->meshes.size(); i++) 
 		{
 			glBindVertexArray(dust2->meshes.at(i)->vao);
 			glBindTexture(GL_TEXTURE_2D, dust2->meshes.at(i)->material->texture);
 			glDrawArrays(GL_TRIANGLES, 0, dust2->meshes.at(i)->vertexCount);
 		}
-
+		*/
 		//ORTHOGRAPHIC DEMO#####################################################
 		// Prepare the orthographic projection matrix (reusing the variable)
 		projection = glm::ortho(0.0f, (float)DEFAULT_WINDOW_WIDTH, 0.0f,
