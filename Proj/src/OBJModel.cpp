@@ -2,6 +2,24 @@
 #include <iostream>
 #include <fstream>
 
+struct Face
+{
+	glm::vec3 pa;
+	glm::vec3 pb;
+	glm::vec3 pc;
+
+	glm::vec2 tca;
+	glm::vec2 tcb;
+	glm::vec2 tcc;
+
+	glm::vec3 na;
+	glm::vec3 nb;
+	glm::vec3 nc;
+
+	glm::vec2 lmca;
+	glm::vec2 lmcb;
+	glm::vec2 lmcc;
+};
 
 void OBJModel::splitStringWhitespace(const std::string& input, std::vector<std::string>& output)
 {
@@ -255,7 +273,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 		{
 			if (currentMaterial) //If this marks the end of one material group/ object 
 			{
-				std::shared_ptr<Object> object = std::make_shared<Object>();
+				std::shared_ptr<Mesh> object = std::make_shared<Mesh>();
 				object->material = currentMaterial;
 
 				glGenVertexArrays(1, &object->vao);
@@ -368,7 +386,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 					glDeleteBuffers(1, &vboId);
 				}
-				objects.push_back(object);
+				meshes.push_back(object);
 			}//End creation of object
 
 			currentMaterial = materials.find(tokens.at(1))->second;
@@ -377,7 +395,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 	//Collect final object
 	if (currentMaterial) //If this marks the end of one material group/ object 
 	{
-		std::shared_ptr<Object> object = std::make_shared<Object>();
+		std::shared_ptr<Mesh> object = std::make_shared<Mesh>();
 		object->material = currentMaterial;
 
 		glGenVertexArrays(1, &object->vao);
@@ -490,7 +508,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 			glDeleteBuffers(1, &vboId);
 		}
-		objects.push_back(object);
+		meshes.push_back(object);
 	}//End creation of object
 
 }

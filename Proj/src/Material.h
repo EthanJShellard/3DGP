@@ -13,8 +13,8 @@ struct Material
 	float dissolve;
 	float opticalDensity;
 	int illuminationModel;
-	GLuint texture;
 
+	GLuint texture;
 
 	void SetTextureFromFile(const char* path);
 

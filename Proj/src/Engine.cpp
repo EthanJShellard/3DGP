@@ -97,11 +97,14 @@ void Engine::Update()
 	windowHeight = height;
 	/////////////////////////
 
-	SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
-	input->ClearMousePrevious(windowWidth, windowHeight);
+	if (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS)
+	{
+		SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
+		input->ClearMousePrevious(windowWidth, windowHeight);
+	}
+	//Moving update into the above block makes it impossible to refocus window
 	input->Update();
 	if (input->GetKey(SDLK_ESCAPE)) input->quit = true;
-
 }
 
 void Engine::Draw()
@@ -115,32 +118,32 @@ int Engine::Run()
 
 	int width = 0;
 	int height = 0;
-	unsigned char* data = LoadTextureData("assets/models/curuthers/Whiskers_diffuse.png", &width, &height);
-	GLint textureID = CreateTexture(data, width, height);
+	//unsigned char* data = LoadTextureData("assets/models/curuthers/Whiskers_diffuse.png", &width, &height);
+	//GLint textureID = CreateTexture(data, width, height);
 
-	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/Skull/12140_Skull_v3_L2.obj");
-	for (int i = 0; i < dust2->objects.size(); i++)
+	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/Dust 2/Triangulated.obj");
+	for (int i = 0; i < dust2->meshes.size(); i++)
 	{
-		std::cout << dust2->objects.at(i)->vertexCount << std::endl;
+		std::cout << dust2->meshes.at(i)->vertexCount << std::endl;
 	}
+	
+	//std::shared_ptr<VertexBuffer> textureCoordsVBO = std::make_shared<VertexBuffer>();
+	//textureCoordsVBO->Add(glm::vec2(0.5f, 1.0f));
+	//textureCoordsVBO->Add(glm::vec2(0.0f, 0.0f));
+	//textureCoordsVBO->Add(glm::vec2(1.0f, 0.0f));
 
-	std::shared_ptr<VertexBuffer> textureCoordsVBO = std::make_shared<VertexBuffer>();
-	textureCoordsVBO->Add(glm::vec2(0.5f, 1.0f));
-	textureCoordsVBO->Add(glm::vec2(0.0f, 0.0f));
-	textureCoordsVBO->Add(glm::vec2(1.0f, 0.0f));
+	//std::shared_ptr<VertexBuffer> positionsVBO = std::make_shared<VertexBuffer>();
+	//positionsVBO->Add(glm::vec3(0.0f, 0.5f, 0.0f));
+	//positionsVBO->Add(glm::vec3(-0.5f, -0.5f, 0.0f));
+	//positionsVBO->Add(glm::vec3(0.5f, -0.5f, 0.0f));
 
-	std::shared_ptr<VertexBuffer> positionsVBO = std::make_shared<VertexBuffer>();
-	positionsVBO->Add(glm::vec3(0.0f, 0.5f, 0.0f));
-	positionsVBO->Add(glm::vec3(-0.5f, -0.5f, 0.0f));
-	positionsVBO->Add(glm::vec3(0.5f, -0.5f, 0.0f));
-
-	//Create VAO and set buffers in VAO
-	std::shared_ptr<VertexArray> VAO = std::make_shared<VertexArray>();
-	VAO->SetBuffer(positionsVBO, 0);
-	VAO->SetBuffer(textureCoordsVBO, 1);
+	////Create VAO and set buffers in VAO
+	//std::shared_ptr<VertexArray> VAO = std::make_shared<VertexArray>();
+	//VAO->SetBuffer(positionsVBO, 0);
+	//VAO->SetBuffer(textureCoordsVBO, 1);
 
 	//CREATE CAT
-	std::shared_ptr<VertexArray> cat = std::make_shared<VertexArray>("assets/models/curuthers/curuthers.obj");
+	//std::shared_ptr<VertexArray> cat = std::make_shared<VertexArray>("assets/models/curuthers/curuthers.obj");
 
 	//Create Shader program
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/test/vert.txt", "assets/shaders/test/frag.txt");
@@ -177,7 +180,7 @@ int Engine::Run()
 
 	//Bind the texture we loaded in
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	//glBindTexture(GL_TEXTURE_2D, textureID);
 
 	//Enable backface culling
 	glEnable(GL_CULL_FACE);
@@ -245,16 +248,17 @@ int Engine::Run()
 
 		// Instruct OpenGL to use our shader program and our VAO
 		glUseProgram(program->GetID());
-		glBindVertexArray(cat->GetID());
+		//glBindVertexArray(cat->GetID());
 
 		// Draw model
 		//glDrawArrays(GL_TRIANGLES, 0, cat->GetVertCount());
-
-		for (int i = 0; i < dust2->objects.size(); i++) 
+		
+		//Iterate through subObjects and draw them with correct materials
+		for (int i = 0; i < dust2->meshes.size(); i++) 
 		{
-			glBindVertexArray(dust2->objects.at(i)->vao);
-			glBindTexture(GL_TEXTURE_2D, dust2->objects.at(i)->material->texture);
-			glDrawArrays(GL_TRIANGLES, 0, dust2->objects.at(i)->vertexCount);
+			glBindVertexArray(dust2->meshes.at(i)->vao);
+			glBindTexture(GL_TEXTURE_2D, dust2->meshes.at(i)->material->texture);
+			glDrawArrays(GL_TRIANGLES, 0, dust2->meshes.at(i)->vertexCount);
 		}
 
 		//ORTHOGRAPHIC DEMO#####################################################

@@ -10,7 +10,7 @@ varying vec3 v_FragPos;
 void main()
 {
     //Light setup
-    vec3 lightPos = vec3(5, 0, 5);
+    vec3 lightPos = vec3(5, 500, 5);
     vec3 lightColor = vec3(1, 1, 1);
     vec3 light;
 

@@ -6,45 +6,9 @@
 #include "GL/glew.h"
 #include "glm/glm.hpp"
 #include "Material.h"
+#include "Mesh.h"
 
-struct Object 
-{
-	GLuint vao;
-	int vertexCount;
-	std::shared_ptr<Material> material;
 
-	Object()
-	{
-		vao = 0;
-		material = nullptr;
-		vertexCount = 0;
-	}
-
-	~Object() 
-	{
-		glDeleteVertexArrays(1, &vao);
-		glDeleteTextures(1, &(material->texture));
-	}
-};
-
-struct Face 
-{
-	glm::vec3 pa;
-	glm::vec3 pb;
-	glm::vec3 pc;
-
-	glm::vec2 tca;
-	glm::vec2 tcb;
-	glm::vec2 tcc;
-
-	glm::vec3 na;
-	glm::vec3 nb;
-	glm::vec3 nc;
-
-	glm::vec2 lmca;
-	glm::vec2 lmcb;
-	glm::vec2 lmcc;
-};
 
 /// <summary>
 /// Class extending the provided bugl file to allow the loading objects with multiple textures
@@ -64,7 +28,7 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<Material>> materials;
 public:
 
-	std::vector< std::shared_ptr<Object> > objects;
+	std::vector< std::shared_ptr<Mesh> > meshes;
 	
 
 	OBJModel(std::string objPath);
