@@ -27,7 +27,10 @@ public:
 	/// <param name="deltaTime">Time since previous frame</param>
 	virtual void Update(float deltaTime) = 0;
 
-	void Draw(glm::mat4 perspective, glm::mat4 invView);
+	/// <summary>
+	/// Draw the the renderable component of your implementation
+	/// </summary>
+	virtual void Draw(glm::mat4 perspective, glm::mat4 invView) = 0;
 
 protected:
 	
