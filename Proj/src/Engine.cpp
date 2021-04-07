@@ -21,10 +21,17 @@
 
 void Engine::Initialise()
 {
+	std::cout << "Initliaze SDL Video..." << std::endl;
+
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		throw std::exception();
 	}
+
+	std::cout << "Done!" << std::endl;
+
+
+	std::cout << "Initliaze SDL Window..." << std::endl;
 
 	window = SDL_CreateWindow("OpenGL Template",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -34,10 +41,17 @@ void Engine::Initialise()
 	{
 		throw std::exception();
 	}
+
+	std::cout << "Done!" << std::endl;
+
+	std::cout << "Initliaze GLEW..." << std::endl;
+
 	if (glewInit() != GLEW_OK)
 	{
 		throw std::exception();
 	}
+
+	std::cout << "Done!" << std::endl;
 
 	SDL_MaximizeWindow(window);
 
