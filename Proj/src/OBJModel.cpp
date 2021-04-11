@@ -408,16 +408,13 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 			std::vector<float> b;
 
-			int count = 0;
 			for (std::vector<Face>::iterator fit = faces.begin();
 				fit != faces.end(); fit++)
 			{
 				b.push_back(fit->pa.x); b.push_back(fit->pa.y); b.push_back(fit->pa.z);
 				b.push_back(fit->pb.x); b.push_back(fit->pb.y); b.push_back(fit->pb.z);
 				b.push_back(fit->pc.x); b.push_back(fit->pc.y); b.push_back(fit->pc.z);
-				count++;
 			}
-			std::cout << "Added to buffer:" << count << std::endl;
 
 			glGenBuffers(1, &vboId);
 			mesh->buffers.push_back(vboId);
