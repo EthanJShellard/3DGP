@@ -77,15 +77,15 @@ void OBJModel::splitString(const std::string& input, char splitter, std::vector<
 	}
 }
 
-void OBJModel::LoadMaterials(const std::string& path) 
+void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine) 
 {
 	std::ifstream file(path.c_str());
-	std::string currentLine;
 	std::shared_ptr<Material> currentMaterial;
 
 
 	if (!file.is_open()) 
 	{
+		currentLine.append(" (Failed to open file)");
 		throw std::exception();
 	}
 
@@ -266,7 +266,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 		{
 			std::string newPath = objPath.substr(0, objPath.find_last_of('/') + 1);
 			newPath.append(tokens.at(1));
-			LoadMaterials(newPath);
+			LoadMaterials(newPath, currentLine);
 			materialsLoaded = true;
 		}
 		else if (tokens.at(0) == "usemtl")

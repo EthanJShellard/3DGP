@@ -21,7 +21,7 @@ private:
 	void splitString(const std::string& input, char splitter, std::vector<std::string>& output);
 	void loadModel(const std::string& objPath, std::string& currentLine);
 	void loadModel(const std::string& path);
-	void LoadMaterials(const std::string& path);
+	void LoadMaterials(const std::string& path, std::string& currentLine);
 
 	std::unordered_map<std::string, std::shared_ptr<Material>> materials;
 public:
