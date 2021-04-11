@@ -140,11 +140,11 @@ int Engine::Run()
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
 
-	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/dust 2/triangulated.obj", program);
+	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/City/Center city Sci-Fi/Center City Sci-Fi.obj", program);
 	std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
 	go->SetModel(dust2);
-	go->Rotate(-90.0f, glm::vec3(1,0,0));
-	go->SetPosition(.0f, .0f, -25.0f);
+	//go->Rotate(-90.0f, glm::vec3(1,0,0));
+	go->SetPosition(.0f, -30.0f, 0.0f);
 	go->SetScale(0.5f, 0.5f, 0.5f);
 	
 	// Store location of uniforms and check if successfully found
@@ -190,7 +190,7 @@ int Engine::Run()
 
 		// Prepare the projection matrix
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-			(float)windowWidth / (float)windowHeight, 0.1f, 100.f);
+			(float)windowWidth / (float)windowHeight, 0.1f, 500.f);
 
 		//Create view matrix
 		view = glm::mat4(1);
