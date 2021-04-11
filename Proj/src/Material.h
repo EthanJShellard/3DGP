@@ -27,6 +27,7 @@ struct Material
 	//GLint diffuseColourLocation;
 	//GLint emissiveColourLocation;
 	//GLint specularColourLocation;
+	GLint specularHighlightLocation;
 	GLint dissolveLocation;
 	GLint lightPositonLocation; 
 	GLint textureLocation;

@@ -4,6 +4,7 @@ uniform mat4 u_View;
 uniform vec3 u_camPos;
 uniform vec3 u_lightPos;
 uniform float u_dissolve;
+uniform float u_specularHighlight;
 
 varying vec2 v_TexCoord;
 varying vec3 v_Normal;
@@ -34,7 +35,7 @@ void main()
     
     //Calculate specular strength
     //Last parameter is shininess, specular highlight
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_specularHighlight);
     //Add colour
     vec3 specular = spec * vec3(1, 1, 1);
 

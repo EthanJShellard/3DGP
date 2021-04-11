@@ -16,13 +16,16 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 	camPositionLocation = glGetUniformLocation(shader->GetID(), "u_camPos");
 	lightPositonLocation = glGetUniformLocation(shader->GetID(), "u_lightPos");
 	dissolveLocation = glGetUniformLocation(shader->GetID(), "u_dissolve");
+	specularHighlightLocation = glGetUniformLocation(shader->GetID(), "u_specularHighlight");
 	if (
 		textureLocation == -1 ||
 		modelMatLocation == -1 ||
 		projMatLocation == -1 ||
 		viewMatLocation== -1 ||
 		camPositionLocation == -1 ||
-		lightPositonLocation == -1)
+		lightPositonLocation == -1 ||
+		specularHighlightLocation == -1
+		) 
 	{
 		throw std::exception();
 	}
@@ -63,6 +66,7 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 	glUniform3f(lightPositonLocation, lightPositions.at(0).x, lightPositions.at(0).y, lightPositions.at(0).z);
 
 	glUniform1f(dissolveLocation, dissolve);
+	glUniform1f(specularHighlightLocation, specularHighlights);
 }
 
 unsigned char* Material::LoadTextureData(const char* file, int* width, int* height)
