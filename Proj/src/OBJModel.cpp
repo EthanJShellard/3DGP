@@ -176,6 +176,8 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 	bool materialsLoaded = false;
 	std::shared_ptr<Material> currentMaterial;
 
+	int counter = 0;
+
 	std::ifstream file(objPath.c_str());
 
 	if (!file.is_open())
@@ -198,7 +200,6 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 			glm::vec3 p(atof(tokens.at(1).c_str()),
 				atof(tokens.at(2).c_str()),
 				atof(tokens.at(3).c_str()));
-
 			positions.push_back(p);
 		}
 		else if (tokens.at(0) == "vt")
@@ -242,7 +243,6 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 			faces.push_back(f);
 			if (tokens.size() < 5) continue;
-
 			Face fq;
 			fq.pa = f.pc;
 			fq.tca = f.tcc;
@@ -273,12 +273,12 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 		{
 			if (currentMaterial) //If this marks the end of one material group/ object 
 			{
-				std::shared_ptr<Mesh> object = std::make_shared<Mesh>();
-				object->material = currentMaterial;
+				std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+				mesh->material = currentMaterial;
 
-				glGenVertexArrays(1, &object->vao);
+				glGenVertexArrays(1, &mesh->vao);
 
-				if (!object->vao)
+				if (!mesh->vao)
 				{
 					throw std::exception();
 				}
@@ -287,10 +287,9 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 				if (faces.size() > 0) 
 				{
-					object->vertexCount += faces.size() * 3; //3 vertices for each triangulated face
+					mesh->vertexCount = faces.size() * 3; //3 vertices for each triangulated face
 
 					std::vector<float> b;
-
 					for (std::vector<Face>::iterator fit = faces.begin();
 						fit != faces.end(); fit++)
 					{
@@ -298,8 +297,8 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 						b.push_back(fit->pb.x); b.push_back(fit->pb.y); b.push_back(fit->pb.z);
 						b.push_back(fit->pc.x); b.push_back(fit->pc.y); b.push_back(fit->pc.z);
 					}
-
 					glGenBuffers(1, &vboId);
+					mesh->buffers.push_back(vboId);
 
 					if (!vboId)
 					{
@@ -311,13 +310,10 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 					glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
 						GL_STATIC_DRAW);
 
-					glBindVertexArray(object->vao);
+					glBindVertexArray(mesh->vao);
 					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 					glEnableVertexAttribArray(0);
 					glBindVertexArray(0);
-
-
-					glDeleteBuffers(1, &vboId);
 
 				} //End if faces > 0
 
@@ -334,6 +330,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 					}
 
 					glGenBuffers(1, &vboId);
+					mesh->buffers.push_back(vboId);
 
 					if (!vboId)
 					{
@@ -345,13 +342,10 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 					glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
 						GL_STATIC_DRAW);
 
-					glBindVertexArray(object->vao);
+					glBindVertexArray(mesh->vao);
 					glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 					glEnableVertexAttribArray(1);
 					glBindVertexArray(0);
-
-
-					glDeleteBuffers(1, &vboId);
 				}
 
 				if (normals.size() > 0)
@@ -367,6 +361,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 					}
 
 					glGenBuffers(1, &vboId);
+					mesh->buffers.push_back(vboId);
 
 					if (!vboId)
 					{
@@ -378,29 +373,29 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 					glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
 						GL_STATIC_DRAW);
 
-					glBindVertexArray(object->vao);
+					glBindVertexArray(mesh->vao);
 					glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 					glEnableVertexAttribArray(2);
 					glBindVertexArray(0);
-
-
-					glDeleteBuffers(1, &vboId);
 				}
-				meshes.push_back(object);
-			}//End creation of object
+				
+				meshes.push_back(mesh);
+
+			}//End creation of object (if(currentMaterial))
 
 			currentMaterial = materials.find(tokens.at(1))->second;
+			faces.clear();
 		}
 	}
 	//Collect final object
 	if (currentMaterial) //If this marks the end of one material group/ object 
 	{
-		std::shared_ptr<Mesh> object = std::make_shared<Mesh>();
-		object->material = currentMaterial;
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+		mesh->material = currentMaterial;
 
-		glGenVertexArrays(1, &object->vao);
+		glGenVertexArrays(1, &mesh->vao);
 
-		if (!object->vao)
+		if (!mesh->vao)
 		{
 			throw std::exception();
 		}
@@ -409,19 +404,23 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 		if (faces.size() > 0)
 		{
-			object->vertexCount += faces.size() * 3; //3 vertices for each triangulated face
+			mesh->vertexCount += faces.size() * 3; //3 vertices for each triangulated face
 
 			std::vector<float> b;
 
+			int count = 0;
 			for (std::vector<Face>::iterator fit = faces.begin();
 				fit != faces.end(); fit++)
 			{
 				b.push_back(fit->pa.x); b.push_back(fit->pa.y); b.push_back(fit->pa.z);
 				b.push_back(fit->pb.x); b.push_back(fit->pb.y); b.push_back(fit->pb.z);
 				b.push_back(fit->pc.x); b.push_back(fit->pc.y); b.push_back(fit->pc.z);
+				count++;
 			}
+			std::cout << "Added to buffer:" << count << std::endl;
 
 			glGenBuffers(1, &vboId);
+			mesh->buffers.push_back(vboId);
 
 			if (!vboId)
 			{
@@ -433,13 +432,10 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
 				GL_STATIC_DRAW);
 
-			glBindVertexArray(object->vao);
+			glBindVertexArray(mesh->vao);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 			glEnableVertexAttribArray(0);
 			glBindVertexArray(0);
-
-
-			glDeleteBuffers(1, &vboId);
 
 		} //End if faces > 0
 
@@ -463,17 +459,15 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 			}
 
 			glBindBuffer(GL_ARRAY_BUFFER, vboId);
+			mesh->buffers.push_back(vboId);
 
 			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
 				GL_STATIC_DRAW);
 
-			glBindVertexArray(object->vao);
+			glBindVertexArray(mesh->vao);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 			glEnableVertexAttribArray(1);
 			glBindVertexArray(0);
-
-
-			glDeleteBuffers(1, &vboId);
 		}
 
 		if (normals.size() > 0)
@@ -496,19 +490,17 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 			}
 
 			glBindBuffer(GL_ARRAY_BUFFER, vboId);
+			mesh->buffers.push_back(vboId);
 
 			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
 				GL_STATIC_DRAW);
 
-			glBindVertexArray(object->vao);
+			glBindVertexArray(mesh->vao);
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 			glEnableVertexAttribArray(2);
 			glBindVertexArray(0);
-
-
-			glDeleteBuffers(1, &vboId);
 		}
-		meshes.push_back(object);
+		meshes.push_back(mesh);
 	}//End creation of object
 
 }

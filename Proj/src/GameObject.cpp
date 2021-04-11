@@ -58,8 +58,8 @@ void GameObject::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos,
 	//Update model matrix
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::scale(modelMatrix, scale);
-	modelMatrix = glm::translate(modelMatrix, position);
 	modelMatrix = glm::toMat4(rotation) * modelMatrix;
+	modelMatrix = glm::translate(modelMatrix, position);
 
 	//Iterate through meshes and draw them with correct materials
 	for (int i = 0; i < model->meshes.size(); i++)

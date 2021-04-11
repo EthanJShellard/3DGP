@@ -10,6 +10,8 @@ struct Mesh
 	GLuint vao;
 	int vertexCount;
 	std::shared_ptr<Material> material;
+	std::vector<GLuint> buffers;
+
 
 	Mesh()
 	{
@@ -22,5 +24,6 @@ struct Mesh
 	{
 		glDeleteVertexArrays(1, &vao);
 		glDeleteTextures(1, &(material->texture));
+		glDeleteBuffers(buffers.size(), &buffers.at(0));
 	}
 };
