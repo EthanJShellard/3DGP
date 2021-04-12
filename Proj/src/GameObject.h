@@ -39,10 +39,16 @@ public:
 protected:
 	
 	glm::mat4 modelMatrix;
+	glm::mat4 scaleMatrix;
+	glm::mat4 rotationMatrix;
+	glm::mat4 translationMatrix;
+
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::quat rotation;
 
 	bool dirty = true;
+
+	void UpdateModelMatrix();
 };
 
