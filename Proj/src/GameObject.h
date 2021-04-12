@@ -42,5 +42,7 @@ protected:
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::quat rotation;
+
+	bool dirty = true;
 };
 
