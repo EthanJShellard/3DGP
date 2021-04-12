@@ -58,6 +58,14 @@ void Engine::Initialise()
 	SDL_MaximizeWindow(window);
 
 	//Done to prevent initial flick
+	//Handle window resizing
+	int width = 0;
+	int height = 0;
+	SDL_GetWindowSize(window, &width, &height);
+	glViewport(0, 0, width, height);
+	windowWidth = width;
+	windowHeight = height;
+	/////////////////////////
 	SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
 	input->Update();
 }
@@ -133,9 +141,6 @@ int Engine::Run()
 {
 	Initialise();
 
-	int width = 0;
-	int height = 0;
-
 	//Create Shader program
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/test/vert.txt", "assets/shaders/test/frag.txt");
 	program->BindAttribute(0, "a_Position");
@@ -149,12 +154,12 @@ int Engine::Run()
 	go->SetPosition(5.0f, 1.0f, 1.0f);
 	go->SetScale(0.01f, 0.01f, 0.01f);
 	
-	//std::shared_ptr<OBJModel> skullModel = std::make_shared<OBJModel>("assets/models/Skull/12140_Skull_v3_L2.obj", program);
-	//std::shared_ptr<GameObjectOBJ> skull = std::make_shared<GameObjectOBJ>();
-	//skull->SetModel(skullModel);
-	//skull->SetPosition(-5.0f, 1.0f, 1.0f);
-	//skull->Rotate(-90.0f, glm::vec3(1,0,0));
-	//skull->SetScale(0.05f, 0.05f, 0.05f);
+	std::shared_ptr<OBJModel> skullModel = std::make_shared<OBJModel>("assets/models/Skull/12140_Skull_v3_L2.obj", program);
+	std::shared_ptr<GameObjectOBJ> skull = std::make_shared<GameObjectOBJ>();
+	skull->SetModel(skullModel);
+	skull->SetPosition(-5.0f, 1.0f, 1.0f);
+	skull->Rotate(-90.0f, glm::vec3(1,0,0));
+	skull->SetScale(0.05f, 0.05f, 0.05f);
 
 	std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
 	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
@@ -223,7 +228,7 @@ int Engine::Run()
 		//DRAW
 		go->Draw(projection, glm::inverse(view), position, lightPositions);
 		floorQuad->Draw(projection, glm::inverse(view), position, lightPositions);
-		//skull->Draw(projection, glm::inverse(view), position, lightPositions);
+		skull->Draw(projection, glm::inverse(view), position, lightPositions);
 
 		//ORTHOGRAPHIC DEMO#####################################################
 		// Prepare the orthographic projection matrix (reusing the variable)
