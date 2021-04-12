@@ -48,6 +48,11 @@ void Material::SetTextureFromFile(const char* path)
 	texture = CreateTexture(data, width, height);
 }
 
+void Material::SetTexture(GLuint tex)
+{
+	texture = tex;
+}
+
 void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm::vec3 camPos, std::vector<glm::vec3> lightPositions)
 {
 	//Bind shader program
@@ -67,6 +72,18 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 
 	glUniform1f(dissolveLocation, dissolve);
 	glUniform1f(specularHighlightLocation, specularHighlights);
+}
+
+Material::Material()
+{
+	ambientColour = glm::vec3(1);
+	diffuseColour = glm::vec3(1);;
+	specularColour = glm::vec3(1);;
+	emissiveColour = glm::vec3(1);;
+	specularHighlights = 999.0f;
+	dissolve = 1.0f;
+	opticalDensity = 1.0f;
+	illuminationModel = 0;
 }
 
 unsigned char* Material::LoadTextureData(const char* file, int* width, int* height)

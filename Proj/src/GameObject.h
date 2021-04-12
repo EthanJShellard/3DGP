@@ -2,8 +2,8 @@
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #include "GL/glew.h"
-#include "OBJModel.h"
 #include <memory>
+#include <vector>
 
 
 
@@ -35,8 +35,6 @@ public:
 	/// </summary>
 	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector<glm::vec3>lightPositions);
 
-	void SetModel(std::shared_ptr<OBJModel> newModel);
-
 	GameObject();
 protected:
 	
@@ -44,7 +42,5 @@ protected:
 	glm::vec3 position;
 	glm::vec3 scale;
 	glm::quat rotation;
-
-	std::shared_ptr<OBJModel> model;
 };
 

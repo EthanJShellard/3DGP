@@ -36,7 +36,10 @@ struct Material
 	GLuint texture;
 	void SetShader(std::shared_ptr<Shader> newShader);
 	void SetTextureFromFile(const char* path);
+	void SetTexture(GLuint tex);
 	void Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 view, glm::vec3 camPos, std::vector<glm::vec3> lightPositions);
+
+	Material();
 private:
 	std::shared_ptr<Shader> shader;
 	unsigned char* LoadTextureData(const char* file, int* width, int* height);

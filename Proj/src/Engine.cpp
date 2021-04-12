@@ -18,6 +18,8 @@
 #include "Shader.h";
 #include "OBJModel.h"
 #include "GameObject.h"
+#include "GameObjectOBJ.h"
+#include "LoneQuad.h"
 
 void Engine::Initialise()
 {
@@ -140,27 +142,18 @@ int Engine::Run()
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
 
-	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/City/Center city Sci-Fi/Center City Sci-Fi.obj", program);
-	std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
+	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/dust 2/triangulated.obj", program);
+	std::shared_ptr<GameObjectOBJ> go = std::make_shared<GameObjectOBJ>();
 	go->SetModel(dust2);
-	//go->Rotate(-90.0f, glm::vec3(1,0,0));
-	go->SetPosition(.0f, -30.0f, 0.0f);
-	go->SetScale(0.5f, 0.5f, 0.5f);
+	go->Rotate(-90.0f, glm::vec3(1,0,0));
+	go->SetPosition(.0f, .0f, 1.0f);
+	go->SetScale(0.01f, 0.01f, 0.01f);
 	
-	// Store location of uniforms and check if successfully found
-	GLint texLoc = glGetUniformLocation(program->GetID(), "u_Texture");
-	GLint modelLoc = glGetUniformLocation(program->GetID(), "u_Model");
-	GLint projectionLoc = glGetUniformLocation(program->GetID(), "u_Projection");
-	GLint viewLoc = glGetUniformLocation(program->GetID(), "u_View");
-	GLint camPosLoc = glGetUniformLocation(program->GetID(), "u_camPos");
-	GLint lightPositonLocation = glGetUniformLocation(program->GetID(), "u_lightPos");
-	GLint dissolveLocation = glGetUniformLocation(program->GetID(), "u_dissolve");
-	if (texLoc == -1 || modelLoc == -1 || projectionLoc == -1 || viewLoc == -1 || camPosLoc == -1 || lightPositonLocation == -1 || dissolveLocation == -1)
-	{
-		throw std::exception();
-	}
+	std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
+	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
+	floorQuad->SetPosition(-25.0f, 0.0f, -25.0f);
 
-	glm::vec3 position = glm::vec3(0);
+	glm::vec3 position = glm::vec3(0, 2, 10);
 	glm::mat4 camRot = glm::mat4(1);
 	glm::vec3 rot = glm::vec3(0);
 	GLfloat camSens = 0.1f;
@@ -170,7 +163,7 @@ int Engine::Run()
 	glm::mat4 view = glm::mat4(1.0f);
 	
 	std::vector<glm::vec3> lightPositions;
-	lightPositions.push_back(glm::vec3(0,1,0));
+	lightPositions.push_back(glm::vec3(0,10,0));
 
 	//Enable backface culling
 	glEnable(GL_CULL_FACE);
@@ -223,6 +216,7 @@ int Engine::Run()
 
 		//DRAW
 		go->Draw(projection, glm::inverse(view), position, lightPositions);
+		floorQuad->Draw(projection, glm::inverse(view), position, lightPositions);
 
 		//ORTHOGRAPHIC DEMO#####################################################
 		// Prepare the orthographic projection matrix (reusing the variable)
