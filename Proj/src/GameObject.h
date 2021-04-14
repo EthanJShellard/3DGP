@@ -1,5 +1,6 @@
 #pragma once
 #include "Transform.h"
+#include "Input.h"
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #include "GL/glew.h"
@@ -29,7 +30,7 @@ public:
 	/// Perform any update functionality here.
 	/// </summary>
 	/// <param name="deltaTime">Time since previous frame</param>
-	virtual void Update(float deltaTime);
+	virtual void Update(float deltaTime, std::shared_ptr<Input> input);
 
 	/// <summary>
 	/// Update matrices and draw the renderable components of the object

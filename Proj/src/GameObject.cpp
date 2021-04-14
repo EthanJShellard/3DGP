@@ -65,7 +65,7 @@ glm::vec3 GameObject::GetScale()
 	return transform.GetScale();
 }
 
-void GameObject::Update(float deltaTime) 
+void GameObject::Update(float deltaTime, std::shared_ptr<Input> input)
 {
 }
 

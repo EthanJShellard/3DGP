@@ -16,8 +16,6 @@ private:
 	int windowWidth;
 	int windowHeight;
 
-	std::shared_ptr<Input> input;
-
 	float lastTime;
 	float deltaTime;
 
@@ -45,6 +43,8 @@ private:
 	void Draw();
 public:
 	int Run();
+
+	std::shared_ptr<Input> input;
 
 	Engine();
 	~Engine();
