@@ -47,9 +47,9 @@ void LoneQuad::BuildArrayObject()
 
 LoneQuad::LoneQuad(std::string texturePath, std::shared_ptr<Shader> shader)
 {
-	position = glm::vec3(0,0,0);
-	rotation = glm::quat(glm::vec3(0, 0, 0));
-	scale = glm::vec3(1,1,1);
+	transform.SetPosition(glm::vec3(0));
+	transform.SetScale(glm::vec3(1));
+	transform.SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 
 	material = std::make_shared<Material>();
 	material->SetTextureFromFile(texturePath.c_str());
@@ -59,9 +59,9 @@ LoneQuad::LoneQuad(std::string texturePath, std::shared_ptr<Shader> shader)
 
 LoneQuad::LoneQuad(GLuint texture, std::shared_ptr<Shader> shader)
 {
-	position = glm::vec3(0);
-	rotation = glm::quat(glm::vec3(0,0,0));
-	scale = glm::vec3(1);
+	transform.SetPosition(glm::vec3(0));
+	transform.SetScale(glm::vec3(1));
+	transform.SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 
 	material = std::make_shared<Material>();
 	material->SetTexture(texture);

@@ -154,16 +154,16 @@ int Engine::Run()
 	go->SetPosition(5.0f, 1.0f, 1.0f);
 	go->SetScale(0.01f, 0.01f, 0.01f);
 	
-	std::shared_ptr<OBJModel> skullModel = std::make_shared<OBJModel>("assets/models/Skull/12140_Skull_v3_L2.obj", program);
-	std::shared_ptr<GameObjectOBJ> skull = std::make_shared<GameObjectOBJ>();
-	skull->SetModel(skullModel);
-	skull->SetPosition(-5.0f, 1.0f, 1.0f);
-	skull->Rotate(-90.0f, glm::vec3(1,0,0));
-	skull->SetScale(0.05f, 0.05f, 0.05f);
+	//std::shared_ptr<OBJModel> skullModel = std::make_shared<OBJModel>("assets/models/Skull/12140_Skull_v3_L2.obj", program);
+	//std::shared_ptr<GameObjectOBJ> skull = std::make_shared<GameObjectOBJ>();
+	//skull->SetModel(skullModel);
+	//skull->SetPosition(-5.0f, 1.0f, 1.0f);
+	//skull->Rotate(-90.0f, glm::vec3(1,0,0));
+	//skull->SetScale(0.05f, 0.05f, 0.05f);
 
-	std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
-	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
-	floorQuad->SetPosition(-25.0f, 0.0f, -25.0f);
+	//std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
+	//floorQuad->SetScale(50.0f, 1.0f, 50.0f);
+	//floorQuad->SetPosition(-25.0f, 0.0f, -25.0f);
 
 	glm::vec3 position = glm::vec3(0, 2, 10);
 	glm::mat4 camRot = glm::mat4(1);
@@ -227,8 +227,8 @@ int Engine::Run()
 
 		//DRAW
 		go->Draw(projection, glm::inverse(view), position, lightPositions);
-		floorQuad->Draw(projection, glm::inverse(view), position, lightPositions);
-		skull->Draw(projection, glm::inverse(view), position, lightPositions);
+		//floorQuad->Draw(projection, glm::inverse(view), position, lightPositions);
+		//skull->Draw(projection, glm::inverse(view), position, lightPositions);
 
 		//ORTHOGRAPHIC DEMO#####################################################
 		// Prepare the orthographic projection matrix (reusing the variable)

@@ -3,66 +3,66 @@
 
 void GameObject::SetPosition(glm::vec3 newPos)
 {
-	position = newPos;
-	translationMatrix = glm::translate(glm::mat4(), position);
+	transform.SetPosition(newPos);
+	translationMatrix = glm::translate(glm::mat4(), transform.GetPosition());
 	dirty = true;
 }
 void GameObject::SetPosition(float x, float y, float z)
 {
-	position = glm::vec3(x, y, z);
-	translationMatrix = glm::translate(glm::mat4(), position);
+	transform.SetPosition(glm::vec3(x, y, z));
+	translationMatrix = glm::translate(glm::mat4(), transform.GetPosition());
 	dirty = true;
 }
 void GameObject::SetRotation(glm::vec3 newRot)
 {
-	rotation = glm::quat(newRot);
-	rotationMatrix = glm::toMat4(rotation);
+	transform.SetRotation(newRot);
+	rotationMatrix = glm::toMat4(transform.GetQuaternionRotation());
 	dirty = true;
 }
 void GameObject::SetRotation(float x, float y, float z)
 {
-	rotation = glm::quat(glm::vec3(x,y,z));
-	rotationMatrix = glm::toMat4(rotation);
+	transform.SetRotation(glm::vec3(x,y,z));
+	rotationMatrix = glm::toMat4(transform.GetQuaternionRotation());
 	dirty = true;
 }
 void GameObject::SetScale(glm::vec3 newScale)
 {
-	scale = newScale;
-	scaleMatrix = glm::scale(glm::mat4(), scale);
+	transform.SetScale(newScale);
+	scaleMatrix = glm::scale(glm::mat4(), transform.GetScale());
 	dirty = true;
 }
 void GameObject::SetScale(float x, float y, float z)
 {
-	scale = glm::vec3(x, y, z);
-	scaleMatrix = glm::scale(glm::mat4(), scale);
+	transform.SetScale(glm::vec3(x, y, z));
+	scaleMatrix = glm::scale(glm::mat4(), transform.GetScale());
 	dirty = true;
 }
 
 void GameObject::Rotate(float angle, glm::vec3 axis)
 {
-	rotation = glm::angleAxis(glm::radians(angle), axis) * rotation;
-	rotationMatrix = glm::toMat4(rotation);
+	transform.Rotate(angle, axis);
+	rotationMatrix = glm::toMat4(transform.GetQuaternionRotation());
 	dirty = true;
 }
 
 void GameObject::Translate(glm::vec3 move)
 {
-	position += move;
-	translationMatrix = glm::translate(glm::mat4(), position);
+	transform.Translate(move);
+	translationMatrix = glm::translate(glm::mat4(), transform.GetPosition());
 	dirty = true;
 }
 
 glm::vec3 GameObject::GetPosition()
 {
-	return position;
+	return transform.GetPosition();
 }
 glm::vec3 GameObject::GetRotation()
 {
-	return glm::eulerAngles(rotation);
+	return transform.GetRotation();
 }
 glm::vec3 GameObject::GetScale()
 {
-	return scale;
+	return transform.GetScale();
 }
 
 void GameObject::Update(float deltaTime) 
@@ -75,9 +75,9 @@ void GameObject::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos,
 
 GameObject::GameObject()
 {
-	position = glm::vec3(0);
-	scale = glm::vec3(1);
-	rotation = glm::quat(glm::vec3(0,0,0));
+	transform.SetPosition(glm::vec3(0));
+	transform.SetScale(glm::vec3(1));
+	transform.SetRotation(glm::quat(glm::vec3(0,0,0)));
 }
 
 void GameObject::UpdateModelMatrix()

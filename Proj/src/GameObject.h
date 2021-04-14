@@ -1,4 +1,5 @@
 #pragma once
+#include "Transform.h"
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #include "GL/glew.h"
@@ -43,9 +44,8 @@ protected:
 	glm::mat4 rotationMatrix;
 	glm::mat4 translationMatrix;
 
-	glm::vec3 position;
-	glm::vec3 scale;
-	glm::quat rotation;
+	Transform transform;
+
 
 	bool dirty = true;
 

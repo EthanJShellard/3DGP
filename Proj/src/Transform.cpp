@@ -1,5 +1,61 @@
 #include "Transform.h"
 
+void Transform::SetPosition(glm::vec3 newPos)
+{
+	position = newPos;
+}
+void  Transform::SetPosition(float x, float y, float z)
+{
+	position = glm::vec3(x, y, z);
+}
+void  Transform::SetRotation(glm::vec3 newRot)
+{
+	orientation = glm::quat(newRot);
+}
+void  Transform::SetRotation(float x, float y, float z)
+{
+	orientation = glm::quat(glm::vec3(x, y, z));
+}
+void Transform::SetRotation(glm::quat newRot)
+{
+	orientation = newRot;
+}
+void  Transform::SetScale(glm::vec3 newScale)
+{
+	scale = newScale;
+}
+void  Transform::SetScale(float x, float y, float z)
+{
+	scale = glm::vec3(x, y, z);
+}
+
+void  Transform::Rotate(float angle, glm::vec3 axis)
+{
+	orientation = glm::angleAxis(glm::radians(angle), axis) * orientation;
+}
+
+void  Transform::Translate(glm::vec3 move)
+{
+	position += move;
+}
+
+glm::vec3  Transform::GetPosition()
+{
+	return position;
+}
+glm::vec3  Transform::GetRotation()
+{
+	return glm::eulerAngles(orientation);
+}
+glm::quat Transform::GetQuaternionRotation()
+{
+	return orientation;
+}
+glm::vec3  Transform::GetScale()
+{
+	return scale;
+}
+
 glm::quat Transform::RotFromTo(glm::vec3 begin, glm::vec3 dest)
 {
 	begin = glm::normalize(begin);
