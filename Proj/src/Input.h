@@ -20,7 +20,7 @@ public:
 	void ClearMousePrevious(int width, int height);
 
 	bool quit;
-
+	float mouseSensitivity;
 private:
 	glm::vec2 mousePrevious;
 	glm::vec2 mousePos;

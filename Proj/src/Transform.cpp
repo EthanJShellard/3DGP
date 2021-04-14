@@ -56,6 +56,21 @@ glm::vec3  Transform::GetScale()
 	return scale;
 }
 
+glm::vec3 Transform::Right()
+{
+	return orientation * glm::vec3(1,0,0);
+}
+
+glm::vec3 Transform::Up()
+{
+	return orientation * glm::vec3(0,1,0);
+}
+
+glm::vec3 Transform::Forward()
+{
+	return glm::vec3(0,0,1);
+}
+
 glm::quat Transform::RotFromTo(glm::vec3 begin, glm::vec3 dest)
 {
 	begin = glm::normalize(begin);

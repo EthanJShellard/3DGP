@@ -4,11 +4,11 @@
 
 struct Transform
 {
-private:
+
 	glm::vec3 position = glm::vec3(0);
 	glm::quat orientation = glm::quat(glm::vec3(0,0,0));
 	glm::vec3 scale = glm::vec3(1);
-public:
+
 	void SetPosition(glm::vec3 newPos);
 	void SetPosition(float x, float y, float z);
 	void SetRotation(glm::vec3 newRot);
@@ -21,6 +21,9 @@ public:
 	glm::vec3 GetRotation();
 	glm::quat GetQuaternionRotation();
 	glm::vec3 GetScale();
+	glm::vec3 Right();
+	glm::vec3 Up();
+	glm::vec3 Forward();
 
 	void Rotate(float angle, glm::vec3 axis);
 	void Translate(glm::vec3 move);

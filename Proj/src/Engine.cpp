@@ -20,6 +20,7 @@
 #include "GameObject.h"
 #include "GameObjectOBJ.h"
 #include "LoneQuad.h"
+#include "Scene.h"
 
 void Engine::Initialise()
 {
@@ -148,11 +149,11 @@ int Engine::Run()
 	program->BindAttribute(2, "a_Normal");
 
 	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/dust 2/triangulated.obj", program);
-	std::shared_ptr<GameObjectOBJ> go = std::make_shared<GameObjectOBJ>();
-	go->SetModel(dust2);
-	go->Rotate(-90.0f, glm::vec3(1,0,0));
-	go->SetPosition(5.0f, 1.0f, 1.0f);
-	go->SetScale(0.01f, 0.01f, 0.01f);
+	std::shared_ptr<GameObjectOBJ> dust2Obj = std::make_shared<GameObjectOBJ>();
+	dust2Obj->SetModel(dust2);
+	dust2Obj->Rotate(-90.0f, glm::vec3(1,0,0));
+	dust2Obj->SetPosition(5.0f, 1.0f, 1.0f);
+	dust2Obj->SetScale(0.05f, 0.05f, 0.05f);
 	
 	//std::shared_ptr<OBJModel> skullModel = std::make_shared<OBJModel>("assets/models/Skull/12140_Skull_v3_L2.obj", program);
 	//std::shared_ptr<GameObjectOBJ> skull = std::make_shared<GameObjectOBJ>();
@@ -161,21 +162,15 @@ int Engine::Run()
 	//skull->Rotate(-90.0f, glm::vec3(1,0,0));
 	//skull->SetScale(0.05f, 0.05f, 0.05f);
 
-	//std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
-	//floorQuad->SetScale(50.0f, 1.0f, 50.0f);
-	//floorQuad->SetPosition(-25.0f, 0.0f, -25.0f);
+	std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
+	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
+	floorQuad->SetPosition(-25.0f, 0.0f, -25.0f);
 
-	glm::vec3 position = glm::vec3(0, 2, 10);
-	glm::mat4 camRot = glm::mat4(1);
-	glm::vec3 rot = glm::vec3(0);
-	GLfloat camSens = 0.1f;
-
-	float delta = 0.01f;
-	float angle = 0;
-	glm::mat4 view = glm::mat4(1.0f);
-	
-	std::vector<glm::vec3> lightPositions;
-	lightPositions.push_back(glm::vec3(0,10,0));
+	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
+	mainScene->AddObject(dust2Obj);
+	mainScene->AddObject(floorQuad);
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0,10,0), glm::vec3(1,1,1) ) );
+	mainScene->mainCamera.transform.SetPosition(glm::vec3(0,10,0));
 
 	//Enable backface culling
 	glEnable(GL_CULL_FACE);
@@ -192,67 +187,14 @@ int Engine::Run()
 	while (!input->quit)
 	{
 		Update();
-
-		// Prepare the projection matrix
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-			(float)windowWidth / (float)windowHeight, 0.1f, 500.f);
-
-		//Create view matrix
-		view = glm::mat4(1);
-
-		if (input->GetKey(SDLK_w)) position.z -= 10 * deltaTime;
-		if (input->GetKey(SDLK_s)) position.z += 10 * deltaTime;
-		if (input->GetKey(SDLK_a)) position.x -= 10 * deltaTime;
-		if (input->GetKey(SDLK_d)) position.x += 10 * deltaTime;
-
-		if (input->GetKey(SDLK_MINUS)) go->SetScale(go->GetScale() * (1 - deltaTime));
-		if (input->GetKey(SDLK_EQUALS)) go->SetScale(go->GetScale() * (1 + deltaTime));
-
-		if (input->GetKey(SDLK_DOWN)) go->Rotate(deltaTime * 90.0f, glm::vec3(1,0,0));
-		if (input->GetKey(SDLK_UP)) go->Translate(glm::vec3(0.0f, deltaTime, 0.0f));
-		if (input->GetKey(SDLK_RIGHT)) go->Translate(glm::vec3(deltaTime, 0.0f, 0.0f));
-		if (input->GetKey(SDLK_LEFT)) go->Translate(glm::vec3(-deltaTime, 0.0f, 0.0f));
-		
-		view = glm::translate(view, position);
-
-		rot.x -= input->GetMouseDelta().x * camSens;
-		rot.y -= input->GetMouseDelta().y * camSens;
-		view = glm::rotate(view, glm::radians(rot.x), glm::vec3(0, 1, 0));
-		view = glm::rotate(view, glm::radians(rot.y), glm::vec3(1, 0, 0));
+		mainScene->Update(deltaTime);
 
 		//Set clear colour to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		//clear
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//DRAW
-		go->Draw(projection, glm::inverse(view), position, lightPositions);
-		//floorQuad->Draw(projection, glm::inverse(view), position, lightPositions);
-		//skull->Draw(projection, glm::inverse(view), position, lightPositions);
-
-		//ORTHOGRAPHIC DEMO#####################################################
-		// Prepare the orthographic projection matrix (reusing the variable)
-		projection = glm::ortho(0.0f, (float)DEFAULT_WINDOW_WIDTH, 0.0f,
-			(float)DEFAULT_WINDOW_HEIGHT, 0.0f, 1.0f);
-
-		//// Prepare model matrix. The scale is important because now our triangle
-		//// would be the size of a single pixel when mapped to an orthographic
-		//// projection.
-		//model = glm::mat4(1.0f);
-		//model = glm::translate(model, glm::vec3(100, WINDOW_HEIGHT - 100, 0));
-		//model = glm::scale(model, glm::vec3(100, 100, 1));
-
-		//// Upload the model matrix
-		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-		//// Upload the projection matrix
-		//glUniformMatrix4fv(projectionLoc, 1, GL_FALSE,
-		//	glm::value_ptr(projection));
-
-		//// Draw shape as before
-		//glBindVertexArray(VAO->GetID());
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		////############################################################################
+		mainScene->Draw(windowWidth, windowHeight);
 
 		// Reset the state
 		glBindVertexArray(0);

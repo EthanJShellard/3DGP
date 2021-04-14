@@ -1,7 +1,9 @@
 #pragma once
 #include "Transform.h"
+#include "Input.h"
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
+#include <memory>
 
 class Camera 
 {
@@ -11,6 +13,8 @@ public:
 	float near;
 	float far;
 
-	Camera(float vFOV, Transform tf);
+	void Update(float deltaTime, std::shared_ptr<Input> input);
+
+	Camera(float vFOV, float near, float far, Transform tf);
 	Camera();
 };

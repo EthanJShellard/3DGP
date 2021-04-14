@@ -9,6 +9,7 @@ Input::Input()
 	mouse1 = false;
 	mouse2 = false;
 	quit = false;
+	mouseSensitivity = 0.1f;
 }
 
 void Input::Update()
