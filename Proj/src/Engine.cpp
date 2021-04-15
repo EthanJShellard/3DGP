@@ -32,14 +32,16 @@ void Engine::Initialise()
 	}
 
 	std::cout << "Done!" << std::endl;
-
-
 	std::cout << "Initliaze SDL Window..." << std::endl;
+	
+	//Set multisample attributes to enable antialiasing
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
 
 	window = SDL_CreateWindow("OpenGL Template",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
-
+	
 	if (!SDL_GL_CreateContext(window))
 	{
 		throw std::exception();
@@ -57,6 +59,7 @@ void Engine::Initialise()
 	std::cout << "Done!" << std::endl;
 
 	SDL_MaximizeWindow(window);
+	glEnable(GL_MULTISAMPLE);
 
 	//Done to prevent initial flick
 	//Handle window resizing
@@ -152,15 +155,8 @@ int Engine::Run()
 	std::shared_ptr<GameObjectOBJ> dust2Obj = std::make_shared<GameObjectOBJ>();
 	dust2Obj->SetModel(dust2);
 	dust2Obj->Rotate(-90.0f, glm::vec3(1,0,0));
-	dust2Obj->SetPosition(5.0f, 1.0f, 1.0f);
-	dust2Obj->SetScale(0.05f, 0.05f, 0.05f);
-	
-	//std::shared_ptr<OBJModel> skullModel = std::make_shared<OBJModel>("assets/models/Skull/12140_Skull_v3_L2.obj", program);
-	//std::shared_ptr<GameObjectOBJ> skull = std::make_shared<GameObjectOBJ>();
-	//skull->SetModel(skullModel);
-	//skull->SetPosition(-5.0f, 1.0f, 1.0f);
-	//skull->Rotate(-90.0f, glm::vec3(1,0,0));
-	//skull->SetScale(0.05f, 0.05f, 0.05f);
+	dust2Obj->SetPosition(10.0f, 1.0f, 1.0f);
+	dust2Obj->SetScale(0.1f, 0.1f, 0.1f);
 
 	std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
 	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
