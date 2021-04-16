@@ -40,8 +40,9 @@ struct Material
 	void Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 view, glm::vec3 camPos, std::vector<glm::vec3> lightPositions);
 
 	Material();
+
+	static unsigned char* LoadTextureData(const char* file, int* width, int* height);
+	static GLuint CreateTexture(unsigned char* data, int width, int height);
 private:
 	std::shared_ptr<Shader> shader;
-	unsigned char* LoadTextureData(const char* file, int* width, int* height);
-	GLuint CreateTexture(unsigned char* data, int width, int height);
 };

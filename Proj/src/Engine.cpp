@@ -6,7 +6,6 @@
 #include "glm/ext.hpp"
 #define STB_IMAGE_IMPLEMENTATION //Needs to be defined before the include in exacly one compilation unit
 #include <stb_image.h>
-
 #include <iostream>
 #include <vector>
 #include <exception>
@@ -20,6 +19,7 @@
 #include "GameObject.h"
 #include "GameObjectOBJ.h"
 #include "LoneQuad.h"
+#include "ScreenQuad.h"
 #include "Scene.h"
 
 void Engine::Initialise()
@@ -74,40 +74,6 @@ void Engine::Initialise()
 	input->Update();
 }
 
-GLuint Engine::CreateTexture(unsigned char* data, int width, int height)
-{
-	//Create and bind texture
-	GLuint texID = 0;
-	glGenTextures(1, &texID);
-
-	if (!texID)
-	{
-		throw std::exception();
-	}
-
-	glBindTexture(GL_TEXTURE_2D, texID);
-
-	//Upload image data to the bound texture unit in the GPU
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-	//Generate MipMap so the texture can be mapped correctly
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	//Unbind the texture
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	return texID;
-}
-
-unsigned char* Engine::LoadTextureData(const char* file, int* width, int* height)
-{
-	unsigned char* data = stbi_load(file, width, height, NULL, 4);
-
-	if (!data) throw std::exception();
-
-	return data;
-}
-
 void Engine::Update()
 {
 	//Handle delta time
@@ -124,6 +90,7 @@ void Engine::Update()
 	glViewport(0, 0, width, height);
 	windowWidth = width;
 	windowHeight = height;
+	screenQuad->Resize(width, height);
 	/////////////////////////
 
 	if (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS)
@@ -162,6 +129,13 @@ int Engine::Run()
 	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
 	floorQuad->SetPosition(-25.0f, 0.0f, -25.0f);
 
+	int width = 0;
+	int height = 0;
+	unsigned char* data = Material::LoadTextureData("assets/textures/smiley.png", &width, &height);
+	GLuint smileyTexture = Material::CreateTexture(data, width, height);
+	std::shared_ptr<Shader> fullbrightShader = std::make_shared<Shader>("assets/shaders/FullbrightVert.txt", "assets/shaders/FullbrightFrag.txt");
+	screenQuad = std::make_shared<ScreenQuad>(fullbrightShader, windowWidth, windowHeight);
+
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(dust2Obj);
 	mainScene->AddObject(floorQuad);
@@ -191,6 +165,10 @@ int Engine::Run()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		mainScene->Draw(windowWidth, windowHeight);
+
+		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
+		glBindTexture(GL_TEXTURE_2D, smileyTexture);
+		screenQuad->Draw(projection);
 
 		// Reset the state
 		glBindVertexArray(0);
