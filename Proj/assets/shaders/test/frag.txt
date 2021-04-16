@@ -1,6 +1,5 @@
 #version 410
 uniform sampler2D u_Texture;
-uniform mat4 u_View;
 uniform vec3 u_camPos;
 uniform vec3 u_lightPos;
 uniform float u_dissolve;
