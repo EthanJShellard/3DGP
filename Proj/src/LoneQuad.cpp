@@ -69,11 +69,26 @@ LoneQuad::LoneQuad(GLuint texture, std::shared_ptr<Shader> shader)
 	BuildArrayObject();
 }
 
-void LoneQuad::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector<glm::vec3> lightPositions)
+void LoneQuad::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector< std::shared_ptr<Light> > lights)
 {
 	UpdateModelMatrix();
 
+	std::vector<float> lightPositions;
+	std::vector<float> lightColours;
+	int count = std::min((int)lights.size(), 5);//We have a hard cap of 5 light sources
+
+	for (int i = 0; i < count; i++)
+	{
+		lightPositions.push_back(lights.at(i)->position.x);
+		lightPositions.push_back(lights.at(i)->position.y);
+		lightPositions.push_back(lights.at(i)->position.z);
+
+		lightColours.push_back(lights.at(i)->colour.x);
+		lightColours.push_back(lights.at(i)->colour.y);
+		lightColours.push_back(lights.at(i)->colour.z);
+	}
+
 	glBindVertexArray(vao->GetID());
-	material->Apply(modelMatrix, projection, invView, camPos, lightPositions);
+	material->Apply(modelMatrix, projection, invView, camPos, lightPositions, lightColours, count);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }

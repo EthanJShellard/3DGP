@@ -139,7 +139,7 @@ int Engine::Run()
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(dust2Obj);
 	mainScene->AddObject(floorQuad);
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0,10,0), glm::vec3(1,1,1) ) );
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0,10,0), glm::vec3(1,1,1) ));
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0,10,0));
 
 	//Enable backface culling
@@ -166,9 +166,9 @@ int Engine::Run()
 
 		mainScene->Draw(windowWidth, windowHeight);
 
-		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
-		glBindTexture(GL_TEXTURE_2D, smileyTexture);
-		screenQuad->Draw(projection);
+		//glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
+		//glBindTexture(GL_TEXTURE_2D, smileyTexture);
+		//screenQuad->Draw(projection);
 
 		// Reset the state
 		glBindVertexArray(0);

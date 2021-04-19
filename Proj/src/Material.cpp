@@ -14,7 +14,9 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 	viewMatLocation = glGetUniformLocation(shader->GetID(), "u_View");
 
 	camPositionLocation = glGetUniformLocation(shader->GetID(), "u_camPos");
-	lightPositonLocation = glGetUniformLocation(shader->GetID(), "u_lightPos");
+	lightPositonsLocation = glGetUniformLocation(shader->GetID(), "u_lightPositions");
+	lightColoursLocation = glGetUniformLocation(shader->GetID(), "u_lightColors");
+	lightCountLocation = glGetUniformLocation(shader->GetID(), "u_lightCount");
 	dissolveLocation = glGetUniformLocation(shader->GetID(), "u_dissolve");
 	specularHighlightLocation = glGetUniformLocation(shader->GetID(), "u_specularHighlight");
 	if (
@@ -23,7 +25,9 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 		projMatLocation == -1 ||
 		viewMatLocation== -1 ||
 		camPositionLocation == -1 ||
-		lightPositonLocation == -1 ||
+		lightPositonsLocation == -1 ||
+		lightColoursLocation == -1 ||
+		lightCountLocation == -1 ||
 		specularHighlightLocation == -1
 		) 
 	{
@@ -53,7 +57,7 @@ void Material::SetTexture(GLuint tex)
 	texture = tex;
 }
 
-void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm::vec3 camPos, std::vector<glm::vec3> lightPositions)
+void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm::vec3 camPos, std::vector<float> lightPositions, std::vector<float> lightColours, int lightCount)
 {
 	//Bind shader program
 	glUseProgram(shader->GetID());
@@ -67,8 +71,10 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 	glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(iView));
 
 	glUniform3f(camPositionLocation, camPos.x, camPos.y, camPos.z);
-	//If we include a uniform for number of lights, we can have multiple light sources
-	glUniform3f(lightPositonLocation, lightPositions.at(0).x, lightPositions.at(0).y, lightPositions.at(0).z);
+	
+	glUniform3fv(lightPositonsLocation, lightCount, &lightPositions.at(0));
+	glUniform3fv(lightColoursLocation, lightCount, &lightColours.at(0));
+	glUniform1i(lightCountLocation, lightCount);
 
 	glUniform1f(dissolveLocation, dissolve);
 	glUniform1f(specularHighlightLocation, specularHighlights);

@@ -2,6 +2,7 @@
 #include "glm/glm.hpp"
 #include "GL/glew.h"
 #include "Shader.h"
+#include "Light.h"
 #include <memory>
 #include <vector>
 
@@ -29,7 +30,9 @@ struct Material
 	//GLint specularColourLocation;
 	GLint specularHighlightLocation;
 	GLint dissolveLocation;
-	GLint lightPositonLocation; 
+	GLint lightPositonsLocation; 
+	GLint lightColoursLocation;
+	GLint lightCountLocation;
 	GLint textureLocation;
 	GLint camPositionLocation;
 
@@ -37,7 +40,7 @@ struct Material
 	void SetShader(std::shared_ptr<Shader> newShader);
 	void SetTextureFromFile(const char* path);
 	void SetTexture(GLuint tex);
-	void Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 view, glm::vec3 camPos, std::vector<glm::vec3> lightPositions);
+	void Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 view, glm::vec3 camPos, std::vector<float> lightPositions, std::vector<float> lightColours, int lightCount);
 
 	Material();
 

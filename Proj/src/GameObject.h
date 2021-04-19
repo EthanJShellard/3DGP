@@ -1,6 +1,7 @@
 #pragma once
 #include "Transform.h"
 #include "Input.h"
+#include "Light.h"
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #include "GL/glew.h"
@@ -35,7 +36,7 @@ public:
 	/// <summary>
 	/// Update matrices and draw the renderable components of the object
 	/// </summary>
-	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector<glm::vec3>lightPositions);
+	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector<std::shared_ptr<Light> >lightPositions);
 
 	GameObject();
 protected:
