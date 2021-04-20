@@ -1,5 +1,13 @@
 #include "Scene.h"
 
+void Scene::Start()
+{
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		gameObjects.at(i)->Start();
+	}
+}
+
 void Scene::Update(float deltaTime)
 {
 	mainCamera.Update(deltaTime, input);
@@ -28,12 +36,36 @@ void Scene::Draw(float windowWidth, float windowHeight)
 
 void Scene::AddObject(std::shared_ptr<GameObject> go)
 {
+	go->SetScene(shared_from_this());
 	gameObjects.push_back(go);
 }
 
 void Scene::AddLight(std::shared_ptr<Light> light)
 {
 	lights.push_back(light);
+}
+
+std::shared_ptr<GameObject> Scene::FindObjectByID(Uint32 ID)
+{
+	for (int i = 0; i < gameObjects.size(); i++) 
+	{
+		if (gameObjects.at(i)->ID == ID) return gameObjects[i];
+	}
+	return nullptr;
+}
+
+std::shared_ptr<Light> Scene::FindLightByID(Uint32 ID)
+{
+	for (int i = 0; i < lights.size(); i++)
+	{
+		if (lights.at(i)->ID == ID) return lights[i];
+	}
+	return nullptr;
+}
+
+std::vector<std::shared_ptr<Light>> Scene::GetLights()
+{
+	return lights;
 }
 
 Scene::Scene(std::shared_ptr<Input> _input)

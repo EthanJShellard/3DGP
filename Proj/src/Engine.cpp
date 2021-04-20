@@ -21,6 +21,7 @@
 #include "LoneQuad.h"
 #include "ScreenQuad.h"
 #include "Scene.h"
+#include "scripted_objects/SpinningLight.h"
 
 void Engine::Initialise()
 {
@@ -139,7 +140,9 @@ int Engine::Run()
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(dust2Obj);
 	mainScene->AddObject(floorQuad);
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0,10,0), glm::vec3(1,1,1) ));
+	mainScene->AddObject(std::make_shared<SpinningLight>());
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0,10,0), glm::vec3(1,1,1)));
+
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0,10,0));
 
 	//Enable backface culling
@@ -152,6 +155,8 @@ int Engine::Run()
 	glEnable(GL_DEPTH_TEST);
 
 	bool quit = false;
+
+	mainScene->Start();
 
 	//UPDATE
 	while (!input->quit)

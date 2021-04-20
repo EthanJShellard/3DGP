@@ -16,9 +16,9 @@ void GameObjectOBJ::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camP
 
 	for (int i = 0; i < count; i++) 
 	{
-		lightPositions.push_back(lights.at(i)->position.x);
-		lightPositions.push_back(lights.at(i)->position.y);
-		lightPositions.push_back(lights.at(i)->position.z);
+		lightPositions.push_back(lights.at(i)->transform->position.x);
+		lightPositions.push_back(lights.at(i)->transform->position.y);
+		lightPositions.push_back(lights.at(i)->transform->position.z);
 
 		lightColours.push_back(lights.at(i)->colour.x);
 		lightColours.push_back(lights.at(i)->colour.y);

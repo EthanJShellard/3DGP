@@ -38,11 +38,23 @@ void GameObject::SetScale(float x, float y, float z)
 	dirty = true;
 }
 
+void GameObject::SetScene(std::shared_ptr<Scene> parentScene)
+{
+	scene = parentScene;
+}
+
 void GameObject::Rotate(float angle, glm::vec3 axis)
 {
 	transform.Rotate(angle, axis);
 	rotationMatrix = glm::toMat4(transform.GetQuaternionRotation());
 	dirty = true;
+}
+
+void GameObject::RotateAround(float angle, glm::vec3 axis, glm::vec3 centre)
+{
+	transform.RotateAround(angle, axis, centre);
+	rotationMatrix = glm::toMat4(transform.GetQuaternionRotation());
+	translationMatrix = glm::translate(glm::mat4(), transform.GetPosition());
 }
 
 void GameObject::Translate(glm::vec3 move)
@@ -63,6 +75,10 @@ glm::vec3 GameObject::GetRotation()
 glm::vec3 GameObject::GetScale()
 {
 	return transform.GetScale();
+}
+
+void GameObject::Start()
+{
 }
 
 void GameObject::Update(float deltaTime, std::shared_ptr<Input> input)
