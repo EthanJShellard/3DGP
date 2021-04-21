@@ -26,7 +26,7 @@
 
 int NearestPowerOf2(int target) 
 {
-	int pow = 256;
+	int pow = 128;
 	while (pow < target) 
 	{
 		pow *= 2;
@@ -106,7 +106,8 @@ void Engine::Update()
 		screenQuad->Resize(width, height);
 		int pow2Width = NearestPowerOf2(width);
 		int pow2Height = NearestPowerOf2(height);
-		renderTexture->Resize(pow2Width, pow2Height);
+		multisampleRenderTexture->Resize(pow2Width, pow2Height);
+		//renderTexture->Resize(pow2Width, pow2Width);
 	}
 	
 	windowWidth = width;
@@ -166,7 +167,10 @@ int Engine::Run()
 
 
 	//Create RenderTexture
-	renderTexture = std::make_shared<RenderTexture>(NearestPowerOf2(windowWidth), NearestPowerOf2(windowHeight));
+	int renTexWidth = NearestPowerOf2(windowWidth);
+	int renTexHeight = NearestPowerOf2(windowHeight);
+	multisampleRenderTexture = std::make_shared<MultisampleRenderTexture>(renTexWidth, renTexHeight, 8);
+	postProcessingRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
 
 	//Enable backface culling
 	glEnable(GL_CULL_FACE);
@@ -190,17 +194,23 @@ int Engine::Run()
 		//Set clear colour to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		
-		renderTexture->Bind(); //Draw to renderTexture
-		glViewport(0,0, 2048, 2048);
+		//DRAW SCENE INTO MULTISAMPLED RENDER TEXTURE
+		multisampleRenderTexture->Bind();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		mainScene->Draw(windowWidth, windowHeight);
-		renderTexture->Unbind();
+		multisampleRenderTexture->Unbind();
+		/////////////////////////////////////////////
 
-		glViewport(0, 0, windowWidth, windowHeight);
+		multisampleRenderTexture->BlitTo(postProcessingRenderTexture);
+
+		//DRAW PROCESSED RENDER TEXTURE TO SCREEN
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glViewport(0,0, windowWidth, windowHeight); //Make sure to set viewport
 		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
-		glBindTexture(GL_TEXTURE_2D, renderTexture->GetTextureID());
+		
+		glBindTexture(GL_TEXTURE_2D, postProcessingRenderTexture->GetTextureID());
 		screenQuad->Draw(projection);
+		//////////////////////////////////////////////
 
 		// Reset the state
 		glBindVertexArray(0);

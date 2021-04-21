@@ -1,19 +1,23 @@
 #include "RenderTexture.h"
 #include <exception>
 
-void RenderTexture::Resize(int width, int height)
+void RenderTexture::Resize(int _width, int _height)
 {
+	width = _width;
+	height = _height;
+
 	glBindTexture(GL_TEXTURE_2D, fbt);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
 void RenderTexture::Bind()
 {
+	glViewport(0,0,width,height);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
@@ -27,8 +31,16 @@ GLuint RenderTexture::GetTextureID()
 	return fbt;
 }
 
-RenderTexture::RenderTexture(int width, int height)
+GLuint RenderTexture::GetFBOID()
 {
+	return fbo;
+}
+
+RenderTexture::RenderTexture(int _width, int _height)
+{
+	width = _width;
+	height = _height;
+
 	//Create FrameBufferObject
 	fbo = 0;
 	glGenFramebuffers(1, &fbo);

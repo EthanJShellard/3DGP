@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "ScreenQuad.h"
 #include "RenderTexture.h"
+#include "MultisampleRenderTexture.h"
 #include <memory>;
 
 #define DEFAULT_WINDOW_WIDTH 640
@@ -23,7 +24,8 @@ private:
 	float deltaTime;
 
 	std::shared_ptr<ScreenQuad> screenQuad;
-	std::shared_ptr<RenderTexture> renderTexture;
+	std::shared_ptr<RenderTexture> postProcessingRenderTexture;
+	std::shared_ptr<MultisampleRenderTexture> multisampleRenderTexture;
 
 	void Initialise();
 
