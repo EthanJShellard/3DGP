@@ -21,7 +21,18 @@
 #include "LoneQuad.h"
 #include "ScreenQuad.h"
 #include "Scene.h"
+
 #include "scripted_objects/SpinningLight.h"
+
+int NearestPowerOf2(int target) 
+{
+	int pow = 256;
+	while (pow < target) 
+	{
+		pow *= 2;
+	}
+	return pow;
+}
 
 void Engine::Initialise()
 {
@@ -89,9 +100,17 @@ void Engine::Update()
 	int height = 0;
 	SDL_GetWindowSize(window, &width, &height);
 	glViewport(0, 0, width, height);
+	
+	if (windowHeight != height || windowWidth != width) 
+	{
+		screenQuad->Resize(width, height);
+		int pow2Width = NearestPowerOf2(width);
+		int pow2Height = NearestPowerOf2(height);
+		renderTexture->Resize(pow2Width, pow2Height);
+	}
+	
 	windowWidth = width;
 	windowHeight = height;
-	screenQuad->Resize(width, height);
 	/////////////////////////
 
 	if (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS)
@@ -145,6 +164,10 @@ int Engine::Run()
 
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0,10,0));
 
+
+	//Create RenderTexture
+	renderTexture = std::make_shared<RenderTexture>(NearestPowerOf2(windowWidth), NearestPowerOf2(windowHeight));
+
 	//Enable backface culling
 	glEnable(GL_CULL_FACE);
 
@@ -163,17 +186,21 @@ int Engine::Run()
 	{
 		Update();
 		mainScene->Update(deltaTime);
-
+		
 		//Set clear colour to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		//clear
-		glClear(GL_COLOR_BUFFER_BIT);
-
+		
+		renderTexture->Bind(); //Draw to renderTexture
+		glViewport(0,0, 2048, 2048);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		mainScene->Draw(windowWidth, windowHeight);
+		renderTexture->Unbind();
 
-		//glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
-		//glBindTexture(GL_TEXTURE_2D, smileyTexture);
-		//screenQuad->Draw(projection);
+		glViewport(0, 0, windowWidth, windowHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
+		glBindTexture(GL_TEXTURE_2D, renderTexture->GetTextureID());
+		screenQuad->Draw(projection);
 
 		// Reset the state
 		glBindVertexArray(0);
@@ -181,8 +208,6 @@ int Engine::Run()
 
 		//Swap opengl memory buffer and screen buffer to eliminate flicker
 		SDL_GL_SwapWindow(window);
-		//clear depth buffer
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	SDL_Quit();

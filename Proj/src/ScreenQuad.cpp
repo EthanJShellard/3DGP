@@ -18,13 +18,13 @@ ScreenQuad::ScreenQuad(std::shared_ptr<Shader> shaderProgram, float windowWidth,
 	positions->Add(glm::vec3(0, 0, 0));
 	positions->Add(glm::vec3(windowWidth, 0, 0));
 	//First tri
+	texCoords->Add(glm::vec2(0, 1));
 	texCoords->Add(glm::vec2(0, 0));
-	texCoords->Add(glm::vec2(0, 1));
-	texCoords->Add(glm::vec2(1, 0));
-	//Second tri
-	texCoords->Add(glm::vec2(1, 0));
-	texCoords->Add(glm::vec2(0, 1));
 	texCoords->Add(glm::vec2(1, 1));
+	//Second tri
+	texCoords->Add(glm::vec2(1, 1));
+	texCoords->Add(glm::vec2(0, 0));
+	texCoords->Add(glm::vec2(1, 0));
 
 	//Bind buffers to vao
 	vao = std::make_shared<VertexArray>();
@@ -71,3 +71,4 @@ void ScreenQuad::Draw(glm::mat4 projectionMat)
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+

@@ -13,6 +13,7 @@ public:
 	ScreenQuad(std::shared_ptr<Shader> shader, float windowWidth, float windowHeight);
 	void Resize(float windowWidth, float windowHeight);
 	void Draw(glm::mat4 projectionMat);
+
 private:
 	std::shared_ptr<VertexArray> vao;
 	std::vector< std::shared_ptr<VertexBuffer> > buffers;
