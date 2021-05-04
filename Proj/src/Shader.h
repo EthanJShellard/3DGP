@@ -10,8 +10,9 @@ public:
 	GLuint GetID();
 
 	Shader(const char * vertexPath, const char * fragmentPath);
+	Shader();
 	~Shader();
-private:
+protected:
 	GLuint vertID;
 	GLuint fragID;
 	GLuint id;

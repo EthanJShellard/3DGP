@@ -1,0 +1,12 @@
+#version 410
+uniform sampler2D u_TextureA;
+uniform sampler2D u_TextureB;
+
+varying vec2 v_TexCoord;
+
+void main()
+{
+    vec4 texA = texture2D(u_TextureA, v_TexCoord);
+    vec4 texB = texture2D(u_TextureB, v_TexCoord);
+    gl_FragColor = texA + texB;
+}

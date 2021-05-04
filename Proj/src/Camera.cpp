@@ -7,6 +7,7 @@ void Camera::Update(float deltaTime, std::shared_ptr<Input> input)
 	if (input->GetKey(SDLK_s)) move += glm::vec3(0, 0, 10 * deltaTime);//transform.position.z += 10 * deltaTime;
 	if (input->GetKey(SDLK_a)) move += glm::vec3(-10 * deltaTime, 0, 0);//transform.position.x -= 10 * deltaTime;
 	if (input->GetKey(SDLK_d)) move += glm::vec3(10 * deltaTime, 0, 0);//transform.position.x += 10 * deltaTime;
+	if (input->GetKey(SDLK_LSHIFT)) move *= 4;
 	transform.Translate(transform.GetQuaternionRotation() * move);
 
 	transform.Rotate(-input->GetMouseDelta().x * input->mouseSensitivity, glm::vec3(0,1,0));

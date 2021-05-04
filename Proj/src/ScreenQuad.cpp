@@ -72,3 +72,13 @@ void ScreenQuad::Draw(glm::mat4 projectionMat)
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
+void ScreenQuad::Draw(glm::mat4 projectionMat, std::shared_ptr<Shader> _shader, GLuint _projectionLoc)
+{
+	glBindVertexArray(vao->GetID());
+	glUseProgram(_shader->GetID());
+
+	glUniformMatrix4fv(_projectionLoc, 1, GL_FALSE, glm::value_ptr(projectionMat));
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+

@@ -1,4 +1,6 @@
 #include "RenderTexture.h"
+#include "PostProcessShader.h"
+#include "ScreenQuad.h"
 #include <exception>
 
 void RenderTexture::Resize(int _width, int _height)
@@ -34,6 +36,24 @@ GLuint RenderTexture::GetTextureID()
 GLuint RenderTexture::GetFBOID()
 {
 	return fbo;
+}
+
+void RenderTexture::RenderFromTo(std::shared_ptr<RenderTexture> input, std::shared_ptr<RenderTexture> output, std::shared_ptr<PostProcessShader> shader, std::shared_ptr<ScreenQuad> screenQuad , glm::mat4 projection)
+{
+	shader->BindTextures(input, input);
+	output->Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	screenQuad->Draw(projection, shader, shader->projectionLoc);
+	output->Unbind();
+}
+
+void RenderTexture::Combine(std::shared_ptr<RenderTexture> inputA, std::shared_ptr<RenderTexture> inputB, std::shared_ptr<RenderTexture> output, std::shared_ptr<PostProcessShader> shader, std::shared_ptr<ScreenQuad> screenQuad, glm::mat4 projection)
+{
+	shader->BindTextures(inputA, inputB);
+	output->Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	screenQuad->Draw(projection, shader, shader->projectionLoc);
+	output->Unbind();
 }
 
 RenderTexture::RenderTexture(int _width, int _height)
@@ -72,6 +92,7 @@ RenderTexture::RenderTexture(int _width, int _height)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
 
 RenderTexture::~RenderTexture()
 {

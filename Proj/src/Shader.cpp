@@ -128,6 +128,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	id = glCreateProgram();
 }
 
+Shader::Shader()
+{
+}
+
 Shader::~Shader()
 {
 	glDetachShader(id, vertID);

@@ -15,6 +15,7 @@
 #include "VertexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h";
+#include "PostProcessShader.h"
 #include "OBJModel.h"
 #include "GameObject.h"
 #include "GameObjectOBJ.h"
@@ -104,7 +105,7 @@ void Engine::Update()
 	if (windowHeight != height || windowWidth != width) 
 	{
 		screenQuad->Resize(width, height);
-		int pow2Width = NearestPowerOf2(width);
+		int pow2Width = NearestPowerOf2(width); //TODO TRY JUST REMOVE AND COMPARE PERFOMANCE
 		int pow2Height = NearestPowerOf2(height);
 		multisampleRenderTexture->Resize(pow2Width, pow2Height);
 		//renderTexture->Resize(pow2Width, pow2Width);
@@ -139,6 +140,10 @@ int Engine::Run()
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
 
+	std::shared_ptr<PostProcessShader> lightKeyShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/LightKeyVert.txt", "assets/shaders/PostProcessing/LightKeyFrag.txt");
+	std::shared_ptr<PostProcessShader> blurShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/BlurVert.txt", "assets/shaders/PostProcessing/BlurFrag.txt");
+	std::shared_ptr<PostProcessShader> combineShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/CombineVert.txt", "assets/shaders/PostProcessing/CombineFrag.txt");
+
 	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/dust 2/triangulated.obj", program);
 	std::shared_ptr<GameObjectOBJ> dust2Obj = std::make_shared<GameObjectOBJ>();
 	dust2Obj->SetModel(dust2);
@@ -171,6 +176,9 @@ int Engine::Run()
 	int renTexHeight = NearestPowerOf2(windowHeight);
 	multisampleRenderTexture = std::make_shared<MultisampleRenderTexture>(renTexWidth, renTexHeight, 8);
 	postProcessingRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
+	std::shared_ptr<RenderTexture> lightKeyRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
+	std::shared_ptr<RenderTexture> blurRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
+	std::shared_ptr<RenderTexture> outputRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
 
 	//Enable backface culling
 	glEnable(GL_CULL_FACE);
@@ -190,7 +198,8 @@ int Engine::Run()
 	{
 		Update();
 		mainScene->Update(deltaTime);
-		
+		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
+
 		//Set clear colour to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		
@@ -203,12 +212,19 @@ int Engine::Run()
 
 		multisampleRenderTexture->BlitTo(postProcessingRenderTexture);
 
+		//Apply lightKey
+		RenderTexture::RenderFromTo(postProcessingRenderTexture, lightKeyRenderTexture, lightKeyShader, screenQuad, projection);
+		//Apply blur to lightkey
+		RenderTexture::RenderFromTo(lightKeyRenderTexture, blurRenderTexture, blurShader, screenQuad, projection);
+		//Combine blurred lightkey with output image
+		RenderTexture::Combine(postProcessingRenderTexture, blurRenderTexture, outputRenderTexture, combineShader, screenQuad, projection);
+
 		//DRAW PROCESSED RENDER TEXTURE TO SCREEN
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0,0, windowWidth, windowHeight); //Make sure to set viewport
-		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
 		
-		glBindTexture(GL_TEXTURE_2D, postProcessingRenderTexture->GetTextureID());
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, outputRenderTexture->GetTextureID());
 		screenQuad->Draw(projection);
 		//////////////////////////////////////////////
 
