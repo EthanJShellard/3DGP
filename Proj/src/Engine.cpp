@@ -166,7 +166,7 @@ int Engine::Run()
 	mainScene->AddObject(dust2Obj);
 	mainScene->AddObject(floorQuad);
 	mainScene->AddObject(std::make_shared<SpinningLight>());
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0,10,0), glm::vec3(1,1,1)));
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0,5,0), glm::vec3(1,1,1), .25f));
 
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0,10,0));
 

@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "Light.h"
+#include "LightManifest.h"
 #include <vector>
 #include <memory>
 
@@ -14,6 +15,8 @@ private:
 	std::vector< std::shared_ptr<GameObject> > gameObjects;
 	std::vector< std::shared_ptr<Light> > lights;
 	std::shared_ptr<Input> input;
+
+	LightManifest lightManifest;
 
 public:
 	Camera mainCamera;

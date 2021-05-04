@@ -9,5 +9,5 @@ private:
 public:
 	void SetModel(std::shared_ptr<OBJModel> newModel);
 
-	void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector< std::shared_ptr<Light> > lightPositions) override;
+	void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest) override;
 };

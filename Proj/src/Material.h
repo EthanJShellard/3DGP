@@ -6,6 +6,8 @@
 #include <memory>
 #include <vector>
 
+struct LightManifest;
+
 struct Material
 {
 	//Material properties
@@ -32,6 +34,7 @@ struct Material
 	GLint dissolveLocation;
 	GLint lightPositonsLocation; 
 	GLint lightColoursLocation;
+	GLint lightIntensitiesLocation;
 	GLint lightCountLocation;
 	GLint textureLocation;
 	GLint camPositionLocation;
@@ -40,7 +43,7 @@ struct Material
 	void SetShader(std::shared_ptr<Shader> newShader);
 	void SetTextureFromFile(const char* path);
 	void SetTexture(GLuint tex);
-	void Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 view, glm::vec3 camPos, std::vector<float> lightPositions, std::vector<float> lightColours, int lightCount);
+	void Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 view, glm::vec3 camPos, LightManifest lightManifest);
 
 	Material();
 

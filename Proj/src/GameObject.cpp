@@ -85,7 +85,7 @@ void GameObject::Update(float deltaTime, std::shared_ptr<Input> input)
 {
 }
 
-void GameObject::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector< std::shared_ptr<Light> > lightPositions)
+void GameObject::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest)
 {
 }
 

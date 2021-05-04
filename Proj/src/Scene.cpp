@@ -16,6 +16,8 @@ void Scene::Update(float deltaTime)
 	{
 		gameObjects.at(i)->Update(deltaTime, input);
 	}
+
+	lightManifest.Update(lights);
 }
 
 void Scene::Draw(float windowWidth, float windowHeight)
@@ -30,7 +32,7 @@ void Scene::Draw(float windowWidth, float windowHeight)
 
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects.at(i)->Draw(projection, glm::inverse(view), mainCamera.transform.GetPosition(), lights);
+		gameObjects.at(i)->Draw(projection, glm::inverse(view), mainCamera.transform.GetPosition(), lightManifest);
 	}
 }
 

@@ -4,7 +4,7 @@
 
 void SpinningLight::Start()
 {
-	light = std::make_shared<Light>(centre + glm::vec3(0,0, -radius), glm::vec3(1, 0, 0));
+	light = std::make_shared<Light>(centre + glm::vec3(0,0, -radius), glm::vec3(1, 0, 0), 0.5f);
 	scene->AddLight(light);
 }
 

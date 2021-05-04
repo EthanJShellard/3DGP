@@ -1,5 +1,6 @@
 #include "glm/ext.hpp"
 #include "Material.h"
+#include "LightManifest.h"
 #include <stb_image.h>
 #include <exception>
 
@@ -16,6 +17,7 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 	camPositionLocation = glGetUniformLocation(shader->GetID(), "u_camPos");
 	lightPositonsLocation = glGetUniformLocation(shader->GetID(), "u_lightPositions");
 	lightColoursLocation = glGetUniformLocation(shader->GetID(), "u_lightColors");
+	lightIntensitiesLocation = glGetUniformLocation(shader->GetID(), "u_lightIntensities");
 	lightCountLocation = glGetUniformLocation(shader->GetID(), "u_lightCount");
 	dissolveLocation = glGetUniformLocation(shader->GetID(), "u_dissolve");
 	specularHighlightLocation = glGetUniformLocation(shader->GetID(), "u_specularHighlight");
@@ -28,6 +30,7 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 		lightPositonsLocation == -1 ||
 		lightColoursLocation == -1 ||
 		lightCountLocation == -1 ||
+		lightIntensitiesLocation == -1 ||
 		specularHighlightLocation == -1
 		) 
 	{
@@ -57,7 +60,7 @@ void Material::SetTexture(GLuint tex)
 	texture = tex;
 }
 
-void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm::vec3 camPos, std::vector<float> lightPositions, std::vector<float> lightColours, int lightCount)
+void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm::vec3 camPos, LightManifest manifest)
 {
 	//Bind shader program
 	glUseProgram(shader->GetID());
@@ -72,9 +75,10 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 
 	glUniform3f(camPositionLocation, camPos.x, camPos.y, camPos.z);
 	
-	glUniform3fv(lightPositonsLocation, lightCount, &lightPositions.at(0));
-	glUniform3fv(lightColoursLocation, lightCount, &lightColours.at(0));
-	glUniform1i(lightCountLocation, lightCount);
+	glUniform3fv(lightPositonsLocation, manifest.count, &manifest.lightPositions.at(0));
+	glUniform3fv(lightColoursLocation, manifest.count, &manifest.lightColours.at(0));
+	glUniform1fv(lightIntensitiesLocation, manifest.count, &manifest.lightIntensities.at(0));
+	glUniform1i(lightCountLocation, manifest.count);
 
 	glUniform1f(dissolveLocation, dissolve);
 	glUniform1f(specularHighlightLocation, specularHighlights);

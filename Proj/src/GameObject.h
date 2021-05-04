@@ -10,6 +10,7 @@
 #include <vector>
 
 class Scene;
+struct LightManifest;
 
 class GameObject
 {
@@ -41,7 +42,7 @@ public:
 	/// <summary>
 	/// Update matrices and draw the renderable components of the object
 	/// </summary>
-	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, std::vector<std::shared_ptr<Light> >lightPositions);
+	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest);
 
 	GameObject();
 

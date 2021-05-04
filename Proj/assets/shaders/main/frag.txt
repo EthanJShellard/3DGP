@@ -2,9 +2,10 @@
 uniform sampler2D u_Texture;
 uniform vec3 u_camPos;
 
-uniform vec3 u_lightPositions[5];
 uniform int u_lightCount;
-uniform vec3 u_lightColors[5];
+uniform float u_lightIntensities[10];
+uniform vec3 u_lightPositions[10];
+uniform vec3 u_lightColors[10];
 
 uniform float u_dissolve;
 uniform float u_specularHighlight;
@@ -16,7 +17,7 @@ varying vec3 v_FragPos;
 void main()
 {
     //Light setup
-    vec3 lightColor = vec3(1, 1, 1);
+    vec3 ambientColor = vec3(1, 1, 1);
     vec3 light = vec3(0,0,0);
     vec3 diffuse = vec3(0,0,0);
     vec3 specular = vec3(0,0,0);
@@ -28,11 +29,16 @@ void main()
     //Handle multiple lights
     for(int i = 0; i < u_lightCount; i++)
     {
+        //Calculate intensity using inverse square law
+        //Potentially able to optimise our variable usage here
+        float lightDist = length(u_lightPositions[i] - v_FragPos);
+        float intensity = u_lightIntensities[i] / lightDist * lightDist;
+
         lightDir = normalize(u_lightPositions[i] - v_FragPos);
 
         //diffuse lighting
         float diff = max(dot(norm, lightDir), 0.0);
-        diffuse += diff * u_lightColors[i];
+        diffuse += diff * intensity * u_lightColors[i];
 
         //Phong reflect
         vec3 reflectDir = reflect(-lightDir, norm);
@@ -41,13 +47,13 @@ void main()
         //Last parameter is shininess, specular highlight
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_specularHighlight);
         //Add colour
-        specular += spec * u_lightColors[i];
+        specular += spec * intensity * u_lightColors[i];
     }
     
 
     //Ambient lighting setup
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * lightColor;
+    float ambientStrength = 0.05;
+    vec3 ambient = ambientStrength * ambientColor;
 
     //Texture read
     vec4 tex = texture2D(u_Texture, v_TexCoord);
