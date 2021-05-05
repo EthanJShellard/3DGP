@@ -27,6 +27,10 @@ private:
 	std::shared_ptr<RenderTexture> postProcessingRenderTexture;
 	std::shared_ptr<MultisampleRenderTexture> multisampleRenderTexture;
 
+	std::shared_ptr<RenderTexture> lightKeyRenderTexture;
+	std::shared_ptr<RenderTexture> blurRenderTexture;
+	std::shared_ptr<RenderTexture> outputRenderTexture;
+
 	void Initialise();
 
 	void Update();

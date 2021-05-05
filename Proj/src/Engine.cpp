@@ -25,6 +25,11 @@
 
 #include "scripted_objects/SpinningLight.h"
 
+/// <summary>
+/// Currently unused as it was found to be unnecessary - should be removed if this doesn't change
+/// </summary>
+/// <param name="target"></param>
+/// <returns></returns>
 int NearestPowerOf2(int target) 
 {
 	int pow = 128;
@@ -105,10 +110,11 @@ void Engine::Update()
 	if (windowHeight != height || windowWidth != width) 
 	{
 		screenQuad->Resize(width, height);
-		int pow2Width = NearestPowerOf2(width); //TODO TRY JUST REMOVE AND COMPARE PERFOMANCE
-		int pow2Height = NearestPowerOf2(height);
-		multisampleRenderTexture->Resize(pow2Width, pow2Height);
-		//renderTexture->Resize(pow2Width, pow2Width);
+		multisampleRenderTexture->Resize(width, height);
+		postProcessingRenderTexture->Resize(width, height);
+		blurRenderTexture->Resize(width, height);
+		lightKeyRenderTexture->Resize(width, height);
+		outputRenderTexture->Resize(width, height);
 	}
 	
 	windowWidth = width;
@@ -166,19 +172,17 @@ int Engine::Run()
 	mainScene->AddObject(dust2Obj);
 	mainScene->AddObject(floorQuad);
 	mainScene->AddObject(std::make_shared<SpinningLight>());
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0,5,0), glm::vec3(1,1,1), .25f));
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(10,3,0), glm::vec3(1,1,1), .45f));
 
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0,10,0));
 
 
-	//Create RenderTexture
-	int renTexWidth = NearestPowerOf2(windowWidth);
-	int renTexHeight = NearestPowerOf2(windowHeight);
-	multisampleRenderTexture = std::make_shared<MultisampleRenderTexture>(renTexWidth, renTexHeight, 8);
-	postProcessingRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
-	std::shared_ptr<RenderTexture> lightKeyRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
-	std::shared_ptr<RenderTexture> blurRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
-	std::shared_ptr<RenderTexture> outputRenderTexture = std::make_shared<RenderTexture>(renTexWidth, renTexHeight);
+	//Create RenderTextures
+	multisampleRenderTexture = std::make_shared<MultisampleRenderTexture>(windowWidth, windowHeight, 8);
+	postProcessingRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
+	lightKeyRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
+	blurRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
+	outputRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 
 	//Enable backface culling
 	glEnable(GL_CULL_FACE);
@@ -190,6 +194,10 @@ int Engine::Run()
 	glEnable(GL_DEPTH_TEST);
 
 	bool quit = false;
+	float frameTimeSum = .0f;
+	int frameCounter = 0;
+	float minimumFrameTime = 60.0f;
+	float maximumFrameTime = 0.0f;
 
 	mainScene->Start();
 
@@ -234,9 +242,24 @@ int Engine::Run()
 
 		//Swap opengl memory buffer and screen buffer to eliminate flicker
 		SDL_GL_SwapWindow(window);
+
+		//Performance monitoring
+		frameCounter++;
+		frameTimeSum += deltaTime;
+		if (deltaTime < minimumFrameTime) minimumFrameTime = deltaTime;
+		if (deltaTime > maximumFrameTime) maximumFrameTime = deltaTime;
 	}
 
 	SDL_Quit();
+
+	std::cout << "Total Frames: " << frameCounter << std::endl;
+	std::cout << "Average Frame Time: " << frameTimeSum / frameCounter << std::endl;
+	std::cout << "Average Frame Rate: " << 1 / (frameTimeSum / frameCounter) << std::endl;
+	std::cout << "Minimum Frame Time: " << minimumFrameTime << std::endl;
+	std::cout << "Maximum Frame Time: " << maximumFrameTime << std::endl;
+	std::cout << "Press any key to exit... ";
+	std::cin.get();
+
 	return 0;
 }
 
