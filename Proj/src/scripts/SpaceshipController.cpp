@@ -23,6 +23,15 @@ void SpaceshipConrtoller::Update(float deltaTs, std::shared_ptr<Input> input)
 	leftThrusterLight->transform->position = pos + leftThrusterPos;
 	rightThrusterLight->transform->position = pos + rightThrusterPos;
 
+	counter += deltaTs;
+	float flicker = std::sin(counter);
+
+	glm::vec3 colour = glm::vec3(0.65f - (flicker / 4), 0.1f, 0);
+	leftThrusterLight->intensity = colour.x;
+	leftThrusterLight->colour = colour;
+	rightThrusterLight->intensity = colour.x;
+	rightThrusterLight->colour = colour;
+
 	spaceShip->SetPosition(pos);
 }
 
@@ -33,6 +42,7 @@ void SpaceshipConrtoller::Start()
 	leftBound = -3.0f;
 	rightBound = 3.0f;
 	speed = 3.0f;
+	counter = 0;
 
 	leftThrusterPos = spaceShip->GetScale() * glm::vec3(-1.0f, 0.0f, 3.0f);
 	rightThrusterPos = spaceShip->GetScale() * glm::vec3(1.0f, 0.0f, 3.0f);

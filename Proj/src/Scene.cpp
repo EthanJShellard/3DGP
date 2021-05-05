@@ -9,7 +9,7 @@ void Scene::Start()
 
 	for (int i = 0; i < scripts.size(); i++) 
 	{
-		scripts.at(0)->Start();
+		scripts.at(i)->Start();
 	}
 }
 
@@ -24,7 +24,7 @@ void Scene::Update(float deltaTime)
 
 	for (int i = 0; i < scripts.size(); i++)
 	{
-		scripts.at(0)->Update(deltaTime, input);
+		scripts.at(i)->Update(deltaTime, input);
 	}
 
 	lightManifest.Update(lights);

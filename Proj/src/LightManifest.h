@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>;
+#include <vector>
 #include <memory>
+#include "glm/glm.hpp"
 
 struct Light;
 

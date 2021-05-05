@@ -34,7 +34,7 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 		specularHighlightLocation == -1
 		) 
 	{
-		throw std::exception();
+		//throw std::exception();
 	}
 
 }
@@ -105,6 +105,9 @@ unsigned char* Material::LoadTextureData(const char* file, int* width, int* heig
 	return data;
 }
 
+/// <summary>
+/// Generates a texture in the context of opengl
+/// </summary>
 GLuint Material::CreateTexture(unsigned char* data, int width, int height)
 {
 	//Create and bind texture

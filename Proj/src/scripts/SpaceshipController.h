@@ -13,6 +13,7 @@ private:
 	float speed;
 	float leftBound;
 	float rightBound;
+	float counter;
 
 	std::shared_ptr<Light> leftThrusterLight;
 	glm::vec3 leftThrusterPos;

@@ -6,6 +6,8 @@
 #include "LoneQuad.h"
 #include "scripted_objects/SpinningLight.h"
 #include "scripts/SpaceshipController.h"
+#include "scripts/ProjectileSpawner.h"
+#include "scripts/CameraController.h"
 
 std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 {
@@ -24,9 +26,18 @@ std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 	spaceShipObject->SetPosition(glm::vec3(-0.1,0,-5));
 	spaceShipObject->Rotate(180.0f, spaceShipObject->transform.Up());
 
+	//Load from file
+	int width = 0;
+	int height = 0;
+	unsigned char* data = Material::LoadTextureData("assets/textures/corcle.png", &width, &height);
+	//Create texture in opengl
+	GLuint texture = Material::CreateTexture(data, width, height);
+
+
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(spaceShipObject);
 	mainScene->AddScript(std::make_shared<SpaceshipConrtoller>());
+	mainScene->AddScript(std::make_shared<ProjectileSpawner>(texture, program));
 
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 2, 1));
 	mainScene->mainCamera.transform.Rotate(-10.0f, mainScene->mainCamera.transform.Right());
@@ -55,13 +66,22 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 	std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
 	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
 	floorQuad->SetPosition(-25.0f, 0.0f, -25.0f);
+	std::shared_ptr<LoneQuad> floorQuad1 = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
+	floorQuad1->SetScale(50.0f, 1.0f, 50.0f);
+	floorQuad1->SetPosition(-25.0f, -5.0f, -25.0f);
+	std::shared_ptr<LoneQuad> floorQuad2 = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
+	floorQuad2->SetScale(50.0f, 1.0f, 50.0f);
+	floorQuad2->SetPosition(-25.0f, -30.0f, -25.0f);
 
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(dust2Obj);
 	mainScene->AddObject(floorQuad);
-	mainScene->AddObject(std::make_shared<SpinningLight>());
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(10, 3, 0), glm::vec3(1, 1, 1), .45f));
-
+	mainScene->AddObject(floorQuad1);
+	mainScene->AddObject(floorQuad2);
+	//mainScene->AddObject(std::make_shared<SpinningLight>());
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(5, 5, 0), glm::vec3(1, 1, 1), 5.0f));
+	mainScene->AddScript(std::make_shared<CameraController>());
+	mainScene->mainCamera.transform.Rotate(-45.0f, mainScene->mainCamera.transform.Right());
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 10, 0));
 
 	return mainScene;

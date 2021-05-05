@@ -31,8 +31,17 @@ void main()
     {
         //Calculate intensity using inverse square law
         //Potentially able to optimise our variable usage here
-        float lightDist = length(u_lightPositions[i] - v_FragPos);
-        float intensity = u_lightIntensities[i] / lightDist * lightDist;
+        float lightDist = distance(u_lightPositions[i], v_FragPos);
+        float intensity = u_lightIntensities[i] / (lightDist * lightDist);
+
+        //DEBUGGING
+        //if(lightDist >= 7.5) gl_FragColor = vec4(1,1,1,1);
+        //else if(lightDist >= 5.0) gl_FragColor = vec4(1,0,0,1);
+        //else if(lightDist >= 2.5) gl_FragColor = vec4(0,0,1,1);
+        //else if(lightDist >= 0) gl_FragColor = vec4(0,0,0,1);
+        //else gl_FragColor = vec4(1,1,1,1);
+        //return;
+        ////////////////////////////
 
         lightDir = normalize(u_lightPositions[i] - v_FragPos);
 
