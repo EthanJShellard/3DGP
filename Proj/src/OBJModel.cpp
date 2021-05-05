@@ -1,4 +1,5 @@
 #include "OBJModel.h"
+#include "Material.h"
 #include <iostream>
 #include <fstream>
 

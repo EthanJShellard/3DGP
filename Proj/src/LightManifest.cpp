@@ -15,6 +15,19 @@ void LightManifest::Update(std::vector<std::shared_ptr<Light>> lights)
 
 	count = std::min(lights.size(), (size_t)10);
 
+	if (count < 1)
+	{
+		lightPositions.push_back(0);
+		lightPositions.push_back(0);
+		lightPositions.push_back(0);
+
+		lightColours.push_back(0);
+		lightColours.push_back(0);
+		lightColours.push_back(0);
+
+		lightIntensities.push_back(0);
+	}
+
 	for (int i = 0; i < count; i++) 
 	{
 		lightPositions.push_back(lights.at(i)->transform->position.x);
