@@ -22,6 +22,7 @@
 #include "LoneQuad.h"
 #include "ScreenQuad.h"
 #include "Scene.h"
+#include "SceneLoader.h"
 
 #include "scripted_objects/SpinningLight.h"
 
@@ -140,42 +141,12 @@ int Engine::Run()
 {
 	Initialise();
 
-	//Create Shader program
-	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
-	program->BindAttribute(0, "a_Position");
-	program->BindAttribute(1, "a_TexCoord");
-	program->BindAttribute(2, "a_Normal");
+	std::shared_ptr<Shader> fullbrightShader = std::make_shared<Shader>("assets/shaders/FullbrightVert.txt", "assets/shaders/FullbrightFrag.txt");
+	screenQuad = std::make_shared<ScreenQuad>(fullbrightShader, windowWidth, windowHeight);
 
 	std::shared_ptr<PostProcessShader> lightKeyShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/LightKeyVert.txt", "assets/shaders/PostProcessing/LightKeyFrag.txt");
 	std::shared_ptr<PostProcessShader> blurShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/BlurVert.txt", "assets/shaders/PostProcessing/BlurFrag.txt");
 	std::shared_ptr<PostProcessShader> combineShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/CombineVert.txt", "assets/shaders/PostProcessing/CombineFrag.txt");
-
-	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/dust 2/triangulated.obj", program);
-	std::shared_ptr<GameObjectOBJ> dust2Obj = std::make_shared<GameObjectOBJ>();
-	dust2Obj->SetModel(dust2);
-	dust2Obj->Rotate(-90.0f, glm::vec3(1,0,0));
-	dust2Obj->SetPosition(10.0f, 1.0f, 1.0f);
-	dust2Obj->SetScale(0.1f, 0.1f, 0.1f);
-
-	std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
-	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
-	floorQuad->SetPosition(-25.0f, 0.0f, -25.0f);
-
-	int width = 0;
-	int height = 0;
-	unsigned char* data = Material::LoadTextureData("assets/textures/smiley.png", &width, &height);
-	GLuint smileyTexture = Material::CreateTexture(data, width, height);
-	std::shared_ptr<Shader> fullbrightShader = std::make_shared<Shader>("assets/shaders/FullbrightVert.txt", "assets/shaders/FullbrightFrag.txt");
-	screenQuad = std::make_shared<ScreenQuad>(fullbrightShader, windowWidth, windowHeight);
-
-	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
-	mainScene->AddObject(dust2Obj);
-	mainScene->AddObject(floorQuad);
-	mainScene->AddObject(std::make_shared<SpinningLight>());
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(10,3,0), glm::vec3(1,1,1), .45f));
-
-	mainScene->mainCamera.transform.SetPosition(glm::vec3(0,10,0));
-
 
 	//Create RenderTextures
 	multisampleRenderTexture = std::make_shared<MultisampleRenderTexture>(windowWidth, windowHeight, 8);
@@ -193,12 +164,14 @@ int Engine::Run()
 	//Enable depth testing
 	glEnable(GL_DEPTH_TEST);
 
+	//Performance metrics
 	bool quit = false;
 	float frameTimeSum = .0f;
 	int frameCounter = 0;
 	float minimumFrameTime = 60.0f;
 	float maximumFrameTime = 0.0f;
 
+	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(0, input);
 	mainScene->Start();
 
 	//UPDATE
