@@ -6,6 +6,11 @@ void Scene::Start()
 	{
 		gameObjects.at(i)->Start();
 	}
+
+	for (int i = 0; i < scripts.size(); i++) 
+	{
+		scripts.at(0)->Start();
+	}
 }
 
 void Scene::Update(float deltaTime)
@@ -15,6 +20,11 @@ void Scene::Update(float deltaTime)
 	for (int i = 0; i < gameObjects.size(); i++) 
 	{
 		gameObjects.at(i)->Update(deltaTime, input);
+	}
+
+	for (int i = 0; i < scripts.size(); i++)
+	{
+		scripts.at(0)->Update(deltaTime, input);
 	}
 
 	lightManifest.Update(lights);
@@ -40,6 +50,12 @@ void Scene::AddObject(std::shared_ptr<GameObject> go)
 {
 	go->SetScene(shared_from_this());
 	gameObjects.push_back(go);
+}
+
+void Scene::AddScript(std::shared_ptr<Script> sc)
+{
+	sc->SetScene(shared_from_this());
+	scripts.push_back(sc);
 }
 
 void Scene::AddLight(std::shared_ptr<Light> light)

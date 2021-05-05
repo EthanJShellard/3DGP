@@ -46,6 +46,7 @@ public:
 
 	GameObject();
 
+	Transform transform;
 	Uint32 ID = 0;
 
 protected:
@@ -54,8 +55,6 @@ protected:
 	glm::mat4 scaleMatrix;
 	glm::mat4 rotationMatrix;
 	glm::mat4 translationMatrix;
-
-	Transform transform;
 
 	std::shared_ptr<Scene> scene;
 

@@ -156,7 +156,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine)
 		{
 			currentMaterial->illuminationModel = atof(tokens.at(1).c_str());
 		}
-		else if (tokens.at(0) == "map_Kd") 
+		else if (tokens.at(0) == "map_Kd") //Does not account for spaces in material file names!!!
 		{
 			std::string newPath = path.substr(0, path.find_last_of('/') + 1);
 			newPath.append(tokens.at(1));

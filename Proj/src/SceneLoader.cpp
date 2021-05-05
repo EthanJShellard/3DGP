@@ -5,6 +5,7 @@
 #include "GameObjectOBJ.h"
 #include "LoneQuad.h"
 #include "scripted_objects/SpinningLight.h"
+#include "scripts/SpaceshipController.h"
 
 std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 {
@@ -19,11 +20,18 @@ std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 	std::shared_ptr<GameObjectOBJ> spaceShipObject = std::make_shared<GameObjectOBJ>();
 	spaceShipObject->ID = 1;
 	spaceShipObject->SetModel(spaceShip);
+	spaceShipObject->SetScale(glm::vec3(0.3,0.3,0.3));
+	spaceShipObject->SetPosition(glm::vec3(-0.1,0,-5));
+	spaceShipObject->Rotate(180.0f, spaceShipObject->transform.Up());
 
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(spaceShipObject);
-	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 10, 0));
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(-5, 0, 0), glm::vec3(1, 1, 1), 1.0f));
+	mainScene->AddScript(std::make_shared<SpaceshipConrtoller>());
+
+	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 2, 1));
+	mainScene->mainCamera.transform.Rotate(-10.0f, mainScene->mainCamera.transform.Right());
+	//mainScene->AddLight(std::make_shared<Light>(glm::vec3(-5, 0, 0), glm::vec3(1, 1, 1), 1.0f));
+
 
 	return mainScene;
 }
