@@ -5,6 +5,7 @@
 #include <memory>
 
 class LoneQuad;
+class GameObject;
 class Shader;
 struct Light;
 
@@ -14,9 +15,12 @@ private:
 	std::shared_ptr<Shader> projectileShader;
 	GLuint projectileTexture;
 	float timer;
+	float period;
+	float speed;
 
 	std::vector< std::shared_ptr<LoneQuad> > loneQuads;
 	std::vector < std::shared_ptr<Light> > lights;
+	std::shared_ptr<GameObject> player;
 
 	std::vector < std::shared_ptr<LoneQuad> > activeProjectiles;
 public:
