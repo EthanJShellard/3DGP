@@ -29,19 +29,20 @@ void main()
     //Handle multiple lights
     for(int i = 0; i < u_lightCount; i++)
     {
-        //Calculate intensity using inverse square law
-        //Potentially able to optimise our variable usage here
-        float lightDist = distance(u_lightPositions[i], v_FragPos);
-        float intensity = u_lightIntensities[i] / (lightDist * lightDist);
+        float intensity = 0;
 
-        //DEBUGGING
-        //if(lightDist >= 7.5) gl_FragColor = vec4(1,1,1,1);
-        //else if(lightDist >= 5.0) gl_FragColor = vec4(1,0,0,1);
-        //else if(lightDist >= 2.5) gl_FragColor = vec4(0,0,1,1);
-        //else if(lightDist >= 0) gl_FragColor = vec4(0,0,0,1);
-        //else gl_FragColor = vec4(1,1,1,1);
-        //return;
-        ////////////////////////////
+        if(u_lightIntensities[i] >= 0)
+        {
+            //Calculate intensity using inverse square law
+            //Potentially able to optimise our variable usage here
+            float lightDist = distance(u_lightPositions[i], v_FragPos);
+            intensity = u_lightIntensities[i] / (lightDist * lightDist);
+        }
+        else //Flat directional light
+        {
+            intensity = abs(u_lightIntensities[i]);
+        }
+        
 
         lightDir = normalize(u_lightPositions[i] - v_FragPos);
 

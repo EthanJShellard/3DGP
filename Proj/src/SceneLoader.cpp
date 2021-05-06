@@ -72,6 +72,7 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 	mainScene->AddObject(floorQuad);
 	//mainScene->AddObject(std::make_shared<SpinningLight>());
 	mainScene->AddLight(std::make_shared<Light>(glm::vec3(5, 5, 0), glm::vec3(1, 1, 1), 5.0f));
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 0), glm::vec3(1, 1, 1), -.2f));
 	mainScene->AddScript(std::make_shared<CameraController>());
 	mainScene->mainCamera.transform.Rotate(-45.0f, mainScene->mainCamera.transform.Right());
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 10, 0));

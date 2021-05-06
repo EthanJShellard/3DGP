@@ -171,7 +171,7 @@ int Engine::Run()
 	float minimumFrameTime = 60.0f;
 	float maximumFrameTime = 0.0f;
 
-	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(1, input);
+	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(0, input);
 	mainScene->Start();
 
 	//UPDATE
