@@ -62,6 +62,10 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 	dust2Obj->SetPosition(10.0f, 1.0f, 1.0f);
 	dust2Obj->SetScale(0.1f, 0.1f, 0.1f);
 
+	std::shared_ptr<OBJModel> demo = std::make_shared<OBJModel>("assets/models/Demo/untitled.obj", program);
+	std::shared_ptr<GameObjectOBJ> demoStage = std::make_shared<GameObjectOBJ>();
+	demoStage->Translate(glm::vec3(0,1,0));
+	demoStage->SetModel(demo);
 
 	std::shared_ptr<LoneQuad> floorQuad = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
 	floorQuad->SetScale(50.0f, 1.0f, 50.0f);
@@ -70,12 +74,34 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(dust2Obj);
 	mainScene->AddObject(floorQuad);
+	mainScene->AddObject(demoStage);
 	//mainScene->AddObject(std::make_shared<SpinningLight>());
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(5, 5, 0), glm::vec3(1, 1, 1), 5.0f));
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 0), glm::vec3(1, 1, 1), -.2f));
+	//mainScene->AddLight(std::make_shared<Light>(glm::vec3(5, 5, 0), glm::vec3(1, 1, 1), 10.0f));
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 5), glm::vec3(1, 1, 1), -.5f));
 	mainScene->AddScript(std::make_shared<CameraController>());
 	mainScene->mainCamera.transform.Rotate(-45.0f, mainScene->mainCamera.transform.Right());
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 10, 0));
+
+	return mainScene;
+}
+
+std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> input)
+{
+	//Create Shader program
+	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
+	program->BindAttribute(0, "a_Position");
+	program->BindAttribute(1, "a_TexCoord");
+	program->BindAttribute(2, "a_Normal");
+
+	std::shared_ptr<OBJModel> demo = std::make_shared<OBJModel>("assets/models/Demo/untitled.obj", program);
+	std::shared_ptr<GameObjectOBJ> demoStage = std::make_shared<GameObjectOBJ>();
+	demoStage->Translate(glm::vec3(0, -2, -5));
+	demoStage->SetModel(demo);
+
+	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
+	mainScene->AddObject(demoStage);
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 5), glm::vec3(1, 1, 1), -.5f));
+	//mainScene->AddScript(std::make_shared<CameraController>());
 
 	return mainScene;
 }
@@ -85,9 +111,12 @@ std::shared_ptr<Scene> SceneLoader::LoadScene(int index, std::shared_ptr<Input> 
 	switch (index) 
 	{
 	case 0:
-		return LoadDust2Scene(input);
+		return LoadBloomDemoScene(input);
 		break;
 	case 1:
+		return LoadDust2Scene(input);
+		break;
+	case 2:
 		return LoadShmupScene(input);
 		break;
 	default:

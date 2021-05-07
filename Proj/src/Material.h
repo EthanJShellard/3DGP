@@ -28,7 +28,7 @@ struct Material
 
 	//Frag shader uniform locations
 	//GLint diffuseColourLocation;
-	//GLint emissiveColourLocation;
+	GLint emissiveColourLocation;
 	//GLint specularColourLocation;
 	GLint specularHighlightLocation;
 	GLint dissolveLocation;

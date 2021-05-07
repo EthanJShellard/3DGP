@@ -34,6 +34,12 @@ PostProcessShader::PostProcessShader(const char* vertexPath, const char* fragmen
 	BindAttribute(0, "a_Position");
 	BindAttribute(1, "a_TexCoords");
 
-	glUseProgram(id);
+	glUseProgram(GetID());
+
+	texture1Loc = glGetUniformLocation(id, "u_TextureA");
+	texture2Loc = glGetUniformLocation(id, "u_TextureB");
+
 	//Make sure to set samplers to 0 and 1 respectively
+	glUniform1i(texture1Loc, 0);
+	glUniform1i(texture2Loc, 1);
 }

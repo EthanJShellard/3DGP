@@ -114,6 +114,7 @@ void Engine::Update()
 		multisampleRenderTexture->Resize(width, height);
 		postProcessingRenderTexture->Resize(width, height);
 		blurRenderTexture->Resize(width, height);
+		blurRenderTexture2->Resize(width, height);
 		lightKeyRenderTexture->Resize(width, height);
 		outputRenderTexture->Resize(width, height);
 	}
@@ -153,6 +154,7 @@ int Engine::Run()
 	postProcessingRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 	lightKeyRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 	blurRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
+	blurRenderTexture2 = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 	outputRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 
 	//Enable backface culling
@@ -172,6 +174,7 @@ int Engine::Run()
 	float maximumFrameTime = 0.0f;
 
 	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(0, input);
+	std::shared_ptr<RenderTexture> out = outputRenderTexture;
 	mainScene->Start();
 
 	//UPDATE
@@ -179,6 +182,11 @@ int Engine::Run()
 	{
 		Update();
 		mainScene->Update(deltaTime);
+
+		if (input->GetKey(SDLK_1)) out = outputRenderTexture;
+		else if (input->GetKey(SDLK_2)) out = blurRenderTexture2;
+		else if (input->GetKey(SDLK_3)) out = lightKeyRenderTexture;
+
 		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
 
 		//Set clear colour to black
@@ -197,15 +205,20 @@ int Engine::Run()
 		RenderTexture::RenderFromTo(postProcessingRenderTexture, lightKeyRenderTexture, lightKeyShader, screenQuad, projection);
 		//Apply blur to lightkey
 		RenderTexture::RenderFromTo(lightKeyRenderTexture, blurRenderTexture, blurShader, screenQuad, projection);
+		RenderTexture::RenderFromTo(blurRenderTexture, blurRenderTexture2, blurShader, screenQuad, projection);
+		RenderTexture::RenderFromTo(blurRenderTexture2, blurRenderTexture, blurShader, screenQuad, projection);
+		RenderTexture::RenderFromTo(blurRenderTexture, blurRenderTexture2, blurShader, screenQuad, projection);
+		RenderTexture::RenderFromTo(blurRenderTexture2, blurRenderTexture, blurShader, screenQuad, projection);
+		RenderTexture::RenderFromTo(blurRenderTexture, blurRenderTexture2, blurShader, screenQuad, projection);
 		//Combine blurred lightkey with output image
-		RenderTexture::Combine(postProcessingRenderTexture, blurRenderTexture, outputRenderTexture, combineShader, screenQuad, projection);
+		RenderTexture::Combine(postProcessingRenderTexture, blurRenderTexture2, outputRenderTexture, combineShader, screenQuad, projection);
 
 		//DRAW PROCESSED RENDER TEXTURE TO SCREEN
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0,0, windowWidth, windowHeight); //Make sure to set viewport
 		
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, outputRenderTexture->GetTextureID());
+		glBindTexture(GL_TEXTURE_2D, out->GetTextureID());
 		screenQuad->Draw(projection);
 		//////////////////////////////////////////////
 

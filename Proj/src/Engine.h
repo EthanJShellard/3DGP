@@ -29,6 +29,7 @@ private:
 
 	std::shared_ptr<RenderTexture> lightKeyRenderTexture;
 	std::shared_ptr<RenderTexture> blurRenderTexture;
+	std::shared_ptr<RenderTexture> blurRenderTexture2;
 	std::shared_ptr<RenderTexture> outputRenderTexture;
 
 	void Initialise();

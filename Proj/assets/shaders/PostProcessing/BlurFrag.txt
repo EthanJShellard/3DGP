@@ -1,5 +1,5 @@
 #version 410
-uniform sampler2D u_Texture;
+uniform sampler2D u_TextureA;
 
 varying vec2 v_TexCoord;
 
@@ -33,7 +33,7 @@ void main()
     //Sample texture
     for(int i = 0; i < 9; i++)
     {
-        sampleTex[i] = vec3(texture2D(u_Texture, v_TexCoord.st + offsets[i]));
+        sampleTex[i] = vec3(texture2D(u_TextureA, v_TexCoord.st + offsets[i]));
     }
 
     vec3 col = vec3(0.0);

@@ -21,6 +21,8 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 	lightCountLocation = glGetUniformLocation(shader->GetID(), "u_lightCount");
 	dissolveLocation = glGetUniformLocation(shader->GetID(), "u_dissolve");
 	specularHighlightLocation = glGetUniformLocation(shader->GetID(), "u_specularHighlight");
+	emissiveColourLocation = glGetUniformLocation(shader->GetID(), "u_emissiveColour");
+
 	if (
 		textureLocation == -1 ||
 		modelMatLocation == -1 ||
@@ -31,7 +33,8 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 		lightColoursLocation == -1 ||
 		lightCountLocation == -1 ||
 		lightIntensitiesLocation == -1 ||
-		specularHighlightLocation == -1
+		specularHighlightLocation == -1 ||
+		emissiveColourLocation == -1
 		) 
 	{
 		//throw std::exception();
@@ -82,14 +85,15 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 
 	glUniform1f(dissolveLocation, dissolve);
 	glUniform1f(specularHighlightLocation, specularHighlights);
+	glUniform3fv(emissiveColourLocation, 1, glm::value_ptr(emissiveColour));
 }
 
 Material::Material()
 {
-	ambientColour = glm::vec3(1);
-	diffuseColour = glm::vec3(1);;
-	specularColour = glm::vec3(1);;
-	emissiveColour = glm::vec3(1);;
+	ambientColour = glm::vec3(0);
+	diffuseColour = glm::vec3(0);;
+	specularColour = glm::vec3(0);;
+	emissiveColour = glm::vec3(0);;
 	specularHighlights = 999.0f;
 	dissolve = 1.0f;
 	opticalDensity = 1.0f;

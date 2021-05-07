@@ -9,6 +9,7 @@ uniform vec3 u_lightColors[10];
 
 uniform float u_dissolve;
 uniform float u_specularHighlight;
+uniform vec3 u_emissiveColour;
 
 varying vec2 v_TexCoord;
 varying vec3 v_Normal;
@@ -25,6 +26,12 @@ void main()
     vec3 norm = normalize(v_Normal);
     vec3 lightDir;
     vec3 viewDir = normalize(u_camPos - v_FragPos);
+
+    if(length(u_emissiveColour) != 0)
+    {
+        light += u_emissiveColour;
+
+    }
 
     //Handle multiple lights
     for(int i = 0; i < u_lightCount; i++)
@@ -69,7 +76,7 @@ void main()
     vec4 tex = texture2D(u_Texture, v_TexCoord);
     
     //Apply lighting
-    light = ambient;
+    light += ambient;
     light += diffuse;
     light += specular;
     gl_FragColor = vec4(light, u_dissolve) * tex;
