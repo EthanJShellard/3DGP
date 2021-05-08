@@ -1,5 +1,7 @@
 #include "OBJModel.h"
 #include "Material.h"
+#include "VertexBuffer.h"
+#include "VertexArray.h"
 #include <iostream>
 #include <fstream>
 
@@ -78,11 +80,10 @@ void OBJModel::splitString(const std::string& input, char splitter, std::vector<
 	}
 }
 
-void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine) 
+void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, std::unordered_map<std::string, std::shared_ptr<Material> >& map)
 {
 	std::ifstream file(path.c_str());
 	std::shared_ptr<Material> currentMaterial;
-
 
 	if (!file.is_open()) 
 	{
@@ -102,7 +103,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine)
 		if (tokens.at(0) == "newmtl") 
 		{
 			currentMaterial = std::make_shared<Material>();
-			materials.insert(std::make_pair(tokens.at(1), currentMaterial));
+			map.insert(std::make_pair(tokens.at(1), currentMaterial));
 		}
 		else if (tokens.at(0) == "Ns") 
 		{
@@ -161,7 +162,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine)
 			std::string newPath = path.substr(0, path.find_last_of('/') + 1);
 			newPath.append(tokens.at(1));
 
-			currentMaterial->SetTextureFromFile(newPath.c_str());
+			currentMaterial->texture = std::make_shared<Texture>(newPath.c_str());
 		}
 	}
 }
@@ -176,6 +177,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 	bool materialsLoaded = false;
 	std::shared_ptr<Material> currentMaterial;
+	std::unordered_map<std::string, std::shared_ptr<Material> > materials;
 
 	int counter = 0;
 
@@ -267,7 +269,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 		{
 			std::string newPath = objPath.substr(0, objPath.find_last_of('/') + 1);
 			newPath.append(tokens.at(1));
-			LoadMaterials(newPath, currentLine);
+			LoadMaterials(newPath, currentLine, materials);
 			materialsLoaded = true;
 		}
 		else if (tokens.at(0) == "usemtl")
@@ -277,107 +279,55 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 				std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 				mesh->material = currentMaterial;
 
-				glGenVertexArrays(1, &mesh->vao);
+				mesh->vao = std::make_shared<VertexArray>();
 
-				if (!mesh->vao)
-				{
-					throw std::exception();
-				}
-
-				GLuint vboId;
 
 				if (faces.size() > 0) 
 				{
-					mesh->vertexCount = faces.size() * 3; //3 vertices for each triangulated face
+					mesh->vao->SetVertCount(faces.size() * 3); //3 vertices for each triangulated face
 
-					std::vector<float> b;
+					std::shared_ptr<VertexBuffer> b = std::make_shared <VertexBuffer>();
+
 					for (std::vector<Face>::iterator fit = faces.begin();
 						fit != faces.end(); fit++)
 					{
-						b.push_back(fit->pa.x); b.push_back(fit->pa.y); b.push_back(fit->pa.z);
-						b.push_back(fit->pb.x); b.push_back(fit->pb.y); b.push_back(fit->pb.z);
-						b.push_back(fit->pc.x); b.push_back(fit->pc.y); b.push_back(fit->pc.z);
-					}
-					glGenBuffers(1, &vboId);
-					mesh->buffers.push_back(vboId);
-
-					if (!vboId)
-					{
-						throw std::exception();
+						b->Add(fit->pa.x, fit->pa.y, fit->pa.z);
+						b->Add(fit->pb.x, fit->pb.y, fit->pb.z);
+						b->Add(fit->pc.x, fit->pc.y, fit->pc.z);
 					}
 
-					glBindBuffer(GL_ARRAY_BUFFER, vboId);
-
-					glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
-						GL_STATIC_DRAW);
-
-					glBindVertexArray(mesh->vao);
-					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-					glEnableVertexAttribArray(0);
-					glBindVertexArray(0);
+					mesh->vao->SetBuffer(b, 0);
 
 				} //End if faces > 0
 
 				if (tcs.size() > 0)
 				{
-					std::vector<float> b;
+					std::shared_ptr<VertexBuffer> b = std::make_shared <VertexBuffer>();
 
 					for (std::vector<Face>::iterator fit = faces.begin();
 						fit != faces.end(); fit++)
 					{
-						b.push_back(fit->tca.x); b.push_back(fit->tca.y);
-						b.push_back(fit->tcb.x); b.push_back(fit->tcb.y);
-						b.push_back(fit->tcc.x); b.push_back(fit->tcc.y);
+						b->Add(fit->tca.x, fit->tca.y);
+						b->Add(fit->tcb.x, fit->tcb.y);
+						b->Add(fit->tcc.x, fit->tcc.y);
 					}
 
-					glGenBuffers(1, &vboId);
-					mesh->buffers.push_back(vboId);
-
-					if (!vboId)
-					{
-						throw std::exception();
-					}
-
-					glBindBuffer(GL_ARRAY_BUFFER, vboId);
-
-					glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
-						GL_STATIC_DRAW);
-
-					glBindVertexArray(mesh->vao);
-					glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-					glEnableVertexAttribArray(1);
-					glBindVertexArray(0);
+					mesh->vao->SetBuffer(b, 1);
 				}
 
 				if (normals.size() > 0)
 				{
-					std::vector<float> b;
+					std::shared_ptr<VertexBuffer> b = std::make_shared <VertexBuffer>();
 
 					for (std::vector<Face>::iterator fit = faces.begin();
 						fit != faces.end(); fit++)
 					{
-						b.push_back(fit->na.x); b.push_back(fit->na.y); b.push_back(fit->na.z);
-						b.push_back(fit->nb.x); b.push_back(fit->nb.y); b.push_back(fit->nb.z);
-						b.push_back(fit->nc.x); b.push_back(fit->nc.y); b.push_back(fit->nc.z);
+						b->Add(fit->na.x, fit->na.y, fit->na.z);
+						b->Add(fit->nb.x, fit->nb.y, fit->nb.z);
+						b->Add(fit->nc.x, fit->nc.y, fit->nc.z);
 					}
 
-					glGenBuffers(1, &vboId);
-					mesh->buffers.push_back(vboId);
-
-					if (!vboId)
-					{
-						throw std::exception();
-					}
-
-					glBindBuffer(GL_ARRAY_BUFFER, vboId);
-
-					glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
-						GL_STATIC_DRAW);
-
-					glBindVertexArray(mesh->vao);
-					glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-					glEnableVertexAttribArray(2);
-					glBindVertexArray(0);
+					mesh->vao->SetBuffer(b, 2);
 				}
 				
 				meshes.push_back(mesh);
@@ -394,112 +344,60 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 		mesh->material = currentMaterial;
 
-		glGenVertexArrays(1, &mesh->vao);
+		mesh->vao = std::make_shared<VertexArray>();
 
-		if (!mesh->vao)
-		{
-			throw std::exception();
-		}
-
-		GLuint vboId;
 
 		if (faces.size() > 0)
 		{
-			mesh->vertexCount += faces.size() * 3; //3 vertices for each triangulated face
+			mesh->vao->SetVertCount(faces.size() * 3); //3 vertices for each triangulated face
 
-			std::vector<float> b;
+			std::shared_ptr<VertexBuffer> b = std::make_shared <VertexBuffer>();
 
 			for (std::vector<Face>::iterator fit = faces.begin();
 				fit != faces.end(); fit++)
 			{
-				b.push_back(fit->pa.x); b.push_back(fit->pa.y); b.push_back(fit->pa.z);
-				b.push_back(fit->pb.x); b.push_back(fit->pb.y); b.push_back(fit->pb.z);
-				b.push_back(fit->pc.x); b.push_back(fit->pc.y); b.push_back(fit->pc.z);
+				b->Add(fit->pa.x, fit->pa.y, fit->pa.z);
+				b->Add(fit->pb.x, fit->pb.y, fit->pb.z);
+				b->Add(fit->pc.x, fit->pc.y, fit->pc.z);
 			}
 
-			glGenBuffers(1, &vboId);
-			mesh->buffers.push_back(vboId);
-
-			if (!vboId)
-			{
-				throw std::exception();
-			}
-
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
-				GL_STATIC_DRAW);
-
-			glBindVertexArray(mesh->vao);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-			glEnableVertexAttribArray(0);
-			glBindVertexArray(0);
+			mesh->vao->SetBuffer(b, 0);
 
 		} //End if faces > 0
 
 		if (tcs.size() > 0)
 		{
-			std::vector<float> b;
+			std::shared_ptr<VertexBuffer> b = std::make_shared <VertexBuffer>();
 
 			for (std::vector<Face>::iterator fit = faces.begin();
 				fit != faces.end(); fit++)
 			{
-				b.push_back(fit->tca.x); b.push_back(fit->tca.y);
-				b.push_back(fit->tcb.x); b.push_back(fit->tcb.y);
-				b.push_back(fit->tcc.x); b.push_back(fit->tcc.y);
+				b->Add(fit->tca.x, fit->tca.y);
+				b->Add(fit->tcb.x, fit->tcb.y);
+				b->Add(fit->tcc.x, fit->tcc.y);
 			}
 
-			glGenBuffers(1, &vboId);
-
-			if (!vboId)
-			{
-				throw std::exception();
-			}
-
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			mesh->buffers.push_back(vboId);
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
-				GL_STATIC_DRAW);
-
-			glBindVertexArray(mesh->vao);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-			glEnableVertexAttribArray(1);
-			glBindVertexArray(0);
+			mesh->vao->SetBuffer(b, 1);
 		}
 
 		if (normals.size() > 0)
 		{
-			std::vector<float> b;
+			std::shared_ptr<VertexBuffer> b = std::make_shared <VertexBuffer>();
 
 			for (std::vector<Face>::iterator fit = faces.begin();
 				fit != faces.end(); fit++)
 			{
-				b.push_back(fit->na.x); b.push_back(fit->na.y); b.push_back(fit->na.z);
-				b.push_back(fit->nb.x); b.push_back(fit->nb.y); b.push_back(fit->nb.z);
-				b.push_back(fit->nc.x); b.push_back(fit->nc.y); b.push_back(fit->nc.z);
+				b->Add(fit->na.x, fit->na.y, fit->na.z);
+				b->Add(fit->nb.x, fit->nb.y, fit->nb.z);
+				b->Add(fit->nc.x, fit->nc.y, fit->nc.z);
 			}
 
-			glGenBuffers(1, &vboId);
-
-			if (!vboId)
-			{
-				throw std::exception();
-			}
-
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			mesh->buffers.push_back(vboId);
-
-			glBufferData(GL_ARRAY_BUFFER, sizeof(b.at(0)) * b.size(), &b.at(0),
-				GL_STATIC_DRAW);
-
-			glBindVertexArray(mesh->vao);
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-			glEnableVertexAttribArray(2);
-			glBindVertexArray(0);
+			mesh->vao->SetBuffer(b, 2);
 		}
+
 		meshes.push_back(mesh);
-	}//End creation of object
+
+	}//End creation of object (if(currentMaterial))
 
 }
 

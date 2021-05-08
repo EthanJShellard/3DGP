@@ -45,6 +45,7 @@ public:
 	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest);
 
 	GameObject();
+	~GameObject();
 
 	Transform transform;
 	Uint32 ID = 0;
@@ -56,7 +57,7 @@ protected:
 	glm::mat4 rotationMatrix;
 	glm::mat4 translationMatrix;
 
-	std::shared_ptr<Scene> scene;
+	std::weak_ptr<Scene> scene;
 
 	bool dirty = true;
 

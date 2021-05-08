@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "glm/gtx/quaternion.hpp"
+#include <iostream>
 
 void GameObject::SetPosition(glm::vec3 newPos)
 {
@@ -94,6 +95,11 @@ GameObject::GameObject()
 	transform.SetPosition(glm::vec3(0));
 	transform.SetScale(glm::vec3(1));
 	transform.SetRotation(glm::quat(glm::vec3(0,0,0)));
+}
+
+GameObject::~GameObject()
+{
+	std::cout << "Destroying Gameobject " << ID << std::endl;
 }
 
 void GameObject::UpdateModelMatrix()

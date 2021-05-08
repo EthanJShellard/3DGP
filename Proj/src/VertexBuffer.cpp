@@ -14,6 +14,18 @@ void VertexBuffer::Add(glm::vec2 value)
 	dirty = true;
 }
 
+void VertexBuffer::Add(float x, float y)
+{
+	if (components != 2 && components != 0) throw std::exception();
+
+	data.push_back(x);
+	data.push_back(y);
+
+	components = 2;
+	//Data yet to be uploaded
+	dirty = true;
+}
+
 void VertexBuffer::Add(glm::vec3 value)
 {
 	if (components != 3 && components != 0) throw std::exception();
@@ -22,6 +34,19 @@ void VertexBuffer::Add(glm::vec3 value)
 	data.push_back(value.x);
 	data.push_back(value.y);
 	data.push_back(value.z);
+
+	components = 3;
+	//Data yet to be uploaded
+	dirty = true;
+}
+
+void VertexBuffer::Add(float x, float y, float z)
+{
+	if (components != 3 && components != 0) throw std::exception();
+
+	data.push_back(x);
+	data.push_back(y);
+	data.push_back(z);
 
 	components = 3;
 	//Data yet to be uploaded
@@ -99,7 +124,7 @@ VertexBuffer::VertexBuffer()
 	dirty = true;
 }
 
-VertexBuffer::~VertexBuffer()
+void VertexBuffer::Delete()
 {
 	glDeleteBuffers(1, &id);
 }

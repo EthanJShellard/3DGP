@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Shader.h"
 #include "OBJModel.h"
+#include "Texture.h"
 #include "GameObjectOBJ.h"
 #include "LoneQuad.h"
 #include "scripted_objects/SpinningLight.h"
@@ -26,13 +27,7 @@ std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 	spaceShipObject->SetPosition(glm::vec3(-0.1,0,-5));
 	spaceShipObject->Rotate(180.0f, spaceShipObject->transform.Up());
 
-	//Load from file
-	int width = 0;
-	int height = 0;
-	unsigned char* data = Material::LoadTextureData("assets/textures/corcle.png", &width, &height);
-	//Create texture in opengl
-	GLuint texture = Material::CreateTexture(data, width, height);
-
+	std::shared_ptr<Texture> texture = std::make_shared<Texture>("assets/textures/corcle.png");
 
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(spaceShipObject);
@@ -102,6 +97,7 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 	mainScene->AddObject(demoStage);
 	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 5), glm::vec3(1, 1, 1), -.5f));
 	//mainScene->AddScript(std::make_shared<CameraController>());
+	mainScene->AddObject(std::make_shared<SpinningLight>());
 
 	return mainScene;
 }

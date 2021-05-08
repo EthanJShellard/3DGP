@@ -3,6 +3,7 @@
 #include "GL/glew.h"
 #include "Shader.h"
 #include "Light.h"
+#include "Texture.h"
 #include <memory>
 #include <vector>
 
@@ -39,16 +40,13 @@ struct Material
 	GLint textureLocation;
 	GLint camPositionLocation;
 
-	GLuint texture;
+	std::shared_ptr<Texture> texture;
 	void SetShader(std::shared_ptr<Shader> newShader);
-	void SetTextureFromFile(const char* path);
-	void SetTexture(GLuint tex);
 	void Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 view, glm::vec3 camPos, LightManifest lightManifest);
 
 	Material();
+	~Material();
 
-	static unsigned char* LoadTextureData(const char* file, int* width, int* height);
-	static GLuint CreateTexture(unsigned char* data, int width, int height);
 private:
 	std::shared_ptr<Shader> shader;
 };

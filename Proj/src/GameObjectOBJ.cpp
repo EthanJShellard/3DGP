@@ -16,8 +16,8 @@ void GameObjectOBJ::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camP
 	//Iterate through meshes and draw them with correct materials
 	for (int i = 0; i < model->meshes.size(); i++)
 	{
-		glBindVertexArray(model->meshes.at(i)->vao);
+		glBindVertexArray(model->meshes.at(i)->vao->GetID());
 		model->meshes.at(i)->material->Apply(modelMatrix, projection, invView, camPos, lightManifest);
-		glDrawArrays(GL_TRIANGLES, 0, model->meshes.at(i)->vertexCount);
+		glDrawArrays(GL_TRIANGLES, 0, model->meshes.at(i)->vao->GetVertCount());
 	}
 }

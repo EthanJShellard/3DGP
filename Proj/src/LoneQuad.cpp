@@ -52,19 +52,19 @@ LoneQuad::LoneQuad(std::string texturePath, std::shared_ptr<Shader> shader)
 	transform.SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 
 	material = std::make_shared<Material>();
-	material->SetTextureFromFile(texturePath.c_str());
+	material->texture = std::make_shared<Texture>(texturePath.c_str());
 	material->SetShader(shader);
 	BuildArrayObject();
 }
 
-LoneQuad::LoneQuad(GLuint texture, std::shared_ptr<Shader> shader)
+LoneQuad::LoneQuad(std::shared_ptr<Texture> tex, std::shared_ptr<Shader> shader)
 {
 	transform.SetPosition(glm::vec3(0));
 	transform.SetScale(glm::vec3(1));
 	transform.SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 
 	material = std::make_shared<Material>();
-	material->SetTexture(texture);
+	material->texture = tex;
 	material->SetShader(shader);
 	BuildArrayObject();
 }

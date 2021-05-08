@@ -13,15 +13,15 @@ class VertexArray
 {
 public:
 	/// <summary>
-	/// Set a vertex buffer on this VBO. This will make the Vertex Array dirty - do not use if you have loaded the VertexArray via a model.
+	/// Set a vertex buffer on this VBO. This will make the Vertex Array dirty
 	/// </summary>
 	void SetBuffer(std::shared_ptr<VertexBuffer> buffer, int position);
 	
 	GLuint GetID();
 	size_t GetVertCount();
+	void SetVertCount(size_t count);
 
 	VertexArray();
-	VertexArray(std::string pathToModel);
 	~VertexArray();
 private:
 	GLuint id;

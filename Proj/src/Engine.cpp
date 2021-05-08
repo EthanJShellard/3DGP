@@ -51,7 +51,7 @@ void Engine::Initialise()
 	}
 
 	std::cout << "Done!" << std::endl;
-	std::cout << "Initliaze SDL Window..." << std::endl;
+	std::cout << "Initialize SDL Window..." << std::endl;
 	
 	//Set multisample attributes to enable antialiasing
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
@@ -173,7 +173,7 @@ int Engine::Run()
 	float minimumFrameTime = 60.0f;
 	float maximumFrameTime = 0.0f;
 
-	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(0, input);
+	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(2, input);
 	std::shared_ptr<RenderTexture> out = outputRenderTexture;
 	mainScene->Start();
 
@@ -237,6 +237,8 @@ int Engine::Run()
 	}
 
 	SDL_Quit();
+
+	mainScene.reset();
 
 	std::cout << "Total Frames: " << frameCounter << std::endl;
 	std::cout << "Average Frame Time: " << frameTimeSum / frameCounter << std::endl;

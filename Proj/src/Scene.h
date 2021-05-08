@@ -35,4 +35,5 @@ public:
 	std::vector< std::shared_ptr<Light> > GetLights();
 
 	Scene(std::shared_ptr<Input> input);
+	~Scene();
 };

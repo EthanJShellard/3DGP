@@ -19,7 +19,7 @@ private:
 
 public:
 	LoneQuad(std::string texturePath, std::shared_ptr<Shader> shader);
-	LoneQuad(GLuint texture, std::shared_ptr<Shader> shader);
+	LoneQuad(std::shared_ptr<Texture> tex, std::shared_ptr<Shader> shader);
 
 	void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest) override;
 };

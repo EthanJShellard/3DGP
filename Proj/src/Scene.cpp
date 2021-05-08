@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include <iostream>
 
 void Scene::Start()
 {
@@ -89,4 +90,9 @@ std::vector<std::shared_ptr<Light>> Scene::GetLights()
 Scene::Scene(std::shared_ptr<Input> _input)
 {
 	input = _input;
+}
+
+Scene::~Scene()
+{
+	std::cout << "DESTROYING SCENE\n";
 }

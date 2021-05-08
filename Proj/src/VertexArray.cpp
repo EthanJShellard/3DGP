@@ -2,10 +2,13 @@
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 
+#include <iostream>
+
 #include <exception>
 
 void VertexArray::SetBuffer(std::shared_ptr<VertexBuffer> buffer, int position)
 {
+	if (buffers.size() <= position) buffers.resize(position + 1);
 	buffers.at(position) = buffer;
 	dirty = true; //Data has changed and so needs to be uploaded
 }
@@ -40,6 +43,11 @@ size_t VertexArray::GetVertCount()
 	return vertCount;
 }
 
+void VertexArray::SetVertCount(size_t count)
+{
+	vertCount = count;
+}
+
 VertexArray::VertexArray()
 {
 	// Create a new VAO on the GPU and bind it
@@ -49,19 +57,22 @@ VertexArray::VertexArray()
 		throw std::exception();
 	}
 
-	buffers.resize(20);
+	buffers.resize(3); //to save on resizes. Our default size will be 3
 
 	vertCount = 0;
 	dirty = true;
 }
 
-VertexArray::VertexArray(std::string pathToModel)
-{
-	id = buLoadModel(pathToModel, &vertCount);
-	dirty = false;
-}
-
 VertexArray::~VertexArray()
 {
+	std::cout << "Deleting buffers ";
+
+	//Delete your buffers
+	for (int i = 0; i < buffers.size(); i++) 
+	{
+		std::cout << buffers.at(i)->GetID() << " ";
+		buffers.at(i)->Delete();
+	}
+	std::cout << "\nDeleting vertex arrays " << id << std::endl;
 	glDeleteVertexArrays(1, &id);
 }

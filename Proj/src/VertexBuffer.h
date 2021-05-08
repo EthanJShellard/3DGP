@@ -8,7 +8,9 @@ class VertexBuffer
 {
 public:
 	void Add(glm::vec2 value);
+	void Add(float x, float y);
 	void Add(glm::vec3 value);
+	void Add(float x, float y, float z);
 	void Add(glm::vec4 value);
 	void Add(GLfloat value);
 
@@ -18,7 +20,7 @@ public:
 	GLuint GetID();
 
 	VertexBuffer();
-	~VertexBuffer();
+	void Delete();
 private:
 	GLuint id;
 	int components;
