@@ -76,6 +76,12 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
 
+	std::shared_ptr<Shader> fullbrightShader = std::make_shared<Shader>("assets/shaders/FullbrightVert.txt", "assets/shaders/FullbrightFrag.txt");
+	std::shared_ptr<LoneQuad> navigationPanel = std::make_shared<LoneQuad>("assets/textures/Navigation.png", fullbrightShader);
+	navigationPanel->SetPosition(-0.7, 1, -5.2);
+	navigationPanel->Rotate(90.0f, glm::vec3(1, 0, 0));
+	navigationPanel->SetScale(glm::vec3(2, 1, 1));
+
 	std::shared_ptr<OBJModel> demo = std::make_shared<OBJModel>("assets/models/Demo/untitled.obj", program);
 	std::shared_ptr<GameObjectOBJ> demoStage = std::make_shared<GameObjectOBJ>();
 	demoStage->Translate(glm::vec3(0, -2, -5));
@@ -83,6 +89,7 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(demoStage);
+	mainScene->AddObject(navigationPanel);
 	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 5), glm::vec3(1, 1, 1), -.5f));
 	//mainScene->AddScript(std::make_shared<CameraController>());
 

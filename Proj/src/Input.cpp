@@ -32,6 +32,7 @@ void Input::Update()
 			{
 				entry->second = true;
 			}
+
 		}
 		else if (event.type == SDL_KEYUP)
 		{
@@ -94,6 +95,7 @@ bool Input::GetKey(SDL_Keycode key)
 	else return itr->second;
 
 }
+
 
 glm::vec2 Input::GetMouseDelta()
 {

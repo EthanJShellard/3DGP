@@ -31,10 +31,10 @@
 /// </summary>
 /// <param name="target"></param>
 /// <returns></returns>
-int NearestPowerOf2(int target) 
+int NearestPowerOf2(int target)
 {
 	int pow = 128;
-	while (pow < target) 
+	while (pow < target)
 	{
 		pow *= 2;
 	}
@@ -52,7 +52,7 @@ void Engine::Initialise()
 
 	std::cout << "Done!" << std::endl;
 	std::cout << "Initialize SDL Window..." << std::endl;
-	
+
 	//Set multisample attributes to enable antialiasing
 	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
@@ -60,7 +60,7 @@ void Engine::Initialise()
 	window = SDL_CreateWindow("Ethan Shellard OpenGL",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
-	
+
 	if (!SDL_GL_CreateContext(window))
 	{
 		throw std::exception();
@@ -107,8 +107,8 @@ void Engine::Update()
 	int height = 0;
 	SDL_GetWindowSize(window, &width, &height);
 	glViewport(0, 0, width, height);
-	
-	if (windowHeight != height || windowWidth != width) 
+
+	if (windowHeight != height || windowWidth != width)
 	{
 		screenQuad->Resize(width, height);
 		multisampleRenderTexture->Resize(width, height);
@@ -120,7 +120,7 @@ void Engine::Update()
 
 		windowWidth = width;
 		windowHeight = height;
-	}	
+	}
 	/////////////////////////
 
 	if (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS)
@@ -170,7 +170,6 @@ int Engine::Run()
 	glEnable(GL_DEPTH_TEST);
 
 	//Performance metrics
-	bool quit = false;
 	float frameTimeSum = .0f;
 	int frameCounter = 0;
 	float minimumFrameTime = 60.0f;
@@ -178,6 +177,7 @@ int Engine::Run()
 
 	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(0, input);
 	std::shared_ptr<RenderTexture> out = outputRenderTexture;
+
 	mainScene->Start();
 
 	int currentScene = 0;
@@ -195,8 +195,8 @@ int Engine::Run()
 		if (input->GetKey(SDLK_1)) nextScene = 0;
 		else if (input->GetKey(SDLK_2)) nextScene = 1;
 		else if (input->GetKey(SDLK_3)) nextScene = 2;
-
-		if (nextScene != currentScene) 
+		else if (input->GetKey(SDLK_4)) nextScene = 3;
+		if (nextScene != currentScene)
 		{
 			//Show loading screen
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -213,13 +213,12 @@ int Engine::Run()
 
 			currentScene = nextScene;
 			mainScene->Start();
-		}
 
-		
+		}
 
 		//Set clear colour to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		
+
 		//DRAW SCENE INTO MULTISAMPLED RENDER TEXTURE
 		multisampleRenderTexture->Bind();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -243,8 +242,8 @@ int Engine::Run()
 
 		//DRAW PROCESSED RENDER TEXTURE TO SCREEN
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0,0, windowWidth, windowHeight); //Make sure to set viewport
-		
+		glViewport(0, 0, windowWidth, windowHeight); //Make sure to set viewport
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, out->GetTextureID());
 		screenQuad->Draw(projection);

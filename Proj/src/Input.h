@@ -33,5 +33,4 @@ private:
 	
 	//Unordered map is used as it has O(1) time complexity [std::map has worst case O(log n)]
 	std::unordered_map<int, bool> keys;
-
 };
