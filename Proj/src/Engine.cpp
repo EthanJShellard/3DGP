@@ -54,8 +54,8 @@ void Engine::Initialise()
 	std::cout << "Initialize SDL Window..." << std::endl;
 	
 	//Set multisample attributes to enable antialiasing
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
+	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
 
 	window = SDL_CreateWindow("Ethan Shellard OpenGL",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -117,10 +117,10 @@ void Engine::Update()
 		blurRenderTexture2->Resize(width, height);
 		lightKeyRenderTexture->Resize(width, height);
 		outputRenderTexture->Resize(width, height);
-	}
-	
-	windowWidth = width;
-	windowHeight = height;
+
+		windowWidth = width;
+		windowHeight = height;
+	}	
 	/////////////////////////
 
 	if (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS)
@@ -157,6 +157,9 @@ int Engine::Run()
 	blurRenderTexture2 = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 	outputRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 
+	//Loading texture
+	std::shared_ptr<Texture> loadingTexture = std::make_shared<Texture>("assets/textures/Loading.png");
+
 	//Enable backface culling
 	glEnable(GL_CULL_FACE);
 
@@ -173,21 +176,46 @@ int Engine::Run()
 	float minimumFrameTime = 60.0f;
 	float maximumFrameTime = 0.0f;
 
-	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(2, input);
+	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(0, input);
 	std::shared_ptr<RenderTexture> out = outputRenderTexture;
 	mainScene->Start();
+
+	int currentScene = 0;
+	int nextScene = 0;
 
 	//UPDATE
 	while (!input->quit)
 	{
 		Update();
+		//Update orthographic projectiona fter potential screen resize
+		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
+
 		mainScene->Update(deltaTime);
 
-		if (input->GetKey(SDLK_1)) out = outputRenderTexture;
-		else if (input->GetKey(SDLK_2)) out = blurRenderTexture2;
-		else if (input->GetKey(SDLK_3)) out = lightKeyRenderTexture;
+		if (input->GetKey(SDLK_1)) nextScene = 0;
+		else if (input->GetKey(SDLK_2)) nextScene = 1;
+		else if (input->GetKey(SDLK_3)) nextScene = 2;
 
-		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
+		if (nextScene != currentScene) 
+		{
+			//Show loading screen
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glViewport(0, 0, windowWidth, windowHeight);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, loadingTexture->id);
+			screenQuad->Draw(projection);
+			SDL_GL_SwapWindow(window);
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+			mainScene.reset();
+
+			mainScene = SceneLoader::LoadScene(nextScene, input);
+
+			currentScene = nextScene;
+			mainScene->Start();
+		}
+
+		
 
 		//Set clear colour to black
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

@@ -58,9 +58,12 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 
 	glUniform3f(camPositionLocation, camPos.x, camPos.y, camPos.z);
 	
-	glUniform3fv(lightPositonsLocation, manifest.count, &manifest.lightPositions.at(0));
-	glUniform3fv(lightColoursLocation, manifest.count, &manifest.lightColours.at(0));
-	glUniform1fv(lightIntensitiesLocation, manifest.count, &manifest.lightIntensities.at(0));
+	if (manifest.count > 0) 
+	{
+		glUniform3fv(lightPositonsLocation, manifest.count, &manifest.lightPositions.at(0));
+		glUniform3fv(lightColoursLocation, manifest.count, &manifest.lightColours.at(0));
+		glUniform1fv(lightIntensitiesLocation, manifest.count, &manifest.lightIntensities.at(0));
+	}
 	glUniform1i(lightCountLocation, manifest.count);
 
 	glUniform1f(dissolveLocation, dissolve);

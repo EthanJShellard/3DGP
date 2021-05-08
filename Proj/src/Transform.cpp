@@ -1,6 +1,7 @@
 #pragma once
 #include "Transform.h"
 #include "glm/gtx/transform.hpp"
+#include <iostream>
 
 void Transform::SetPosition(glm::vec3 newPos)
 {
@@ -123,4 +124,9 @@ glm::quat Transform::RotFromTo(glm::vec3 begin, glm::vec3 dest)
 		rotAxis.y * inverse,
 		rotAxis.z * inverse
 	};
+}
+
+Transform::~Transform()
+{
+	std::cout << "Destroying Transform\n";
 }

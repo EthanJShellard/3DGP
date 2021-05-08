@@ -94,5 +94,7 @@ Scene::Scene(std::shared_ptr<Input> _input)
 
 Scene::~Scene()
 {
-	std::cout << "DESTROYING SCENE\n";
+	std::cout << "\n\nDESTROYING SCENE\n\n";
+	std::cout << "GameObject count = " << gameObjects.size();
+	std::cout << "\nScript Count = " << scripts.size() << "\n\n";
 }

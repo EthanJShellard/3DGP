@@ -13,7 +13,7 @@ struct Texture;
 class ProjectileSpawner : public Script 
 {
 private:
-	std::weak_ptr<Shader> projectileShader;
+	std::shared_ptr<Shader> projectileShader;
 	std::shared_ptr<Texture> projectileTexture;
 	float timer;
 	float period;
@@ -23,7 +23,7 @@ private:
 	std::vector < std::weak_ptr<Light> > lights;
 	std::weak_ptr<GameObject> player;
 
-	std::vector < std::shared_ptr<LoneQuad> > activeProjectiles;
+	std::vector < std::weak_ptr<LoneQuad> > activeProjectiles;
 public:
 	ProjectileSpawner(std::shared_ptr<Texture> texture, std::shared_ptr<Shader> shader);
 	void Update(float deltaTs, std::shared_ptr<Input> input) override;

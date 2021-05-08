@@ -17,4 +17,5 @@ public:
 
 	Camera(float vFOV, float near, float far, Transform tf);
 	Camera();
+	~Camera();
 };

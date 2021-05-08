@@ -30,4 +30,6 @@ struct Transform
 	void Translate(glm::vec3 move);
 
 	static glm::quat RotFromTo(glm::vec3 begin, glm::vec3 dest);
+
+	~Transform();
 };

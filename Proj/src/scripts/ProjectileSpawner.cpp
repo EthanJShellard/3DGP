@@ -33,10 +33,10 @@ void ProjectileSpawner::Update(float deltaTs, std::shared_ptr<Input> input)
 	{
 		auto playerPtr = player.lock();
 		auto lightPtr = lights.at(i).lock();
+		auto pro = activeProjectiles.at(i).lock();
 
-		if (playerPtr && lightPtr) 
+		if (playerPtr && lightPtr && pro) 
 		{
-			std::shared_ptr<LoneQuad> pro = activeProjectiles.at(i);
 			pro->Translate(glm::vec3(0.0f, 0.0f, speed * deltaTs));
 
 			float zDiff = pro->GetPosition().z - playerPtr->GetPosition().z;
@@ -60,9 +60,6 @@ void ProjectileSpawner::Update(float deltaTs, std::shared_ptr<Input> input)
 				{
 					playerPtr->SetScale(playerPtr->GetScale() * (1 - deltaTs));
 				}
-
-
-
 			}
 
 			lightPtr->transform->position = pro->GetPosition();
@@ -74,15 +71,14 @@ void ProjectileSpawner::Update(float deltaTs, std::shared_ptr<Input> input)
 
 void ProjectileSpawner::Start()
 {
-	auto shaderPtr = projectileShader.lock();
 	auto scPtr = scene.lock();
 
-	if (shaderPtr && scPtr) 
+	if (scPtr) 
 	{
 		//Create pool of 8 projectiles
 		for (int i = 0; i < 8; i++)
 		{
-			std::shared_ptr<LoneQuad> qu = std::make_shared<LoneQuad>(projectileTexture, shaderPtr);
+			std::shared_ptr<LoneQuad> qu = std::make_shared<LoneQuad>(projectileTexture, projectileShader);
 			loneQuads.push_back(qu);
 			qu->SetScale(0.25f, 0.25f, 0.25f);
 			qu->Rotate(90, qu->transform.Right());
