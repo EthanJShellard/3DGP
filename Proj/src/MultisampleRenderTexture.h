@@ -12,6 +12,7 @@ private:
 
 	int width;
 	int height;
+	int samples;
 
 public:
 	void Resize(int width, int height);

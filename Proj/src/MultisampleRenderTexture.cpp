@@ -8,11 +8,11 @@ void MultisampleRenderTexture::Resize(int _width, int _height)
 	height = _height;
 
 	glBindTexture(GL_TEXTURE_2D, fbt);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, width, height, GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
@@ -48,10 +48,11 @@ GLuint MultisampleRenderTexture::GetTextureID()
 	return fbt;
 }
 
-MultisampleRenderTexture::MultisampleRenderTexture(int _width, int _height, int samples)
+MultisampleRenderTexture::MultisampleRenderTexture(int _width, int _height, int _samples)
 {
 	width = _width;
 	height = _height;
+	samples = _samples;
 
 	//Create FrameBufferObject
 	fbo = 0;

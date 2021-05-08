@@ -183,6 +183,9 @@ int Engine::Run()
 	int currentScene = 0;
 	int nextScene = 0;
 
+	//Set clear colour to black
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 	//UPDATE
 	while (!input->quit)
 	{
@@ -192,6 +195,7 @@ int Engine::Run()
 
 		mainScene->Update(deltaTime);
 
+		//Handle scene changes
 		if (input->GetKey(SDLK_1)) nextScene = 0;
 		else if (input->GetKey(SDLK_2)) nextScene = 1;
 		else if (input->GetKey(SDLK_3)) nextScene = 2;
@@ -216,8 +220,7 @@ int Engine::Run()
 
 		}
 
-		//Set clear colour to black
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		
 
 		//DRAW SCENE INTO MULTISAMPLED RENDER TEXTURE
 		multisampleRenderTexture->Bind();

@@ -91,8 +91,52 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 	mainScene->AddObject(demoStage);
 	mainScene->AddObject(navigationPanel);
 	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 5), glm::vec3(1, 1, 1), -.5f));
-	//mainScene->AddScript(std::make_shared<CameraController>());
+	mainScene->AddScript(std::make_shared<CameraController>());
 
+	return mainScene;
+}
+
+std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input> input)
+{
+	//Create Shader program
+	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
+	program->BindAttribute(0, "a_Position");
+	program->BindAttribute(1, "a_TexCoord");
+	program->BindAttribute(2, "a_Normal");
+
+	std::shared_ptr<LoneQuad> potatoFloor = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
+	potatoFloor->SetScale(glm::vec3(10,10,10));
+	potatoFloor->SetPosition(glm::vec3(-5, 0.5f,-10));
+
+	std::shared_ptr<OBJModel> curuthersModel = std::make_shared<OBJModel>("assets/models/curuthers/triangulated.obj", program);
+	std::shared_ptr<GameObjectOBJ> curuthers = std::make_shared<GameObjectOBJ>();
+	curuthers->SetModel(curuthersModel);
+	curuthers->SetPosition(glm::vec3(1,1,-5));
+	curuthers->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
+
+	std::shared_ptr<OBJModel> streetLamp = std::make_shared<OBJModel>("assets/models/StreetLamp/Triangulated.obj", program);
+	std::shared_ptr<GameObjectOBJ> lamp1 = std::make_shared<GameObjectOBJ>();
+	std::shared_ptr<GameObjectOBJ> lamp2 = std::make_shared<GameObjectOBJ>();
+	lamp1->SetModel(streetLamp);
+	lamp2->SetModel(streetLamp);
+	lamp1->SetPosition(glm::vec3(2.5,0.5f, -5));
+	lamp2->SetPosition(glm::vec3(-2.5, 0.5f, -5));
+	lamp1->SetScale(glm::vec3(0.2f,0.2f,0.2f));
+	lamp2->SetScale(glm::vec3(0.2f,0.2f,0.2f));
+
+	std::shared_ptr<Light> light1 = std::make_shared<Light>(lamp1->GetPosition() + glm::vec3(0, 1.25f,0), glm::vec3(1,0.6,0), 1.0f);
+	std::shared_ptr<Light> light2 = std::make_shared<Light>(lamp2->GetPosition() + glm::vec3(0, 1.25f, 0), glm::vec3(1, 0.6, 0), 1.0f);
+
+	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
+	mainScene->AddScript(std::make_shared<CameraController>());
+	mainScene->AddObject(lamp1);
+	mainScene->AddObject(lamp2);
+	mainScene->AddLight(light1);
+	mainScene->AddLight(light2);
+	mainScene->AddObject(potatoFloor);
+	mainScene->AddObject(curuthers);
+
+	mainScene->mainCamera.transform.Translate(glm::vec3(0,2,0));
 	return mainScene;
 }
 
@@ -108,6 +152,9 @@ std::shared_ptr<Scene> SceneLoader::LoadScene(int index, std::shared_ptr<Input> 
 		break;
 	case 2:
 		return LoadShmupScene(input);
+		break;
+	case 3:
+		return LoadPointLightingDemo(input);
 		break;
 	default:
 		return LoadDust2Scene(input);
