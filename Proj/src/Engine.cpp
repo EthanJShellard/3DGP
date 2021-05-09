@@ -174,11 +174,12 @@ int Engine::Run()
 
 		mainScene->Update(deltaTime);
 
-		//Handle scene changes
+		//Handle scene changes //////////////
 		if (input->GetKey(SDLK_1)) nextScene = 0;
 		else if (input->GetKey(SDLK_2)) nextScene = 1;
 		else if (input->GetKey(SDLK_3)) nextScene = 2;
 		else if (input->GetKey(SDLK_4)) nextScene = 3;
+
 		if (nextScene != currentScene)
 		{
 			//Show loading screen
@@ -198,7 +199,7 @@ int Engine::Run()
 			mainScene->Start();
 
 		}
-
+		///////////////////////////////////////
 		
 
 		//DRAW SCENE INTO MULTISAMPLED RENDER TEXTURE
@@ -208,6 +209,7 @@ int Engine::Run()
 		multisampleRenderTexture->Unbind();
 		/////////////////////////////////////////////
 
+		//Blit multisampled texture into a standard render texture.
 		multisampleRenderTexture->BlitTo(postProcessingRenderTexture);
 
 		//Apply lightKey
@@ -225,7 +227,6 @@ int Engine::Run()
 		//DRAW PROCESSED RENDER TEXTURE TO SCREEN
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, windowWidth, windowHeight); //Make sure to set viewport
-
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, outputRenderTexture->GetTextureID());
 		screenQuad->Draw(projection);
@@ -234,6 +235,7 @@ int Engine::Run()
 		// Reset the state
 		glBindVertexArray(0);
 		glUseProgram(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		//Swap opengl memory buffer and screen buffer to eliminate flicker
 		SDL_GL_SwapWindow(window);
@@ -245,8 +247,10 @@ int Engine::Run()
 		if (deltaTime > maximumFrameTime) maximumFrameTime = deltaTime;
 	}
 
+	//Close SDL instance
 	SDL_Quit();
 
+	//Deleting scene now for debug output purposes
 	mainScene.reset();
 
 	std::cout << "Total Frames: " << frameCounter << std::endl;
