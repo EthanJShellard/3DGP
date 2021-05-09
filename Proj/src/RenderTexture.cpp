@@ -8,10 +8,11 @@ void RenderTexture::Resize(int _width, int _height)
 	width = _width;
 	height = _height;
 
+	//Refit texture
 	glBindTexture(GL_TEXTURE_2D, fbt);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	
+	//Refit renderBufferStorage
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _width, _height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);

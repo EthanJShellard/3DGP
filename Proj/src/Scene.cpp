@@ -3,11 +3,12 @@
 
 void Scene::Start()
 {
+	//Initialise game objects
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects.at(i)->Start();
 	}
-
+	//Initialise scripts
 	for (int i = 0; i < scripts.size(); i++) 
 	{
 		scripts.at(i)->Start();
@@ -16,18 +17,22 @@ void Scene::Start()
 
 void Scene::Update(float deltaTime)
 {
+	//Update camera
 	mainCamera.Update(deltaTime, input);
 
+	//Update game objects
 	for (int i = 0; i < gameObjects.size(); i++) 
 	{
 		gameObjects.at(i)->Update(deltaTime, input);
 	}
 
+	//Update scripts
 	for (int i = 0; i < scripts.size(); i++)
 	{
 		scripts.at(i)->Update(deltaTime, input);
 	}
 
+	//Update light manifest
 	lightManifest.Update(lights);
 }
 
@@ -41,6 +46,7 @@ void Scene::Draw(float windowWidth, float windowHeight)
 	glm::mat4 view = glm::mat4(1);
 	view = glm::translate(view, mainCamera.transform.GetPosition()) * glm::toMat4(mainCamera.transform.GetQuaternionRotation()) * view;	
 
+	//Draw each game object
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
 		gameObjects.at(i)->Draw(projection, glm::inverse(view), mainCamera.transform.GetPosition(), lightManifest);
@@ -49,13 +55,13 @@ void Scene::Draw(float windowWidth, float windowHeight)
 
 void Scene::AddObject(std::shared_ptr<GameObject> go)
 {
-	go->SetScene(shared_from_this());
+	go->SetScene(shared_from_this()); //Provide object reference to this scene
 	gameObjects.push_back(go);
 }
 
 void Scene::AddScript(std::shared_ptr<Script> sc)
 {
-	sc->SetScene(shared_from_this());
+	sc->SetScene(shared_from_this()); //Provide script reference to this scene
 	scripts.push_back(sc);
 }
 
@@ -66,7 +72,6 @@ void Scene::AddLight(std::shared_ptr<Light> light)
 
 void Scene::SetAmbientBrightness(float amb)
 {
-	//Clamp [0,1]
 	lightManifest.ambientBrightness = amb;
 }
 

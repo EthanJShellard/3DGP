@@ -104,7 +104,7 @@ GameObject::~GameObject()
 
 void GameObject::UpdateModelMatrix()
 {
-	if (dirty)
+	if (dirty) //If our matrices have been edited
 	{
 		modelMatrix = glm::mat4(1.0f);
 		modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;

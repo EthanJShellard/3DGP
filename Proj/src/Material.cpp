@@ -8,7 +8,7 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 {
 	shader = newShader;
 
-	// Store location of uniforms and check if successfully found
+	// Store location of available uniforms
 	textureLocation = glGetUniformLocation(shader->GetID(), "u_Texture");
 	modelMatLocation = glGetUniformLocation(shader->GetID(), "u_Model");
 	projMatLocation = glGetUniformLocation(shader->GetID(), "u_Projection");
@@ -23,23 +23,6 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 	specularHighlightLocation = glGetUniformLocation(shader->GetID(), "u_specularHighlight");
 	emissiveColourLocation = glGetUniformLocation(shader->GetID(), "u_emissiveColour");
 	ambientBrightnessLocation = glGetUniformLocation(shader->GetID(), "u_ambientBrightness");
-
-	if (
-		textureLocation == -1 ||
-		modelMatLocation == -1 ||
-		projMatLocation == -1 ||
-		viewMatLocation== -1 ||
-		camPositionLocation == -1 ||
-		lightPositonsLocation == -1 ||
-		lightColoursLocation == -1 ||
-		lightCountLocation == -1 ||
-		lightIntensitiesLocation == -1 ||
-		specularHighlightLocation == -1 ||
-		emissiveColourLocation == -1
-		) 
-	{
-		//throw std::exception();
-	}
 
 }
 
@@ -57,8 +40,10 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 	glUniformMatrix4fv(projMatLocation, 1, GL_FALSE, glm::value_ptr(projection));
 	glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(iView));
 
+	//Upload camera position
 	glUniform3f(camPositionLocation, camPos.x, camPos.y, camPos.z);
 	
+	//Upload lighting information
 	if (manifest.count > 0) 
 	{
 		glUniform3fv(lightPositonsLocation, manifest.count, &manifest.lightPositions.at(0));
@@ -67,7 +52,8 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 	}
 	glUniform1i(lightCountLocation, manifest.count);
 	glUniform1f(ambientBrightnessLocation, manifest.ambientBrightness);
-
+	
+	//Upload material information
 	glUniform1f(dissolveLocation, dissolve);
 	glUniform1f(specularHighlightLocation, specularHighlights);
 	glUniform3fv(emissiveColourLocation, 1, glm::value_ptr(emissiveColour));

@@ -9,7 +9,7 @@ Input::Input()
 	mouse1 = false;
 	mouse2 = false;
 	quit = false;
-	mouseSensitivity = 30.0f;
+	mouseSensitivity = 20.0f;
 }
 
 void Input::Update()
@@ -26,7 +26,7 @@ void Input::Update()
 			std::unordered_map<int, bool>::iterator entry = keys.find(event.key.keysym.sym);
 			if (entry == keys.end()) //Key is not present in map
 			{
-				keys.insert( std::pair<int, bool>(event.key.keysym.sym, true));
+				keys.insert( std::pair<int, bool>(event.key.keysym.sym, true)); //So put it in there
 			}
 			else 
 			{

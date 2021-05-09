@@ -18,30 +18,34 @@ void ProjectileSpawner::Update(float deltaTs, std::shared_ptr<Input> input)
 	{
 		if (auto lckPtr = loneQuads.at(loneQuads.size() - 1).lock()) 
 		{
+			//Make projectile active
 			activeProjectiles.push_back(lckPtr);
-
+			//And remove it from inactive list
 			loneQuads.pop_back();
-
+			//Get projectile into position
 			lckPtr->SetPosition(glm::vec3(std::rand() % 6 - 3.0f, 0.0f, -35.0f));
+			//Adjust game speed and reset timer
 			timer = 0.0f;
 			speed *= 1.015f;
 			period *= .99f;
 		}
 	}
 
+	auto playerPtr = player.lock();
+
 	for (int i = 0; i < activeProjectiles.size(); i++)
 	{
-		auto playerPtr = player.lock();
 		auto lightPtr = lights.at(i).lock();
 		auto pro = activeProjectiles.at(i).lock();
 
-		if (playerPtr && lightPtr && pro) 
+		if (playerPtr && lightPtr && pro) //Verify weak pointers
 		{
+			//Move projectile
 			pro->Translate(glm::vec3(0.0f, 0.0f, speed * deltaTs));
-
+			//Get distance of projectile from player in z axis
 			float zDiff = pro->GetPosition().z - playerPtr->GetPosition().z;
 
-			if (zDiff > 8)
+			if (zDiff > 8) //If projectile has gone far enough behind the player
 			{
 				//Return to projectile bank
 				pro->SetPosition(999.0f, 999.0f, 999.0f);
@@ -61,7 +65,7 @@ void ProjectileSpawner::Update(float deltaTs, std::shared_ptr<Input> input)
 					playerPtr->SetScale(playerPtr->GetScale() * (1 - deltaTs));
 				}
 			}
-
+			//Make sure respective light is following projectile
 			lightPtr->transform->position = pro->GetPosition();
 		}
 		

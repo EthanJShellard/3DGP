@@ -100,16 +100,16 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 		splitStringWhitespace(currentLine, tokens);
 		if (tokens.size() < 1) continue; //If no tokens returned go to next line
 
-		if (tokens.at(0) == "newmtl") 
+		if (tokens.at(0) == "newmtl") //New material
 		{
 			currentMaterial = std::make_shared<Material>();
 			map.insert(std::make_pair(tokens.at(1), currentMaterial));
 		}
-		else if (tokens.at(0) == "Ns") 
+		else if (tokens.at(0) == "Ns") //Specular highlights define
 		{
 			currentMaterial->specularHighlights = atof(tokens.at(1).c_str());
 		}
-		else if (tokens.at(0) == "Ka") 
+		else if (tokens.at(0) == "Ka") //Ambient colour define
 		{
 			currentMaterial->ambientColour = glm::vec3
 			(
@@ -118,7 +118,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 				atof(tokens.at(3).c_str())
 			);
 		}
-		else if (tokens.at(0) == "Kd") 
+		else if (tokens.at(0) == "Kd") //Diffuse colour define
 		{
 			currentMaterial->diffuseColour = glm::vec3
 			(
@@ -127,7 +127,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 				atof(tokens.at(3).c_str())
 			);
 		}
-		else if (tokens.at(0) == "Ks") 
+		else if (tokens.at(0) == "Ks") //Specular colour define
 		{
 			currentMaterial->specularColour = glm::vec3
 			(
@@ -136,7 +136,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 				atof(tokens.at(3).c_str())
 			);
 		}
-		else if (tokens.at(0) == "Ke") 
+		else if (tokens.at(0) == "Ke") //Emissive colour define
 		{
 			currentMaterial->emissiveColour = glm::vec3
 			(
@@ -145,19 +145,19 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 				atof(tokens.at(3).c_str())
 			);
 		}
-		else if (tokens.at(0) == "Ni") 
+		else if (tokens.at(0) == "Ni") //Optical density define
 		{
 			currentMaterial->opticalDensity = atof(tokens.at(1).c_str());
 		}
-		else if (tokens.at(0) == "d") 
+		else if (tokens.at(0) == "d") //Dissolve define
 		{
 			currentMaterial->dissolve = atof(tokens.at(1).c_str());
 		}
-		else if (tokens.at(0) == "illum") 
+		else if (tokens.at(0) == "illum") //Illumination model define
 		{
 			currentMaterial->illuminationModel = atof(tokens.at(1).c_str());
 		}
-		else if (tokens.at(0) == "map_Kd") //Does not account for spaces in material file names!!!
+		else if (tokens.at(0) == "map_Kd") //Texture define - does not account for spaces in material file names!!!
 		{
 			std::string newPath = path.substr(0, path.find_last_of('/') + 1);
 			newPath.append(tokens.at(1));
@@ -166,7 +166,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 		}
 	}
 
-	if (!currentMaterial->texture) 
+	if (!currentMaterial->texture) //If no texture was defined, provide default texture
 	{
 		currentMaterial->texture = std::make_shared<Texture>("assets/models/Demo/WhiteSquare.png");
 	}
@@ -203,21 +203,21 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 		splitStringWhitespace(currentLine, tokens);
 		if (tokens.size() < 1) continue;
 
-		if (tokens.at(0) == "v")
+		if (tokens.at(0) == "v") //Vertex definition
 		{
 			glm::vec3 p(atof(tokens.at(1).c_str()),
 				atof(tokens.at(2).c_str()),
 				atof(tokens.at(3).c_str()));
 			positions.push_back(p);
 		}
-		else if (tokens.at(0) == "vt")
+		else if (tokens.at(0) == "vt") //Texture coordinate definition
 		{
 			glm::vec2 tc(atof(tokens.at(1).c_str()),
 				1.0f - atof(tokens.at(2).c_str()));
 
 			tcs.push_back(tc);
 		}
-		else if (tokens.at(0) == "vn")
+		else if (tokens.at(0) == "vn") //Vertex normal definition
 		{
 			glm::vec3 n(atof(tokens.at(1).c_str()),
 				atof(tokens.at(2).c_str()),
@@ -225,7 +225,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 			normals.push_back(n);
 		}
-		else if (tokens.at(0) == "f")
+		else if (tokens.at(0) == "f") //Face definition
 		{
 			if (tokens.size() < 4) continue;
 
@@ -270,14 +270,14 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 			faces.push_back(fq);
 		}
-		else if (tokens.at(0) == "mtllib") 
+		else if (tokens.at(0) == "mtllib") //Load material library
 		{
 			std::string newPath = objPath.substr(0, objPath.find_last_of('/') + 1);
 			newPath.append(tokens.at(1));
 			LoadMaterials(newPath, currentLine, materials);
 			materialsLoaded = true;
 		}
-		else if (tokens.at(0) == "usemtl")
+		else if (tokens.at(0) == "usemtl") //Start of material group
 		{
 			if (currentMaterial) //If this marks the end of one material group/ object 
 			{

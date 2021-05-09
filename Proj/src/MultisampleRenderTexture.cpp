@@ -7,10 +7,11 @@ void MultisampleRenderTexture::Resize(int _width, int _height)
 	width = _width;
 	height = _height;
 
+	//Generate new multisampled texure of the new dimensions
 	glBindTexture(GL_TEXTURE_2D, fbt);
 	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB, width, height, GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
+	//Adjust the render buffer's storage
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 	glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, width, height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -18,8 +19,10 @@ void MultisampleRenderTexture::Resize(int _width, int _height)
 
 void MultisampleRenderTexture::BlitTo(std::shared_ptr<RenderTexture> other)
 {
+	//Bind FBOs to respective read and draw framebuffers
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, other->GetFBOID());
+	//Perform blit
 	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -32,8 +35,10 @@ void MultisampleRenderTexture::Bind()
 
 void MultisampleRenderTexture::BlitToDefaultFramebuffer()
 {
+	//Bind fbo as READ framebuffer and default as draw
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	//Perform blit
 	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

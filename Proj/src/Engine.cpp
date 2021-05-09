@@ -253,7 +253,7 @@ int Engine::Run()
 	//Deleting scene now for debug output purposes
 	mainScene.reset();
 
-	std::cout << "Total Frames: " << frameCounter << std::endl;
+	std::cout << "\n\nTotal Frames: " << frameCounter << std::endl;
 	std::cout << "Average Frame Time: " << frameTimeSum / frameCounter << std::endl;
 	std::cout << "Average Frame Rate: " << 1 / (frameTimeSum / frameCounter) << std::endl;
 	std::cout << "Minimum Frame Time: " << minimumFrameTime << std::endl;
