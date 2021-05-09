@@ -78,7 +78,6 @@ void Engine::Initialise()
 	std::cout << "Done!" << std::endl;
 
 	SDL_MaximizeWindow(window);
-	glEnable(GL_MULTISAMPLE);
 
 	//Done to prevent initial flick
 	//Handle window resizing

@@ -13,6 +13,9 @@
 #define DEFAULT_WINDOW_WIDTH 640
 #define DEFAULT_WINDOW_HEIGHT 480
 
+/// <summary>
+/// Class controlling the opengl functionality of the program.
+/// </summary>
 class Engine
 {
 private:
@@ -32,6 +35,9 @@ private:
 	std::shared_ptr<RenderTexture> blurRenderTexture2;
 	std::shared_ptr<RenderTexture> outputRenderTexture;
 
+	/// <summary>
+	/// Read the engine for operation. 
+	/// </summary>
 	void Initialise();
 
 	void Update();

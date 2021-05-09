@@ -12,6 +12,9 @@
 class Scene;
 struct LightManifest;
 
+/// <summary>
+/// Generic object. Intended as superclass, but intentionally not abstract.
+/// </summary>
 class GameObject
 {
 public:
