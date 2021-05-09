@@ -8,6 +8,7 @@ void main()
 
     if(tex.x > 0.8 || tex.y > 0.8 || tex.z > 0.8)
     {
+        //Uncomment if you want pure white lightmap
         //tex = vec4(1,1,1,1);
     }
     else

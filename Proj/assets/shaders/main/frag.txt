@@ -31,7 +31,6 @@ void main()
     if(length(u_emissiveColour) != 0)
     {
         light += u_emissiveColour;
-
     }
 
     //Handle multiple lights
@@ -39,10 +38,9 @@ void main()
     {
         float intensity = 0;
 
-        if(u_lightIntensities[i] >= 0)
+        if(u_lightIntensities[i] > 0)
         {
             //Calculate intensity using inverse square law
-            //Potentially able to optimise our variable usage here
             float lightDist = distance(u_lightPositions[i], v_FragPos);
             intensity = u_lightIntensities[i] / (lightDist * lightDist);
         }

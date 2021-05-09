@@ -172,8 +172,6 @@ int Engine::Run()
 		//Update orthographic projectiona fter potential screen resize
 		glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.0f, 1.0f);
 
-		mainScene->Update(deltaTime);
-
 		//Handle scene changes //////////////
 		if (input->GetKey(SDLK_1)) nextScene = 0;
 		else if (input->GetKey(SDLK_2)) nextScene = 1;
@@ -201,6 +199,8 @@ int Engine::Run()
 		}
 		///////////////////////////////////////
 		
+		mainScene->Update(deltaTime);
+
 
 		//DRAW SCENE INTO MULTISAMPLED RENDER TEXTURE
 		multisampleRenderTexture->Bind();
