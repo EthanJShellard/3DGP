@@ -13,27 +13,25 @@
 #define DEFAULT_WINDOW_WIDTH 640
 #define DEFAULT_WINDOW_HEIGHT 480
 
-/// <summary>
-/// Class controlling the opengl functionality of the program.
-/// </summary>
+//Class controlling the opengl functionality of the program.
 class Engine
 {
 private:
-	SDL_Window* window;
-	int windowWidth;
-	int windowHeight;
+	SDL_Window* m_window;
+	int m_windowWidth;
+	int m_windowHeight;
 
-	float lastTime;
-	float deltaTime;
+	float m_lastTime;
+	float m_deltaTime;
 
-	std::shared_ptr<ScreenQuad> screenQuad;
-	std::shared_ptr<RenderTexture> postProcessingRenderTexture;
-	std::shared_ptr<MultisampleRenderTexture> multisampleRenderTexture;
+	std::shared_ptr<ScreenQuad> m_screenQuad;
+	std::shared_ptr<RenderTexture> m_postProcessingRenderTexture;
+	std::shared_ptr<MultisampleRenderTexture> m_multisampleRenderTexture;
 
-	std::shared_ptr<RenderTexture> lightKeyRenderTexture;
-	std::shared_ptr<RenderTexture> blurRenderTexture;
-	std::shared_ptr<RenderTexture> blurRenderTexture2;
-	std::shared_ptr<RenderTexture> outputRenderTexture;
+	std::shared_ptr<RenderTexture> m_lightKeyRenderTexture;
+	std::shared_ptr<RenderTexture> m_blurRenderTexture;
+	std::shared_ptr<RenderTexture> m_blurRenderTexture2;
+	std::shared_ptr<RenderTexture> m_outputRenderTexture;
 
 	/// <summary>
 	/// Ready the engine for operation. Creates the SDL2 and OpenGL environments. 
@@ -51,7 +49,7 @@ public:
 	/// </summary>
 	int Run();
 
-	std::shared_ptr<Input> input;
+	std::shared_ptr<Input> m_input;
 
 	Engine();
 	~Engine();

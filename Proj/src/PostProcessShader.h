@@ -8,13 +8,13 @@ class RenderTexture;
 class PostProcessShader : public Shader
 {
 private:
-	GLint texture1Loc;
-	GLint texture2Loc;
+	GLint m_texture1Loc;
+	GLint m_texture2Loc;
 
 public:
-	void BindTextures(std::shared_ptr<RenderTexture> tex1, std::shared_ptr<RenderTexture> tex2);
-	void BindTexture(std::shared_ptr<RenderTexture> tex1);
+	void BindTextures(std::shared_ptr<RenderTexture> _tex1, std::shared_ptr<RenderTexture> _tex2);
+	void BindTexture(std::shared_ptr<RenderTexture> _tex1);
 
-	PostProcessShader(const char* vertexPath, const char* fragmentPath);
-	GLuint projectionLoc;
+	PostProcessShader(const char* _vertexPath, const char* _fragmentPath);
+	GLuint m_projectionLoc;
 };

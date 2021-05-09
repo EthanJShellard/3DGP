@@ -4,44 +4,44 @@
 
 LightManifest::LightManifest()
 {
-	count = 0;
-	ambientBrightness = 0.02; //Default ambient brightness
+	m_count = 0;
+	m_ambientBrightness = 0.02; //Default ambient brightness
 }
 
-void LightManifest::Update(std::vector<std::shared_ptr<Light>> lights)
+void LightManifest::Update(std::vector<std::shared_ptr<Light>> _lights)
 {
 	//Empty our vectors
-	lightPositions.clear();
-	lightColours.clear();
-	lightIntensities.clear();
+	m_lightPositions.clear();
+	m_lightColours.clear();
+	m_lightIntensities.clear();
 
 	//Make sure that we don't upload more lights than our hard limit. Magic number not ideal, but is fine for our purpose.
-	count = std::min(lights.size(), (size_t)10);
+	m_count = std::min(_lights.size(), (size_t)10);
 
-	if (count < 1)
+	if (m_count < 1)
 	{
-		lightPositions.push_back(0);
-		lightPositions.push_back(0);
-		lightPositions.push_back(0);
+		m_lightPositions.push_back(0);
+		m_lightPositions.push_back(0);
+		m_lightPositions.push_back(0);
 
-		lightColours.push_back(0);
-		lightColours.push_back(0);
-		lightColours.push_back(0);
+		m_lightColours.push_back(0);
+		m_lightColours.push_back(0);
+		m_lightColours.push_back(0);
 
-		lightIntensities.push_back(0);
+		m_lightIntensities.push_back(0);
 	}
 
-	for (int i = 0; i < count; i++) 
+	for (int i = 0; i < m_count; i++) 
 	{
 		//Position
-		lightPositions.push_back(lights.at(i)->transform.position.x);
-		lightPositions.push_back(lights.at(i)->transform.position.y);
-		lightPositions.push_back(lights.at(i)->transform.position.z);
+		m_lightPositions.push_back(_lights.at(i)->m_transform.m_position.x);
+		m_lightPositions.push_back(_lights.at(i)->m_transform.m_position.y);
+		m_lightPositions.push_back(_lights.at(i)->m_transform.m_position.z);
 		//Colour
-		lightColours.push_back(lights.at(i)->colour.x);
-		lightColours.push_back(lights.at(i)->colour.y);
-		lightColours.push_back(lights.at(i)->colour.z);
+		m_lightColours.push_back(_lights.at(i)->m_colour.x);
+		m_lightColours.push_back(_lights.at(i)->m_colour.y);
+		m_lightColours.push_back(_lights.at(i)->m_colour.z);
 		//Intensity
-		lightIntensities.push_back(lights.at(i)->intensity);
+		m_lightIntensities.push_back(_lights.at(i)->m_intensity);
 	}
 }

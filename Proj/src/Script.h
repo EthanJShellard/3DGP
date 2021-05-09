@@ -8,11 +8,11 @@ class Input;
 class Script 
 {
 protected:
-	std::weak_ptr<Scene> scene;
+	std::weak_ptr<Scene> m_scene;
 
 public:
-	void SetScene(std::shared_ptr<Scene> parentScene);
-	virtual void Update(float deltaTs, std::shared_ptr<Input> input);
+	void SetScene(std::shared_ptr<Scene> _parentScene);
+	virtual void Update(float _deltaTs, std::shared_ptr<Input> _input);
 	virtual void Start();
 
 	~Script();

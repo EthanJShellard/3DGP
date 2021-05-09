@@ -14,28 +14,28 @@ class GameObject;
 class Scene : public std::enable_shared_from_this<Scene>
 {
 private:
-	std::vector< std::shared_ptr<GameObject> > gameObjects;
-	std::vector< std::shared_ptr<Script> > scripts;
-	std::vector< std::shared_ptr<Light> > lights;
-	std::shared_ptr<Input> input;
+	std::vector< std::shared_ptr<GameObject> > m_gameObjects;
+	std::vector< std::shared_ptr<Script> > m_scripts;
+	std::vector< std::shared_ptr<Light> > m_lights;
+	std::shared_ptr<Input> m_input;
 
-	LightManifest lightManifest;
+	LightManifest m_lightManifest;
 
 public:
-	Camera mainCamera;
+	Camera m_mainCamera;
 
 	void Start();
-	void Update(float deltaTime);
-	void Draw(float windowWidth, float windowHeight);
+	void Update(float _deltaTime);
+	void Draw(float _windowWidth, float _windowHeight);
 
-	void AddObject(std::shared_ptr<GameObject> go);
-	void AddScript(std::shared_ptr<Script> sc);
-	void AddLight(std::shared_ptr<Light> light);
-	void SetAmbientBrightness(float amb);
-	std::shared_ptr<GameObject> FindObjectByID(Uint32 ID);
-	std::shared_ptr<Light> FindLightByID(Uint32 ID);
+	void AddObject(std::shared_ptr<GameObject> _go);
+	void AddScript(std::shared_ptr<Script> _sc);
+	void AddLight(std::shared_ptr<Light> _light);
+	void SetAmbientBrightness(float _ambientBrightness);
+	std::shared_ptr<GameObject> FindObjectByID(Uint32 _ID);
+	std::shared_ptr<Light> FindLightByID(Uint32 _ID);
 	std::vector< std::shared_ptr<Light> > GetLights();
 
-	Scene(std::shared_ptr<Input> input);
+	Scene(std::shared_ptr<Input> _input);
 	~Scene();
 };

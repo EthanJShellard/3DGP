@@ -4,71 +4,71 @@
 #include <exception>
 #include <iostream>
 
-void Material::SetShader(std::shared_ptr<Shader> newShader)
+void Material::SetShader(std::shared_ptr<Shader> _newShader)
 {
-	shader = newShader;
+	m_shader = _newShader;
 
 	// Store location of available uniforms
-	textureLocation = glGetUniformLocation(shader->GetID(), "u_Texture");
-	modelMatLocation = glGetUniformLocation(shader->GetID(), "u_Model");
-	projMatLocation = glGetUniformLocation(shader->GetID(), "u_Projection");
-	viewMatLocation = glGetUniformLocation(shader->GetID(), "u_View");
+	m_textureLocation = glGetUniformLocation(m_shader->GetID(), "u_Texture");
+	m_modelMatLocation = glGetUniformLocation(m_shader->GetID(), "u_Model");
+	m_projMatLocation = glGetUniformLocation(m_shader->GetID(), "u_Projection");
+	m_viewMatLocation = glGetUniformLocation(m_shader->GetID(), "u_View");
 
-	camPositionLocation = glGetUniformLocation(shader->GetID(), "u_camPos");
-	lightPositonsLocation = glGetUniformLocation(shader->GetID(), "u_lightPositions");
-	lightColoursLocation = glGetUniformLocation(shader->GetID(), "u_lightColors");
-	lightIntensitiesLocation = glGetUniformLocation(shader->GetID(), "u_lightIntensities");
-	lightCountLocation = glGetUniformLocation(shader->GetID(), "u_lightCount");
-	dissolveLocation = glGetUniformLocation(shader->GetID(), "u_dissolve");
-	specularHighlightLocation = glGetUniformLocation(shader->GetID(), "u_specularHighlight");
-	emissiveColourLocation = glGetUniformLocation(shader->GetID(), "u_emissiveColour");
-	ambientBrightnessLocation = glGetUniformLocation(shader->GetID(), "u_ambientBrightness");
+	m_camPositionLocation = glGetUniformLocation(m_shader->GetID(), "u_camPos");
+	m_lightPositonsLocation = glGetUniformLocation(m_shader->GetID(), "u_lightPositions");
+	m_lightColoursLocation = glGetUniformLocation(m_shader->GetID(), "u_lightColors");
+	m_lightIntensitiesLocation = glGetUniformLocation(m_shader->GetID(), "u_lightIntensities");
+	m_lightCountLocation = glGetUniformLocation(m_shader->GetID(), "u_lightCount");
+	m_dissolveLocation = glGetUniformLocation(m_shader->GetID(), "u_dissolve");
+	m_specularHighlightLocation = glGetUniformLocation(m_shader->GetID(), "u_specularHighlight");
+	m_emissiveColourLocation = glGetUniformLocation(m_shader->GetID(), "u_emissiveColour");
+	m_ambientBrightnessLocation = glGetUniformLocation(m_shader->GetID(), "u_ambientBrightness");
 
 }
 
 
-void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm::vec3 camPos, LightManifest manifest)
+void Material::Apply(glm::mat4 _model, glm::mat4 _projection, glm::mat4 _iView, glm::vec3 _camPos, LightManifest _manifest)
 {
 	//Bind shader program
-	glUseProgram(shader->GetID());
+	glUseProgram(m_shader->GetID());
 	//Bind texture
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture->id);
+	glBindTexture(GL_TEXTURE_2D, m_texture->m_id);
 
 	//Upload matrices
-	glUniformMatrix4fv(modelMatLocation, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(projMatLocation, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(viewMatLocation, 1, GL_FALSE, glm::value_ptr(iView));
+	glUniformMatrix4fv(m_modelMatLocation, 1, GL_FALSE, glm::value_ptr(_model));
+	glUniformMatrix4fv(m_projMatLocation, 1, GL_FALSE, glm::value_ptr(_projection));
+	glUniformMatrix4fv(m_viewMatLocation, 1, GL_FALSE, glm::value_ptr(_iView));
 
 	//Upload camera position
-	glUniform3f(camPositionLocation, camPos.x, camPos.y, camPos.z);
+	glUniform3f(m_camPositionLocation, _camPos.x, _camPos.y, _camPos.z);
 	
 	//Upload lighting information
-	if (manifest.count > 0) 
+	if (_manifest.m_count > 0) 
 	{
-		glUniform3fv(lightPositonsLocation, manifest.count, &manifest.lightPositions.at(0));
-		glUniform3fv(lightColoursLocation, manifest.count, &manifest.lightColours.at(0));
-		glUniform1fv(lightIntensitiesLocation, manifest.count, &manifest.lightIntensities.at(0));
+		glUniform3fv(m_lightPositonsLocation, _manifest.m_count, &_manifest.m_lightPositions.at(0));
+		glUniform3fv(m_lightColoursLocation, _manifest.m_count, &_manifest.m_lightColours.at(0));
+		glUniform1fv(m_lightIntensitiesLocation, _manifest.m_count, &_manifest.m_lightIntensities.at(0));
 	}
-	glUniform1i(lightCountLocation, manifest.count);
-	glUniform1f(ambientBrightnessLocation, manifest.ambientBrightness);
+	glUniform1i(m_lightCountLocation, _manifest.m_count);
+	glUniform1f(m_ambientBrightnessLocation, _manifest.m_ambientBrightness);
 	
 	//Upload material information
-	glUniform1f(dissolveLocation, dissolve);
-	glUniform1f(specularHighlightLocation, specularHighlights);
-	glUniform3fv(emissiveColourLocation, 1, glm::value_ptr(emissiveColour));
+	glUniform1f(m_dissolveLocation, m_dissolve);
+	glUniform1f(m_specularHighlightLocation, m_specularHighlights);
+	glUniform3fv(m_emissiveColourLocation, 1, glm::value_ptr(m_emissiveColour));
 }
 
 Material::Material()
 {
-	ambientColour = glm::vec3(0);
-	diffuseColour = glm::vec3(0);;
-	specularColour = glm::vec3(0);;
-	emissiveColour = glm::vec3(0);;
-	specularHighlights = 999.0f;
-	dissolve = 1.0f;
-	opticalDensity = 1.0f;
-	illuminationModel = 0;
+	m_ambientColour = glm::vec3(0);
+	m_diffuseColour = glm::vec3(0);;
+	m_specularColour = glm::vec3(0);;
+	m_emissiveColour = glm::vec3(0);;
+	m_specularHighlights = 999.0f;
+	m_dissolve = 1.0f;
+	m_opticalDensity = 1.0f;
+	m_illuminationModel = 0;
 }
 
 Material::~Material()

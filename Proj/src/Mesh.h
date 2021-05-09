@@ -4,11 +4,9 @@
 #include <memory>
 #include <iostream>
 
-/// <summary>
-/// Struct containing mesh information and the material relevant to rendering
-/// </summary>
+//Struct containing mesh information and the material relevant to rendering
 struct Mesh
 {
-	std::shared_ptr<VertexArray> vao;
-	std::shared_ptr<Material> material;
+	std::shared_ptr<VertexArray> m_vao;
+	std::shared_ptr<Material> m_material;
 };

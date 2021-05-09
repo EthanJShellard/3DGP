@@ -2,12 +2,12 @@
 #include "Input.h"
 #include <iostream>
 
-void Script::SetScene(std::shared_ptr<Scene> parentScene)
+void Script::SetScene(std::shared_ptr<Scene> _parentScene)
 {
-	scene = parentScene;
+	m_scene = _parentScene;
 }
 
-void Script::Update(float deltaTs, std::shared_ptr<Input> input)
+void Script::Update(float _deltaTs, std::shared_ptr<Input> _input)
 {
 }
 

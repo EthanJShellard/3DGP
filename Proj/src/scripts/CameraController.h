@@ -7,5 +7,5 @@
 class CameraController : public Script 
 {
 public:
-	void Update(float deltaTs, std::shared_ptr<Input> input) override;
+	void Update(float _deltaTs, std::shared_ptr<Input> _input) override;
 };

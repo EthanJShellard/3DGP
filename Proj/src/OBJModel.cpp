@@ -24,94 +24,94 @@ struct Face
 	glm::vec2 lmcc;
 };
 
-void OBJModel::splitStringWhitespace(const std::string& input, std::vector<std::string>& output)
+void OBJModel::splitStringWhitespace(const std::string& _input, std::vector<std::string>& _output)
 {
 	std::string curr;
 
-	output.clear();
+	_output.clear();
 
-	for (size_t i = 0; i < input.length(); i++)
+	for (size_t i = 0; i < _input.length(); i++)
 	{
-		if (input.at(i) == ' ' ||
-			input.at(i) == '\r' ||
-			input.at(i) == '\n' ||
-			input.at(i) == '\t')
+		if (_input.at(i) == ' ' ||
+			_input.at(i) == '\r' ||
+			_input.at(i) == '\n' ||
+			_input.at(i) == '\t')
 		{
 			if (curr.length() > 0)
 			{
-				output.push_back(curr);
+				_output.push_back(curr);
 				curr = "";
 			}
 		}
 		else
 		{
-			curr += input.at(i);
+			curr += _input.at(i);
 		}
 	}
 
 	if (curr.length() > 0)
 	{
-		output.push_back(curr);
+		_output.push_back(curr);
 	}
 }
 
-void OBJModel::splitString(const std::string& input, char splitter, std::vector<std::string>& output)
+void OBJModel::splitString(const std::string& _input, char _splitter, std::vector<std::string>& _output)
 {
 	std::string curr;
 
-	output.clear();
+	_output.clear();
 
-	for (size_t i = 0; i < input.length(); i++)
+	for (size_t i = 0; i < _input.length(); i++)
 	{
-		if (input.at(i) == splitter)
+		if (_input.at(i) == _splitter)
 		{
-			output.push_back(curr);
+			_output.push_back(curr);
 			curr = "";
 		}
 		else
 		{
-			curr += input.at(i);
+			curr += _input.at(i);
 		}
 	}
 
 	if (curr.length() > 0)
 	{
-		output.push_back(curr);
+		_output.push_back(curr);
 	}
 }
 
-void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, std::unordered_map<std::string, std::shared_ptr<Material> >& map)
+void OBJModel::LoadMaterials(const std::string& _path, std::string &_currentLine, std::unordered_map<std::string, std::shared_ptr<Material> >& _map)
 {
-	std::ifstream file(path.c_str());
+	std::ifstream file(_path.c_str());
 	std::shared_ptr<Material> currentMaterial;
 
 	if (!file.is_open()) 
 	{
-		currentLine.append(" (Failed to open file)");
+		_currentLine.append(" (Failed to open file)");
 		throw std::exception();
 	}
 
 	while(!file.eof()) 
 	{
-		std::getline(file, currentLine);
-		if (currentLine.length() < 1) continue; //If line is empty go to next line
+		std::getline(file, _currentLine);
+		if (_currentLine.length() < 1) continue; //If line is empty go to next line
 
 		std::vector<std::string> tokens;
-		splitStringWhitespace(currentLine, tokens);
+		splitStringWhitespace(_currentLine, tokens);
 		if (tokens.size() < 1) continue; //If no tokens returned go to next line
 
 		if (tokens.at(0) == "newmtl") //New material
 		{
 			currentMaterial = std::make_shared<Material>();
-			map.insert(std::make_pair(tokens.at(1), currentMaterial));
+			_map.insert(std::make_pair(tokens.at(1), currentMaterial));
 		}
 		else if (tokens.at(0) == "Ns") //Specular highlights define
 		{
-			currentMaterial->specularHighlights = atof(tokens.at(1).c_str());
+			currentMaterial->m_specularHighlights = atof(tokens.at(1).c_str());
 		}
 		else if (tokens.at(0) == "Ka") //Ambient colour define
 		{
-			currentMaterial->ambientColour = glm::vec3
+			currentMaterial->m_ambientColour = glm::vec3
 			(
 				atof(tokens.at(1).c_str()),
 				atof(tokens.at(2).c_str()),
@@ -120,7 +120,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 		}
 		else if (tokens.at(0) == "Kd") //Diffuse colour define
 		{
-			currentMaterial->diffuseColour = glm::vec3
+			currentMaterial->m_diffuseColour = glm::vec3
 			(
 				atof(tokens.at(1).c_str()),
 				atof(tokens.at(2).c_str()),
@@ -129,7 +129,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 		}
 		else if (tokens.at(0) == "Ks") //Specular colour define
 		{
-			currentMaterial->specularColour = glm::vec3
+			currentMaterial->m_specularColour = glm::vec3
 			(
 				atof(tokens.at(1).c_str()),
 				atof(tokens.at(2).c_str()),
@@ -138,7 +138,7 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 		}
 		else if (tokens.at(0) == "Ke") //Emissive colour define
 		{
-			currentMaterial->emissiveColour = glm::vec3
+			currentMaterial->m_emissiveColour = glm::vec3
 			(
 				atof(tokens.at(1).c_str()),
 				atof(tokens.at(2).c_str()),
@@ -147,32 +147,32 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 		}
 		else if (tokens.at(0) == "Ni") //Optical density define
 		{
-			currentMaterial->opticalDensity = atof(tokens.at(1).c_str());
+			currentMaterial->m_opticalDensity = atof(tokens.at(1).c_str());
 		}
 		else if (tokens.at(0) == "d") //Dissolve define
 		{
-			currentMaterial->dissolve = atof(tokens.at(1).c_str());
+			currentMaterial->m_dissolve = atof(tokens.at(1).c_str());
 		}
 		else if (tokens.at(0) == "illum") //Illumination model define
 		{
-			currentMaterial->illuminationModel = atof(tokens.at(1).c_str());
+			currentMaterial->m_illuminationModel = atof(tokens.at(1).c_str());
 		}
 		else if (tokens.at(0) == "map_Kd") //Texture define - does not account for spaces in material file names!!!
 		{
-			std::string newPath = path.substr(0, path.find_last_of('/') + 1);
+			std::string newPath = _path.substr(0, _path.find_last_of('/') + 1);
 			newPath.append(tokens.at(1));
 
-			currentMaterial->texture = std::make_shared<Texture>(newPath.c_str());
+			currentMaterial->m_texture = std::make_shared<Texture>(newPath.c_str());
 		}
 	}
 
-	if (!currentMaterial->texture) //If no texture was defined, provide default texture
+	if (!currentMaterial->m_texture) //If no texture was defined, provide default texture
 	{
-		currentMaterial->texture = std::make_shared<Texture>("assets/models/Demo/WhiteSquare.png");
+		currentMaterial->m_texture = std::make_shared<Texture>("assets/models/Demo/WhiteSquare.png");
 	}
 }
 
-void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
+void OBJModel::loadModel(const std::string& _objPath, std::string& _currentLine)
 {
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec2> tcs;
@@ -186,7 +186,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 	int counter = 0;
 
-	std::ifstream file(objPath.c_str());
+	std::ifstream file(_objPath.c_str());
 
 	if (!file.is_open())
 	{
@@ -195,12 +195,12 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 
 	while (!file.eof())
 	{
-		std::getline(file, currentLine);
-		if (currentLine.length() < 1) continue;
+		std::getline(file, _currentLine);
+		if (_currentLine.length() < 1) continue;
 		//std::cout << "Line [" << currentLine << "]" << std::endl;
 
 		std::vector<std::string> tokens;
-		splitStringWhitespace(currentLine, tokens);
+		splitStringWhitespace(_currentLine, tokens);
 		if (tokens.size() < 1) continue;
 
 		if (tokens.at(0) == "v") //Vertex definition
@@ -272,9 +272,9 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 		}
 		else if (tokens.at(0) == "mtllib") //Load material library
 		{
-			std::string newPath = objPath.substr(0, objPath.find_last_of('/') + 1);
+			std::string newPath = _objPath.substr(0, _objPath.find_last_of('/') + 1);
 			newPath.append(tokens.at(1));
-			LoadMaterials(newPath, currentLine, materials);
+			LoadMaterials(newPath, _currentLine, materials);
 			materialsLoaded = true;
 		}
 		else if (tokens.at(0) == "usemtl") //Start of material group
@@ -282,14 +282,14 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 			if (currentMaterial) //If this marks the end of one material group/ object 
 			{
 				std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-				mesh->material = currentMaterial;
+				mesh->m_material = currentMaterial;
 
-				mesh->vao = std::make_shared<VertexArray>();
+				mesh->m_vao = std::make_shared<VertexArray>();
 
 
 				if (faces.size() > 0) 
 				{
-					mesh->vao->SetVertCount(faces.size() * 3); //3 vertices for each triangulated face
+					mesh->m_vao->SetVertCount(faces.size() * 3); //3 vertices for each triangulated face
 
 					std::shared_ptr<VertexBuffer> b = std::make_shared <VertexBuffer>();
 
@@ -301,7 +301,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 						b->Add(fit->pc.x, fit->pc.y, fit->pc.z);
 					}
 
-					mesh->vao->SetBuffer(b, 0);
+					mesh->m_vao->SetBuffer(b, 0);
 
 				} //End if faces > 0
 
@@ -317,7 +317,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 						b->Add(fit->tcc.x, fit->tcc.y);
 					}
 
-					mesh->vao->SetBuffer(b, 1);
+					mesh->m_vao->SetBuffer(b, 1);
 				}
 
 				if (normals.size() > 0)
@@ -332,10 +332,10 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 						b->Add(fit->nc.x, fit->nc.y, fit->nc.z);
 					}
 
-					mesh->vao->SetBuffer(b, 2);
+					mesh->m_vao->SetBuffer(b, 2);
 				}
 				
-				meshes.push_back(mesh);
+				m_meshes.push_back(mesh);
 
 			}//End creation of object (if(currentMaterial))
 
@@ -347,14 +347,14 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 	if (currentMaterial) //If this marks the end of one material group/ object 
 	{
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-		mesh->material = currentMaterial;
+		mesh->m_material = currentMaterial;
 
-		mesh->vao = std::make_shared<VertexArray>();
+		mesh->m_vao = std::make_shared<VertexArray>();
 
 
 		if (faces.size() > 0)
 		{
-			mesh->vao->SetVertCount(faces.size() * 3); //3 vertices for each triangulated face
+			mesh->m_vao->SetVertCount(faces.size() * 3); //3 vertices for each triangulated face
 
 			std::shared_ptr<VertexBuffer> b = std::make_shared <VertexBuffer>();
 
@@ -366,7 +366,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 				b->Add(fit->pc.x, fit->pc.y, fit->pc.z);
 			}
 
-			mesh->vao->SetBuffer(b, 0);
+			mesh->m_vao->SetBuffer(b, 0);
 
 		} //End if faces > 0
 
@@ -382,7 +382,7 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 				b->Add(fit->tcc.x, fit->tcc.y);
 			}
 
-			mesh->vao->SetBuffer(b, 1);
+			mesh->m_vao->SetBuffer(b, 1);
 		}
 
 		if (normals.size() > 0)
@@ -397,22 +397,22 @@ void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
 				b->Add(fit->nc.x, fit->nc.y, fit->nc.z);
 			}
 
-			mesh->vao->SetBuffer(b, 2);
+			mesh->m_vao->SetBuffer(b, 2);
 		}
 
-		meshes.push_back(mesh);
+		m_meshes.push_back(mesh);
 
 	}//End creation of object (if(currentMaterial))
 
 }
 
-void OBJModel::loadModel(const std::string& path)
+void OBJModel::loadModel(const std::string& _path)
 {
-	std::string currentLine = path;
+	std::string currentLine = _path;
 
 	try
 	{
-		return loadModel(path, currentLine);
+		return loadModel(_path, currentLine);
 	}
 	catch (std::exception& e)
 	{
@@ -424,13 +424,13 @@ void OBJModel::loadModel(const std::string& path)
 	}
 }
 
-OBJModel::OBJModel(std::string objPath, std::shared_ptr<Shader> defaultShader)
+OBJModel::OBJModel(std::string _objPath, std::shared_ptr<Shader> _defaultShader)
 {
-	loadModel(objPath);
+	loadModel(_objPath);
 
-	for (int i = 0; i < meshes.size(); i++) 
+	for (int i = 0; i < m_meshes.size(); i++) 
 	{
-		meshes.at(i)->material->SetShader(defaultShader);
+		m_meshes.at(i)->m_material->SetShader(_defaultShader);
 	}
 }
 

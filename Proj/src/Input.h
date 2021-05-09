@@ -13,7 +13,7 @@ public:
 	void Update();
 
 	//Check if an SDLK is being pressed this frame
-	bool GetKey(SDL_Keycode key);
+	bool GetKey(SDL_Keycode _key);
 
 	//Get the change in mouse position from last frame to this frame
 	glm::vec2 GetMouseDelta();
@@ -31,20 +31,20 @@ public:
 	bool Mouse3Down();
 
 	//Clear the previous mouse position, resetting it to the centre of the screen
-	void ClearMousePrevious(int width, int height);
+	void ClearMousePrevious(int _width, int _height);
 
-	bool quit;
-	float mouseSensitivity;
+	bool m_quit;
+	float m_mouseSensitivity;
 private:
-	glm::vec2 mousePrevious;
-	glm::vec2 mousePos;
-	glm::vec2 mouseDelta;
-	glm::vec2 scroll;
+	glm::vec2 m_mousePrevious;
+	glm::vec2 m_mousePos;
+	glm::vec2 m_mouseDelta;
+	glm::vec2 m_scroll;
 
-	bool mouse1;
-	bool mouse2;
-	bool mouse3;
+	bool m_mouse1;
+	bool m_mouse2;
+	bool m_mouse3;
 	
 	//Unordered map is used as it has O(1) time complexity [std::map has worst case O(log n)]
-	std::unordered_map<int, bool> keys;
+	std::unordered_map<int, bool> m_keys;
 };

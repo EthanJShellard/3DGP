@@ -12,16 +12,16 @@
 class LoneQuad : public GameObject
 {
 private:
-	std::shared_ptr<VertexArray> vao;
-	std::vector< std::shared_ptr<VertexBuffer> > buffers;
-	std::shared_ptr<Material> material;
+	std::shared_ptr<VertexArray> m_vao;
+	std::vector< std::shared_ptr<VertexBuffer> > m_buffers;
+	std::shared_ptr<Material> m_material;
 
 	//Create an array object containing vertex, texture coordinate and normal information
 	void BuildArrayObject();
 
 public:
-	LoneQuad(std::string texturePath, std::shared_ptr<Shader> shader);
-	LoneQuad(std::shared_ptr<Texture> tex, std::shared_ptr<Shader> shader);
+	LoneQuad(std::string _texturePath, std::shared_ptr<Shader> _shader);
+	LoneQuad(std::shared_ptr<Texture> _tex, std::shared_ptr<Shader> _shader);
 
-	void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest) override;
+	void Draw(glm::mat4 _projection, glm::mat4 _invView, glm::vec3 _camPos, LightManifest _lightManifest) override;
 };

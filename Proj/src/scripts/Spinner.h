@@ -4,14 +4,14 @@
 
 class Spinner : public Script 
 {
-	std::weak_ptr<GameObject> targetObject;
+	std::weak_ptr<GameObject> m_targetObject;
 
-	float speed;
-	glm::vec3 axis;
-	int targetID;
+	float m_speed;
+	glm::vec3 m_axis;
+	int m_targetID;
 
 public:
-	void Update(float deltaTs, std::shared_ptr<Input> input) override;
+	void Update(float _deltaTs, std::shared_ptr<Input> _input) override;
 	void Start() override;
 	Spinner(float _speed, glm::vec3 _axis, int _targetID);
 };

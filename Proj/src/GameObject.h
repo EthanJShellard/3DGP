@@ -16,16 +16,16 @@ struct LightManifest;
 class GameObject
 {
 public:
-	void SetPosition(glm::vec3 newPos);
-	void SetPosition(float x, float y, float z);
-	void SetRotation(glm::vec3 newRot);
-	void SetRotation(float x, float y, float z);
-	void SetScale(glm::vec3 newScale);
-	void SetScale(float x, float y, float z);
-	void SetScene(std::shared_ptr<Scene> parentScene);
+	void SetPosition(glm::vec3 _newPos);
+	void SetPosition(float _x, float _y, float _z);
+	void SetRotation(glm::vec3 _newRot);
+	void SetRotation(float _x, float _y, float _z);
+	void SetScale(glm::vec3 _newScale);
+	void SetScale(float _x, float _y, float _z);
+	void SetScene(std::shared_ptr<Scene> _parentScene);
 
-	void Rotate(float angle, glm::vec3 axis);
-	void Translate(glm::vec3 move);
+	void Rotate(float _angle, glm::vec3 _axis);
+	void Translate(glm::vec3 _move);
 
 	glm::vec3 GetPosition();
 	glm::vec3 GetRotation();
@@ -35,27 +35,27 @@ public:
 	virtual void Start();
 
 	//Perform any update functionality here.
-	virtual void Update(float deltaTime, std::shared_ptr<Input> input);
+	virtual void Update(float _deltaTime, std::shared_ptr<Input> _input);
 
 	//Update matrices and draw the renderable components of the object
-	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest);
+	virtual void Draw(glm::mat4 _projection, glm::mat4 _invView, glm::vec3 _camPos, LightManifest _lightManifest);
 
 	GameObject();
 	~GameObject();
 
-	Transform transform;
-	Uint32 ID = 0;
+	Transform m_transform;
+	Uint32 m_ID = 0;
 
 protected:
 	
-	glm::mat4 modelMatrix;
-	glm::mat4 scaleMatrix;
-	glm::mat4 rotationMatrix;
-	glm::mat4 translationMatrix;
+	glm::mat4 m_modelMatrix;
+	glm::mat4 m_scaleMatrix;
+	glm::mat4 m_rotationMatrix;
+	glm::mat4 m_translationMatrix;
 
-	std::weak_ptr<Scene> scene;
+	std::weak_ptr<Scene> m_scene;
 
-	bool dirty = true;
+	bool m_dirty = true;
 
 	//Update this object's model matrix to reflect its position, rotation and scale
 	void UpdateModelMatrix();

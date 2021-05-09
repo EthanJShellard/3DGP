@@ -3,24 +3,24 @@
 #include "../Transform.h"
 #include "../Scene.h"
 
-void CameraController::Update(float deltaTime, std::shared_ptr<Input> input)
+void CameraController::Update(float _deltaTime, std::shared_ptr<Input> _input)
 {
-	if (auto scPtr = scene.lock()) 
+	if (auto scPtr = m_scene.lock()) 
 	{
 		glm::vec3 move = glm::vec3(0);
 		//Forward/Backward
-		if (input->GetKey(SDLK_w)) move += glm::vec3(0, 0, -10 * deltaTime);
-		if (input->GetKey(SDLK_s)) move += glm::vec3(0, 0, 10 * deltaTime);
+		if (_input->GetKey(SDLK_w)) move += glm::vec3(0, 0, -10 * _deltaTime);
+		if (_input->GetKey(SDLK_s)) move += glm::vec3(0, 0, 10 * _deltaTime);
 		//Left/Right
-		if (input->GetKey(SDLK_a)) move += glm::vec3(-10 * deltaTime, 0, 0);
-		if (input->GetKey(SDLK_d)) move += glm::vec3(10 * deltaTime, 0, 0);
+		if (_input->GetKey(SDLK_a)) move += glm::vec3(-10 * _deltaTime, 0, 0);
+		if (_input->GetKey(SDLK_d)) move += glm::vec3(10 * _deltaTime, 0, 0);
 		//Speed modifier
-		if (input->GetKey(SDLK_LSHIFT)) move *= 4;
+		if (_input->GetKey(SDLK_LSHIFT)) move *= 4;
 
-		scPtr->mainCamera.transform.Translate(scPtr->mainCamera.transform.GetQuaternionRotation() * move);
+		scPtr->m_mainCamera.m_transform.Translate(scPtr->m_mainCamera.m_transform.GetQuaternionRotation() * move);
 
-		scPtr->mainCamera.transform.Rotate(-input->GetMouseDelta().x * input->mouseSensitivity * deltaTime, glm::vec3(0, 1, 0));
-		scPtr->mainCamera.transform.Rotate(-input->GetMouseDelta().y * input->mouseSensitivity * deltaTime, scPtr->mainCamera.transform.Right());
+		scPtr->m_mainCamera.m_transform.Rotate(-_input->GetMouseDelta().x * _input->m_mouseSensitivity * _deltaTime, glm::vec3(0, 1, 0));
+		scPtr->m_mainCamera.m_transform.Rotate(-_input->GetMouseDelta().y * _input->m_mouseSensitivity * _deltaTime, scPtr->m_mainCamera.m_transform.Right());
 	}
 	
 }

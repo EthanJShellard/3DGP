@@ -11,7 +11,7 @@
 #include "scripts/PulsingLight.h"
 #include "scripts/Spinner.h"
 
-std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
+std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> _input)
 {
 	//Create Shader programs
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
@@ -24,28 +24,28 @@ std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 	//Create SpaceShip game object
 	std::shared_ptr<OBJModel> spaceShip = std::make_shared<OBJModel>("assets/models/Spaceship/Intergalactic_Spaceship-(Wavefront).obj", program);
 	std::shared_ptr<GameObjectOBJ> spaceShipObject = std::make_shared<GameObjectOBJ>();
-	spaceShipObject->ID = 1;
+	spaceShipObject->m_ID = 1;
 	spaceShipObject->SetModel(spaceShip);
 	spaceShipObject->SetScale(glm::vec3(0.3,0.3,0.3));
 	spaceShipObject->SetPosition(glm::vec3(-0.1,0,-5));
-	spaceShipObject->Rotate(180.0f, spaceShipObject->transform.Up());
+	spaceShipObject->Rotate(180.0f, spaceShipObject->m_transform.Up());
 	//////////////////////////////
 
 	std::shared_ptr<Texture> texture = std::make_shared<Texture>("assets/textures/corcle.png");
 
 	//Set up Scene
-	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
+	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(_input);
 	mainScene->AddObject(spaceShipObject);
 	mainScene->AddScript(std::make_shared<SpaceshipConrtoller>());
 	mainScene->AddScript(std::make_shared<ProjectileSpawner>(texture, fullbrightShader));
-	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 2, 1));
-	mainScene->mainCamera.transform.Rotate(-10.0f, mainScene->mainCamera.transform.Right());
+	mainScene->m_mainCamera.m_transform.SetPosition(glm::vec3(0, 2, 1));
+	mainScene->m_mainCamera.m_transform.Rotate(-10.0f, mainScene->m_mainCamera.m_transform.Right());
 
 
 	return mainScene;
 }
 
-std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
+std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> _input)
 {
 	//Create Shader program
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
@@ -64,18 +64,18 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 	///////////////////////////
 
 	//Set up scene
-	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
+	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(_input);
 	mainScene->AddObject(dust2Obj);
 	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, -2.0f), glm::vec3(1, 1, 1), -.6f));
 	mainScene->AddScript(std::make_shared<CameraController>());
-	mainScene->mainCamera.transform.Rotate(-45.0f, mainScene->mainCamera.transform.Right());
-	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 10, 0));
+	mainScene->m_mainCamera.m_transform.Rotate(-45.0f, mainScene->m_mainCamera.m_transform.Right());
+	mainScene->m_mainCamera.m_transform.SetPosition(glm::vec3(0, 10, 0));
 	mainScene->SetAmbientBrightness(0.1f);
 
 	return mainScene;
 }
 
-std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> input)
+std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> _input)
 {
 	//Create Shader programs
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
@@ -102,25 +102,25 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 	spinnerCube->Translate(glm::vec3(0,-0.25,-4));
 	spinnerCube->SetScale(0.1f,0.2f,0.1f);
 	spinnerCube->Rotate(45.0f, glm::vec3(0,0,-1));
-	spinnerCube->model->meshes.at(0)->material->emissiveColour = glm::vec3(0,1,0);
-	spinnerCube->model->meshes.at(0)->material->dissolve = 0.6f;
-	spinnerCube->ID = 1;
+	spinnerCube->m_model->m_meshes.at(0)->m_material->m_emissiveColour = glm::vec3(0,1,0);
+	spinnerCube->m_model->m_meshes.at(0)->m_material->m_dissolve = 0.6f;
+	spinnerCube->m_ID = 1;
 	////////////////////////
 
 	//Set up scene
-	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
+	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(_input);
 	mainScene->AddObject(demoStage);
 	mainScene->AddObject(navigationPanel);
 	mainScene->AddObject(spinnerCube);
 	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 5), glm::vec3(1, 1, 1), -.5f));
 	mainScene->AddScript(std::make_shared<CameraController>());
-	mainScene->AddScript(std::make_shared<Spinner>(90, glm::vec3(spinnerCube->transform.Right()), 1));
-	mainScene->AddScript(std::make_shared<Spinner>(-45, glm::vec3(spinnerCube->transform.Up()), 1));
+	mainScene->AddScript(std::make_shared<Spinner>(90, glm::vec3(spinnerCube->m_transform.Right()), 1));
+	mainScene->AddScript(std::make_shared<Spinner>(-45, glm::vec3(spinnerCube->m_transform.Up()), 1));
 
 	return mainScene;
 }
 
-std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input> input)
+std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input> _input)
 {
 	//Create Shader program
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
@@ -159,7 +159,7 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 	std::shared_ptr<Light> light2 = std::make_shared<Light>(lamp2->GetPosition() + glm::vec3(0, 1.25f, 0), glm::vec3(1, 0.6, 0), 1.0f);
 
 	//Set up scene
-	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
+	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(_input);
 	mainScene->AddScript(std::make_shared<CameraController>());
 	mainScene->AddScript(std::make_shared<PulsingLight>(.0f, 10.0f, 2.0f, glm::vec3(4,2,-20), glm::vec3(0.8,0,0)));
 	mainScene->AddObject(lamp1);
@@ -170,29 +170,29 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 	mainScene->AddObject(curuthers);
 	mainScene->AddObject(giantCuruthers);
 	mainScene->SetAmbientBrightness(0.0f);
-	mainScene->mainCamera.transform.Translate(glm::vec3(0,2,0));
+	mainScene->m_mainCamera.m_transform.Translate(glm::vec3(0,2,0));
 
 	return mainScene;
 }
 
-std::shared_ptr<Scene> SceneLoader::LoadScene(int index, std::shared_ptr<Input> input)
+std::shared_ptr<Scene> SceneLoader::LoadScene(int _index, std::shared_ptr<Input> _input)
 {
-	switch (index) 
+	switch (_index) 
 	{
 	case 0:
-		return LoadBloomDemoScene(input);
+		return LoadBloomDemoScene(_input);
 		break;
 	case 1:
-		return LoadDust2Scene(input);
+		return LoadDust2Scene(_input);
 		break;
 	case 2:
-		return LoadShmupScene(input);
+		return LoadShmupScene(_input);
 		break;
 	case 3:
-		return LoadPointLightingDemo(input);
+		return LoadPointLightingDemo(_input);
 		break;
 	default:
-		return LoadDust2Scene(input);
+		return LoadDust2Scene(_input);
 		break;
 	}
 }

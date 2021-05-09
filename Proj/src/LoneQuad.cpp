@@ -34,48 +34,48 @@ void LoneQuad::BuildArrayObject()
 	vertNormals->Add(glm::vec3(0, 1, 0));
 
 	//Bind buffers to vao
-	vao =  std::make_shared<VertexArray>();
-	vao->SetBuffer(positions, 0);
-	vao->SetBuffer(texCoords, 1);
-	vao->SetBuffer(vertNormals, 2);
+	m_vao =  std::make_shared<VertexArray>();
+	m_vao->SetBuffer(positions, 0);
+	m_vao->SetBuffer(texCoords, 1);
+	m_vao->SetBuffer(vertNormals, 2);
 
 	//Store buffers so they are only destroyed when object goes out of scope.
-	buffers.push_back(positions);
-	buffers.push_back(texCoords);
-	buffers.push_back(vertNormals);
+	m_buffers.push_back(positions);
+	m_buffers.push_back(texCoords);
+	m_buffers.push_back(vertNormals);
 }
 
-LoneQuad::LoneQuad(std::string texturePath, std::shared_ptr<Shader> shader)
+LoneQuad::LoneQuad(std::string _texturePath, std::shared_ptr<Shader> _shader)
 {
-	transform.SetPosition(glm::vec3(0));
-	transform.SetScale(glm::vec3(1));
-	transform.SetRotation(glm::quat(glm::vec3(0, 0, 0)));
+	m_transform.SetPosition(glm::vec3(0));
+	m_transform.SetScale(glm::vec3(1));
+	m_transform.SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 
-	material = std::make_shared<Material>();
-	material->texture = std::make_shared<Texture>(texturePath.c_str());
-	material->SetShader(shader);
+	m_material = std::make_shared<Material>();
+	m_material->m_texture = std::make_shared<Texture>(_texturePath.c_str());
+	m_material->SetShader(_shader);
 	BuildArrayObject();
 }
 
-LoneQuad::LoneQuad(std::shared_ptr<Texture> tex, std::shared_ptr<Shader> shader)
+LoneQuad::LoneQuad(std::shared_ptr<Texture> _tex, std::shared_ptr<Shader> _shader)
 {
-	transform.SetPosition(glm::vec3(0));
-	transform.SetScale(glm::vec3(1));
-	transform.SetRotation(glm::quat(glm::vec3(0, 0, 0)));
+	m_transform.SetPosition(glm::vec3(0));
+	m_transform.SetScale(glm::vec3(1));
+	m_transform.SetRotation(glm::quat(glm::vec3(0, 0, 0)));
 
-	material = std::make_shared<Material>();
-	material->texture = tex;
-	material->SetShader(shader);
+	m_material = std::make_shared<Material>();
+	m_material->m_texture = _tex;
+	m_material->SetShader(_shader);
 	BuildArrayObject();
 }
 
-void LoneQuad::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest)
+void LoneQuad::Draw(glm::mat4 _projection, glm::mat4 _invView, glm::vec3 _camPos, LightManifest _lightManifest)
 {
 	UpdateModelMatrix();
 	//Bind vao
-	glBindVertexArray(vao->GetID());
+	glBindVertexArray(m_vao->GetID());
 	//Apply material, bind shader and upload light information
-	material->Apply(modelMatrix, projection, invView, camPos, lightManifest);
+	m_material->Apply(m_modelMatrix, _projection, _invView, _camPos, _lightManifest);
 	//Draw quad
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }

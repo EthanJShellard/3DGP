@@ -8,12 +8,12 @@
 class VertexBuffer 
 {
 public:
-	void Add(glm::vec2 value);
-	void Add(float x, float y);
-	void Add(glm::vec3 value);
-	void Add(float x, float y, float z);
-	void Add(glm::vec4 value);
-	void Add(GLfloat value);
+	void Add(glm::vec2 _value);
+	void Add(float _x, float _y);
+	void Add(glm::vec3 _value);
+	void Add(float _x, float _y, float _z);
+	void Add(glm::vec4 _value);
+	void Add(GLfloat _value);
 
 	//Get the number of components in one unit of data for this buffer. (e.g. 3 for glm::vec3)
 	int GetComponents();
@@ -24,10 +24,10 @@ public:
 	~VertexBuffer();
 	void Delete();
 private:
-	GLuint id;
-	int components;
-	std::vector<GLfloat> data;
-	bool dirty; //Used to specify whether data is yet to be uploaded to GPU
-	bool dead;
+	GLuint m_id;
+	int m_components;
+	std::vector<GLfloat> m_data;
+	bool m_dirty; //Used to specify whether data is yet to be uploaded to GPU
+	bool m_dead;
 };
 

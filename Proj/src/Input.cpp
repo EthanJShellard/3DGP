@@ -5,28 +5,28 @@
 
 Input::Input()
 {
-	mouse3 = false;
-	mouse1 = false;
-	mouse2 = false;
-	quit = false;
-	mouseSensitivity = 20.0f;
+	m_mouse3 = false;
+	m_mouse1 = false;
+	m_mouse2 = false;
+	m_quit = false;
+	m_mouseSensitivity = 20.0f;
 }
 
 void Input::Update()
 {
 	SDL_Event event = SDL_Event{0};
-	mouseDelta = glm::vec2(0, 0);
-	scroll = glm::vec2(0, 0);
+	m_mouseDelta = glm::vec2(0, 0);
+	m_scroll = glm::vec2(0, 0);
 
 	//Poll inputs
 	while (SDL_PollEvent(&event)) 
 	{
 		if (event.type == SDL_KEYDOWN) 
 		{
-			std::unordered_map<int, bool>::iterator entry = keys.find(event.key.keysym.sym);
-			if (entry == keys.end()) //Key is not present in map
+			std::unordered_map<int, bool>::iterator entry = m_keys.find(event.key.keysym.sym);
+			if (entry == m_keys.end()) //Key is not present in map
 			{
-				keys.insert( std::pair<int, bool>(event.key.keysym.sym, true)); //So put it in there
+				m_keys.insert( std::pair<int, bool>(event.key.keysym.sym, true)); //So put it in there
 			}
 			else 
 			{
@@ -36,26 +36,26 @@ void Input::Update()
 		}
 		else if (event.type == SDL_KEYUP)
 		{
-			keys.find(event.key.keysym.sym)->second = false;
+			m_keys.find(event.key.keysym.sym)->second = false;
 		}
 		else if (event.type == SDL_MOUSEMOTION) 
 		{
 			//Use += delta to avoid issues if mouse motion events come in twice
-			mouseDelta.x += event.motion.x - mousePrevious.x;
-			mouseDelta.y += event.motion.y - mousePrevious.y;
+			m_mouseDelta.x += event.motion.x - m_mousePrevious.x;
+			m_mouseDelta.y += event.motion.y - m_mousePrevious.y;
 		}
 		else if (event.type == SDL_MOUSEBUTTONDOWN) 
 		{
 			switch (event.button.button) 
 			{
 			case SDL_BUTTON_LEFT:
-				mouse1 = true;
+				m_mouse1 = true;
 				break;
 			case SDL_BUTTON_RIGHT:
-				mouse2 = true;
+				m_mouse2 = true;
 				break;
 			case SDL_BUTTON_MIDDLE:
-				mouse3 = true;
+				m_mouse3 = true;
 				break;
 			}
 		}
@@ -64,34 +64,34 @@ void Input::Update()
 			switch (event.button.button)
 			{
 			case SDL_BUTTON_LEFT:
-				mouse1 = false;
+				m_mouse1 = false;
 				break;
 			case SDL_BUTTON_RIGHT:
-				mouse2 = false;
+				m_mouse2 = false;
 				break;
 			case SDL_BUTTON_MIDDLE:
-				mouse3 = false;
+				m_mouse3 = false;
 				break;
 			}
 		}
 		else if (event.type == SDL_MOUSEWHEEL)
 		{
-			scroll.x = event.wheel.x;
-			scroll.y = event.wheel.y;
+			m_scroll.x = event.wheel.x;
+			m_scroll.y = event.wheel.y;
 		}
 		else if (event.type == SDL_QUIT) 
 		{
-			quit = true;
+			m_quit = true;
 		}
 	}
 
-	mousePrevious += mouseDelta;
+	m_mousePrevious += m_mouseDelta;
 }
 
-bool Input::GetKey(SDL_Keycode key)
+bool Input::GetKey(SDL_Keycode _key)
 {
-	std::unordered_map<int, bool>::iterator itr = keys.find(key);
-	if (itr == keys.end()) return false;
+	std::unordered_map<int, bool>::iterator itr = m_keys.find(_key);
+	if (itr == m_keys.end()) return false;
 	else return itr->second;
 
 }
@@ -99,30 +99,30 @@ bool Input::GetKey(SDL_Keycode key)
 
 glm::vec2 Input::GetMouseDelta()
 {
-	return mouseDelta;
+	return m_mouseDelta;
 }
 
 glm::vec2 Input::GetMouseWheelScroll()
 {
-	return scroll;
+	return m_scroll;
 }
 
 bool Input::Mouse1Down()
 {
-	return mouse1;
+	return m_mouse1;
 }
 
 bool Input::Mouse2Down()
 {
-	return mouse2;
+	return m_mouse2;
 }
 
 bool Input::Mouse3Down()
 {
-	return mouse3;
+	return m_mouse3;
 }
 
-void Input::ClearMousePrevious(int width, int height)
+void Input::ClearMousePrevious(int _width, int _height)
 {
-	mousePrevious = glm::vec2(width / 2, height / 2);
+	m_mousePrevious = glm::vec2(_width / 2, _height / 2);
 }

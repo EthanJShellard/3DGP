@@ -17,17 +17,17 @@ class OBJModel
 {
 private:
 
-	void splitStringWhitespace(const std::string& input, std::vector<std::string>& output);
-	void splitString(const std::string& input, char splitter, std::vector<std::string>& output);
-	void loadModel(const std::string& objPath, std::string& currentLine);
-	void loadModel(const std::string& path);
-	void LoadMaterials(const std::string& path, std::string& currentLine, std::unordered_map<std::string, std::shared_ptr<Material> >& map);
+	void splitStringWhitespace(const std::string& _input, std::vector<std::string>& _output);
+	void splitString(const std::string& _input, char _splitter, std::vector<std::string>& _output);
+	void loadModel(const std::string& _objPath, std::string& _currentLine);
+	void loadModel(const std::string& _path);
+	void LoadMaterials(const std::string& _path, std::string& _currentLine, std::unordered_map<std::string, std::shared_ptr<Material> >& _map);
 
 public:
 
-	std::vector< std::shared_ptr<Mesh> > meshes;
+	std::vector< std::shared_ptr<Mesh> > m_meshes;
 	
 
-	OBJModel(std::string objPath, std::shared_ptr<Shader> shader);
+	OBJModel(std::string _objPath, std::shared_ptr<Shader> _shader);
 
 };

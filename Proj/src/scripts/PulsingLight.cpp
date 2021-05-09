@@ -2,39 +2,39 @@
 #include "../Scene.h"
 
 
-void PulsingLight::Update(float deltaTs, std::shared_ptr<Input> input)
+void PulsingLight::Update(float _deltaTs, std::shared_ptr<Input> _input)
 {
-	if (auto lPtr = light.lock()) 
+	if (auto lPtr = m_light.lock()) 
 	{
-		if (rising) 
+		if (m_rising) 
 		{
-			lPtr->intensity += speed * deltaTs;
-			if (lPtr->intensity >= maxIntensity) rising = false;
+			lPtr->m_intensity += m_speed * _deltaTs;
+			if (lPtr->m_intensity >= m_maxIntensity) m_rising = false;
 		}
 		else 
 		{
-			lPtr->intensity -= speed * deltaTs;
-			if (lPtr->intensity <= minIntensity) rising = true;
+			lPtr->m_intensity -= m_speed * _deltaTs;
+			if (lPtr->m_intensity <= m_minIntensity) m_rising = true;
 		}
 	}
 }
 
 void PulsingLight::Start()
 {
-	if (auto scPtr = scene.lock()) 
+	if (auto scPtr = m_scene.lock()) 
 	{
-		std::shared_ptr<Light> lightPtr = std::make_shared<Light>(position, colour, minIntensity);
+		std::shared_ptr<Light> lightPtr = std::make_shared<Light>(m_position, m_colour, m_minIntensity);
 		scPtr->AddLight(lightPtr);
-		light = lightPtr;
+		m_light = lightPtr;
 	}
 }
 
 PulsingLight::PulsingLight(float _minIntensity, float _maxIntensity, float _speed, glm::vec3 _position, glm::vec3 _colour)
 {
-	minIntensity = _minIntensity;
-	maxIntensity = _maxIntensity;
-	speed = _speed;
-	position = _position;
-	colour = _colour;
-	rising = true;
+	m_minIntensity = _minIntensity;
+	m_maxIntensity = _maxIntensity;
+	m_speed = _speed;
+	m_position = _position;
+	m_colour = _colour;
+	m_rising = true;
 }

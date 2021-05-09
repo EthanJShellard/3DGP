@@ -1,140 +1,140 @@
 #include "VertexBuffer.h"
 #include <exception>
 
-void VertexBuffer::Add(glm::vec2 value)
+void VertexBuffer::Add(glm::vec2 _value)
 {
-	if (components != 2 && components != 0) throw std::exception();
+	if (m_components != 2 && m_components != 0) throw std::exception();
 
 	//Flatten data
-	data.push_back(value.x);
-	data.push_back(value.y);
+	m_data.push_back(_value.x);
+	m_data.push_back(_value.y);
 
-	components = 2;
+	m_components = 2;
 	//Data yet to be uploaded
-	dirty = true;
+	m_dirty = true;
 }
 
-void VertexBuffer::Add(float x, float y)
+void VertexBuffer::Add(float _x, float _y)
 {
-	if (components != 2 && components != 0) throw std::exception();
+	if (m_components != 2 && m_components != 0) throw std::exception();
 
-	data.push_back(x);
-	data.push_back(y);
+	m_data.push_back(_x);
+	m_data.push_back(_y);
 
-	components = 2;
+	m_components = 2;
 	//Data yet to be uploaded
-	dirty = true;
+	m_dirty = true;
 }
 
-void VertexBuffer::Add(glm::vec3 value)
+void VertexBuffer::Add(glm::vec3 _value)
 {
-	if (components != 3 && components != 0) throw std::exception();
+	if (m_components != 3 && m_components != 0) throw std::exception();
 
 	//Flatten data
-	data.push_back(value.x);
-	data.push_back(value.y);
-	data.push_back(value.z);
+	m_data.push_back(_value.x);
+	m_data.push_back(_value.y);
+	m_data.push_back(_value.z);
 
-	components = 3;
+	m_components = 3;
 	//Data yet to be uploaded
-	dirty = true;
+	m_dirty = true;
 }
 
-void VertexBuffer::Add(float x, float y, float z)
+void VertexBuffer::Add(float _x, float _y, float _z)
 {
-	if (components != 3 && components != 0) throw std::exception();
+	if (m_components != 3 && m_components != 0) throw std::exception();
 
-	data.push_back(x);
-	data.push_back(y);
-	data.push_back(z);
+	m_data.push_back(_x);
+	m_data.push_back(_y);
+	m_data.push_back(_z);
 
-	components = 3;
+	m_components = 3;
 	//Data yet to be uploaded
-	dirty = true;
+	m_dirty = true;
 }
 
-void VertexBuffer::Add(glm::vec4 value)
+void VertexBuffer::Add(glm::vec4 _value)
 {
-	if (components != 4 && components != 0) throw std::exception();
+	if (m_components != 4 && m_components != 0) throw std::exception();
 
 	//Flatten data
-	data.push_back(value.x);
-	data.push_back(value.y);
-	data.push_back(value.z);
-	data.push_back(value.w);
+	m_data.push_back(_value.x);
+	m_data.push_back(_value.y);
+	m_data.push_back(_value.z);
+	m_data.push_back(_value.w);
 
-	components = 4;
+	m_components = 4;
 	//Data yet to be uploaded
-	dirty = true;
+	m_dirty = true;
 }
 
-void VertexBuffer::Add(GLfloat value)
+void VertexBuffer::Add(GLfloat _value)
 {
-	if (components != 1 && components != 0) throw std::exception();
+	if (m_components != 1 && m_components != 0) throw std::exception();
 
 	//Flatten data
-	data.push_back(value);
+	m_data.push_back(_value);
 
-	components = 1;
+	m_components = 1;
 	//Data yet to be uploaded
-	dirty = true;
+	m_dirty = true;
 }
 
 int VertexBuffer::GetComponents()
 {
-	return components;
+	return m_components;
 }
 
 GLuint VertexBuffer::GetID()
 {
 	//We know that the data will be needed on the GPU after GETID is called
 	//So we upload if the data has changed
-	if (dirty) 
+	if (m_dirty) 
 	{
 		//Now when we operate, we operate on this buffer
-		glBindBuffer(GL_ARRAY_BUFFER, id);
+		glBindBuffer(GL_ARRAY_BUFFER, m_id);
 
 		// Upload a copy of the data from memory into the new VBO
 		glBufferData(GL_ARRAY_BUFFER,
-			data.size() * sizeof(data.at(0)), //Length of vector times size of datum
-			&data.at(0), GL_STATIC_DRAW);	//Pointer to first item (data will be contiguous)
+			m_data.size() * sizeof(m_data.at(0)), //Length of vector times size of datum
+			&m_data.at(0), GL_STATIC_DRAW);	//Pointer to first item (data will be contiguous)
 
 		// Reset the state
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		//Data now uploaded
-		dirty = false;
+		m_dirty = false;
 	}
 
-	return id;
+	return m_id;
 }
 
 VertexBuffer::VertexBuffer()
 {
 	//Create a new VBO
-	glGenBuffers(1, &id);
-	if (!id)
+	glGenBuffers(1, &m_id);
+	if (!m_id)
 	{
 		throw std::exception();
 	}
 
-	components = 0;
+	m_components = 0;
 	//Data yet to be uploaded
-	dirty = true;
+	m_dirty = true;
 	//Not deleted yet
-	dead = false;
+	m_dead = false;
 }
 
 VertexBuffer::~VertexBuffer()
 {
-	if (!dead) 
+	if (!m_dead) 
 	{
-		glDeleteBuffers(1, &id);
+		glDeleteBuffers(1, &m_id);
 	}
 }
 
 void VertexBuffer::Delete()
 {
-	glDeleteBuffers(1, &id);
-	dead = true;
+	glDeleteBuffers(1, &m_id);
+	m_dead = true;
 }

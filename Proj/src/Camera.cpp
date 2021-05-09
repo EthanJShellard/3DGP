@@ -1,24 +1,24 @@
 #include "Camera.h"
 #include <iostream>
 
-void Camera::Update(float deltaTime, std::shared_ptr<Input> input)
+void Camera::Update(float _deltaTime, std::shared_ptr<Input> _input)
 {
 	//This function is mostly a placeholder. Used to do camera control here.
 }
 
-Camera::Camera(float vertFov, float _near, float _far, Transform tf)
+Camera::Camera(float _vertFov, float _near, float _far, Transform _tf)
 {
-	vFOV = vertFov;
-	transform = tf;
-	near = _near;
-	far = _far;
+	m_vFOV = _vertFov;
+	m_transform = _tf;
+	m_near = _near;
+	m_far = _far;
 }
 
 Camera::Camera()
 {
-	vFOV = 45.0f;
-	near = 0.1f;
-	far = 100.0f;
+	m_vFOV = 45.0f;
+	m_near = 0.1f;
+	m_far = 100.0f;
 }
 
 Camera::~Camera()

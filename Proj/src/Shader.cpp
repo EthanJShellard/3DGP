@@ -7,13 +7,13 @@
 
 
 
-void Shader::LoadNewVertexShader(const char* path)
+void Shader::LoadNewVertexShader(const char* _path)
 {
 	std::ifstream fileRead;
 	std::stringstream strStream;
 	std::string stringSrc;
 
-	fileRead.open(path);
+	fileRead.open(_path);
 	strStream << fileRead.rdbuf();
 	stringSrc = strStream.str();
 	const char* src = stringSrc.c_str();
@@ -21,32 +21,32 @@ void Shader::LoadNewVertexShader(const char* path)
 
 	// Create a new vertex shader, attach source code, compile it and
 	// check for errors.
-	vertID = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertID, 1, &src, NULL);
-	glCompileShader(vertID);
+	m_vertID = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(m_vertID, 1, &src, NULL);
+	glCompileShader(m_vertID);
 	GLint success = 0;
-	glGetShaderiv(vertID, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(m_vertID, GL_COMPILE_STATUS, &success);
 
 	if (!success)
 	{
 		GLint maxLength = 0; 
-		glGetShaderiv(vertID, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetShaderiv(m_vertID, GL_INFO_LOG_LENGTH, &maxLength);
 		std::vector<GLchar> errorLog(maxLength);
-		glGetShaderInfoLog(vertID, maxLength, &maxLength, &errorLog[0]);
+		glGetShaderInfoLog(m_vertID, maxLength, &maxLength, &errorLog[0]);
 		std::cout << &errorLog.at(0) << std::endl;
 		throw std::exception();
 	}
 
-	dirty = true;
+	m_dirty = true;
 }
 
-void Shader::LoadNewFragmentShader(const char* path)
+void Shader::LoadNewFragmentShader(const char* _path)
 {
 	std::ifstream fileRead;
 	std::stringstream strStream;
 	std::string stringSrc;
 
-	fileRead.open(path);
+	fileRead.open(_path);
 	strStream << fileRead.rdbuf();
 	stringSrc = strStream.str();
 	const char* src = stringSrc.c_str();
@@ -54,52 +54,52 @@ void Shader::LoadNewFragmentShader(const char* path)
 
 	// Create a new fragment shader, attach source code, compile it and
 	// check for errors.
-	fragID = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragID, 1, &src, NULL);
-	glCompileShader(fragID);
+	m_fragID = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(m_fragID, 1, &src, NULL);
+	glCompileShader(m_fragID);
 	GLint success = 0;
-	glGetShaderiv(fragID, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(m_fragID, GL_COMPILE_STATUS, &success);
 
 	if (!success)
 	{
 		GLint maxLength = 0; 
-		glGetShaderiv(fragID, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetShaderiv(m_fragID, GL_INFO_LOG_LENGTH, &maxLength);
 		std::vector<GLchar> errorLog(maxLength);
-		glGetShaderInfoLog(fragID, maxLength, &maxLength, &errorLog[0]);
+		glGetShaderInfoLog(m_fragID, maxLength, &maxLength, &errorLog[0]);
 		std::cout << &errorLog.at(0) << std::endl;
 		throw std::exception();
 	}
 
-	dirty = true;
+	m_dirty = true;
 }
 
-void Shader::BindAttribute(int index, const char* identifier)
+void Shader::BindAttribute(int _index, const char* _identifier)
 {
-	glBindAttribLocation(id, index, identifier);
-	dirty = true;
+	glBindAttribLocation(m_id, _index, _identifier);
+	m_dirty = true;
 }
 
 GLuint Shader::GetID()
 {
-	if (dirty) 
+	if (m_dirty) 
 	{
 		GLint success = 0;
-		glAttachShader(id, fragID);
-		glAttachShader(id, vertID);
+		glAttachShader(m_id, m_fragID);
+		glAttachShader(m_id, m_vertID);
 
 		// Perform the link and check for failure
-		glLinkProgram(id);
-		glGetProgramiv(id, GL_LINK_STATUS, &success);
+		glLinkProgram(m_id);
+		glGetProgramiv(m_id, GL_LINK_STATUS, &success);
 
 		if (!success)
 		{
 			GLint maxLength = 0; 
-			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+			glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &maxLength);
 
 			if(maxLength)
 			{
 				std::vector<GLchar> errorLog(maxLength);
-				glGetShaderInfoLog(id, maxLength, &maxLength, &errorLog[0]);
+				glGetShaderInfoLog(m_id, maxLength, &maxLength, &errorLog[0]);
 				std::cout << &errorLog.at(0) << std::endl; 
 				throw std::exception();
 			}
@@ -109,23 +109,23 @@ GLuint Shader::GetID()
 			}
 		}
 
-		dirty = false;
+		m_dirty = false;
 	}
 
-	return id;
+	return m_id;
 }
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char* _vertexPath, const char* _fragmentPath)
 {
 	//Initialise variables
-	dirty = true;
-	vertID = 0;
-	fragID = 0;
+	m_dirty = true;
+	m_vertID = 0;
+	m_fragID = 0;
 
-	LoadNewVertexShader(vertexPath);
-	LoadNewFragmentShader(fragmentPath);
+	LoadNewVertexShader(_vertexPath);
+	LoadNewFragmentShader(_fragmentPath);
 
-	id = glCreateProgram();
+	m_id = glCreateProgram();
 }
 
 Shader::Shader()
@@ -134,9 +134,9 @@ Shader::Shader()
 
 Shader::~Shader()
 {
-	glDetachShader(id, vertID);
-	glDeleteShader(vertID);
-	glDetachShader(id, fragID);
-	glDeleteShader(fragID);
-	glDeleteProgram(id);
+	glDetachShader(m_id, m_vertID);
+	glDeleteShader(m_vertID);
+	glDetachShader(m_id, m_fragID);
+	glDeleteShader(m_fragID);
+	glDeleteProgram(m_id);
 }

@@ -11,18 +11,19 @@
 class ScreenQuad
 {
 public:
-	ScreenQuad(std::shared_ptr<Shader> shader, float windowWidth, float windowHeight);
-	void Resize(float windowWidth, float windowHeight);
-	void Draw(glm::mat4 projectionMat);
+	ScreenQuad(std::shared_ptr<Shader> _shader, float _windowWidth, float _windowHeight);
+	void Resize(float _windowWidth, float _windowHeight);
+	void Draw(glm::mat4 _projectionMat);
+
 	//Use for drawing from one RenderTexture to another - does not account for model or view matrices
-	void Draw(glm::mat4 projectionMat, std::shared_ptr<Shader> shader, GLuint _projectionLoc);
+	void Draw(glm::mat4 _projectionMat, std::shared_ptr<Shader> _shader, GLuint _projectionLoc);
 
 private:
-	std::shared_ptr<VertexArray> vao;
-	std::vector< std::shared_ptr<VertexBuffer> > buffers;
-	std::shared_ptr<Shader> shader;
+	std::shared_ptr<VertexArray> m_vao;
+	std::vector< std::shared_ptr<VertexBuffer> > m_buffers;
+	std::shared_ptr<Shader> m_shader;
 
-	GLuint projectionLoc;
-	GLuint viewLoc;
-	GLuint modelLoc;
+	GLuint m_projectionLoc;
+	GLuint m_viewLoc;
+	GLuint m_modelLoc;
 };

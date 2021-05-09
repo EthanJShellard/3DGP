@@ -1,23 +1,23 @@
 #include "GameObjectOBJ.h"
 #include "glm/gtx/quaternion.hpp"
 
-void GameObjectOBJ::SetModel(std::shared_ptr<OBJModel> newModel)
+void GameObjectOBJ::SetModel(std::shared_ptr<OBJModel> _newModel)
 {
-	model = newModel;
+	m_model = _newModel;
 }
 
-void GameObjectOBJ::Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest)
+void GameObjectOBJ::Draw(glm::mat4 _projection, glm::mat4 _invView, glm::vec3 _camPos, LightManifest _lightManifest)
 {
 	UpdateModelMatrix();
 
 	//Iterate through meshes and draw them with correct materials
-	for (int i = 0; i < model->meshes.size(); i++)
+	for (int i = 0; i < m_model->m_meshes.size(); i++)
 	{
 		//Bind the mesh VAO
-		glBindVertexArray(model->meshes.at(i)->vao->GetID());
+		glBindVertexArray(m_model->m_meshes.at(i)->m_vao->GetID());
 		//Apply the relevant material, binding the correct shader and passing in lighting info
-		model->meshes.at(i)->material->Apply(modelMatrix, projection, invView, camPos, lightManifest);
+		m_model->m_meshes.at(i)->m_material->Apply(m_modelMatrix, _projection, _invView, _camPos, _lightManifest);
 		//Draw the mesh
-		glDrawArrays(GL_TRIANGLES, 0, model->meshes.at(i)->vao->GetVertCount());
+		glDrawArrays(GL_TRIANGLES, 0, m_model->m_meshes.at(i)->m_vao->GetVertCount());
 	}
 }

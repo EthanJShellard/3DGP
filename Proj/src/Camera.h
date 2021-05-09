@@ -11,14 +11,14 @@
 class Camera 
 {
 public:
-	Transform transform;
-	float vFOV;
-	float near;
-	float far;
+	Transform m_transform;
+	float m_vFOV;
+	float m_near;
+	float m_far;
 
-	void Update(float deltaTime, std::shared_ptr<Input> input);
+	void Update(float _deltaTime, std::shared_ptr<Input> _input);
 
-	Camera(float vFOV, float near, float far, Transform tf);
+	Camera(float _vFOV, float _near, float _far, Transform _tf);
 	Camera();
 	~Camera();
 };

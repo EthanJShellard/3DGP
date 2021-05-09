@@ -4,12 +4,12 @@
 //Wrapper struct for an openGL texture
 struct Texture 
 {
-	GLuint id;
+	GLuint m_id;
 	//Create an openGL texture from raw data
-	GLuint CreateTexture(unsigned char* data, int width, int height);
+	GLuint CreateTexture(unsigned char* _data, int _width, int _height);
 	//Load in texture date from the specified file and return a pointer to the first character of the raw data
-	unsigned char* LoadTextureData(const char* file, int* width, int* height);
+	unsigned char* LoadTextureData(const char* _file, int* _width, int* _height);
 
-	Texture(const char* path);
+	Texture(const char* _path);
 	~Texture();
 };

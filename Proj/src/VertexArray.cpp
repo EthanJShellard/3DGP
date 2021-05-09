@@ -6,25 +6,25 @@
 
 #include <exception>
 
-void VertexArray::SetBuffer(std::shared_ptr<VertexBuffer> buffer, int position)
+void VertexArray::SetBuffer(std::shared_ptr<VertexBuffer> _buffer, int _position)
 {
-	if (buffers.size() <= position) buffers.resize(position + 1);
-	buffers.at(position) = buffer;
-	dirty = true; //Data has changed and so needs to be uploaded
+	if (m_buffers.size() <= _position) m_buffers.resize(_position + 1);
+	m_buffers.at(_position) = _buffer;
+	m_dirty = true; //Data has changed and so needs to be uploaded
 }
 
 GLuint VertexArray::GetID()
 {
-	if (dirty) 
+	if (m_dirty) 
 	{
-		glBindVertexArray(id);
+		glBindVertexArray(m_id);
 
-		for (size_t i = 0; i < buffers.size(); i++) 
+		for (size_t i = 0; i < m_buffers.size(); i++) 
 		{
-			if (!buffers.at(i)) continue; //If null go to next
+			if (!m_buffers.at(i)) continue; //If null go to next
 
-			glBindBuffer(GL_ARRAY_BUFFER, buffers.at(i)->GetID());
-			glVertexAttribPointer(i, buffers.at(i)->GetComponents(), GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glBindBuffer(GL_ARRAY_BUFFER, m_buffers.at(i)->GetID());
+			glVertexAttribPointer(i, m_buffers.at(i)->GetComponents(), GL_FLOAT, GL_FALSE, 0, (void*)0);
 			glEnableVertexAttribArray(i);
 		}
 
@@ -32,35 +32,35 @@ GLuint VertexArray::GetID()
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		dirty = false;
+		m_dirty = false;
 	}
 	
-	return id;
+	return m_id;
 }
 
 size_t VertexArray::GetVertCount()
 {
-	return vertCount;
+	return m_vertCount;
 }
 
-void VertexArray::SetVertCount(size_t count)
+void VertexArray::SetVertCount(size_t _count)
 {
-	vertCount = count;
+	m_vertCount = _count;
 }
 
 VertexArray::VertexArray()
 {
 	// Create a new VAO on the GPU and bind it
-	glGenVertexArrays(1, &id);
-	if (!id)
+	glGenVertexArrays(1, &m_id);
+	if (!m_id)
 	{
 		throw std::exception();
 	}
 
-	buffers.resize(3); //to save on resizes. Our default size will be 3
+	m_buffers.resize(3); //to save on resizes. Our default size will be 3
 
-	vertCount = 0;
-	dirty = true;
+	m_vertCount = 0;
+	m_dirty = true;
 }
 
 VertexArray::~VertexArray()
@@ -68,11 +68,11 @@ VertexArray::~VertexArray()
 	std::cout << "Deleting buffers ";
 
 	//Delete your buffers
-	for (int i = 0; i < buffers.size(); i++) 
+	for (int i = 0; i < m_buffers.size(); i++) 
 	{
-		std::cout << buffers.at(i)->GetID() << " ";
-		buffers.at(i)->Delete();
+		std::cout << m_buffers.at(i)->GetID() << " ";
+		m_buffers.at(i)->Delete();
 	}
-	std::cout << "\nDeleting vertex arrays " << id << std::endl;
-	glDeleteVertexArrays(1, &id);
+	std::cout << "\nDeleting vertex arrays " << m_id << std::endl;
+	glDeleteVertexArrays(1, &m_id);
 }

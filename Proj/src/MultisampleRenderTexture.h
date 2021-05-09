@@ -7,22 +7,22 @@
 class MultisampleRenderTexture
 {
 private:
-	GLuint fbo;
-	GLuint rbo;
-	GLuint fbt;
+	GLuint m_fbo;
+	GLuint m_rbo;
+	GLuint m_fbt;
 
-	int width;
-	int height;
-	int samples;
+	int m_width;
+	int m_height;
+	int m_samples;
 
 public:
-	void Resize(int width, int height);
-	void BlitTo(std::shared_ptr<RenderTexture> other);
+	void Resize(int _width, int _height);
+	void BlitTo(std::shared_ptr<RenderTexture> _other);
 	void BlitToDefaultFramebuffer();
 	void Bind();
 	void Unbind();
 	GLuint GetTextureID();
 
-	MultisampleRenderTexture(int width, int height, int samples);
+	MultisampleRenderTexture(int _width, int _height, int _samples);
 	~MultisampleRenderTexture();
 };
