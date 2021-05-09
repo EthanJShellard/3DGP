@@ -87,6 +87,7 @@ void Engine::Update()
 	SDL_GetWindowSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 
+	//If window has been resized, adjust screen quad and all render textures to fit the new dimensions
 	if (windowHeight != height || windowWidth != width)
 	{
 		screenQuad->Resize(width, height);
@@ -102,12 +103,12 @@ void Engine::Update()
 	}
 	/////////////////////////
 
+	//Stop the program from grabbing the mouse when the user has unfocused the window
 	if (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS)
 	{
 		SDL_WarpMouseInWindow(window, windowWidth / 2, windowHeight / 2);
 		input->ClearMousePrevious(windowWidth, windowHeight);
 	}
-	//Moving update into the above block makes it impossible to refocus window
 	input->Update();
 	if (input->GetKey(SDLK_ESCAPE)) input->quit = true;
 }
@@ -117,9 +118,12 @@ int Engine::Run()
 {
 	Initialise();
 
+	//Create full bright shader mostly used to display textures without lighting
 	std::shared_ptr<Shader> fullbrightShader = std::make_shared<Shader>("assets/shaders/FullbrightVert.txt", "assets/shaders/FullbrightFrag.txt");
+
 	screenQuad = std::make_shared<ScreenQuad>(fullbrightShader, windowWidth, windowHeight);
 
+	//Postprocessing shaders
 	std::shared_ptr<PostProcessShader> lightKeyShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/LightKeyVert.txt", "assets/shaders/PostProcessing/LightKeyFrag.txt");
 	std::shared_ptr<PostProcessShader> blurShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/BlurVert.txt", "assets/shaders/PostProcessing/BlurFrag.txt");
 	std::shared_ptr<PostProcessShader> combineShader = std::make_shared<PostProcessShader>("assets/shaders/PostProcessing/CombineVert.txt", "assets/shaders/PostProcessing/CombineFrag.txt");
@@ -132,7 +136,7 @@ int Engine::Run()
 	blurRenderTexture2 = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 	outputRenderTexture = std::make_shared<RenderTexture>(windowWidth, windowHeight);
 
-	//Loading texture
+	//Loading screen texture
 	std::shared_ptr<Texture> loadingTexture = std::make_shared<Texture>("assets/textures/Loading.png");
 
 	//Enable backface culling
@@ -150,8 +154,8 @@ int Engine::Run()
 	float minimumFrameTime = 60.0f;
 	float maximumFrameTime = 0.0f;
 
+	//Create main scene, loading into the default first scene
 	std::shared_ptr<Scene> mainScene = SceneLoader::LoadScene(0, input);
-	std::shared_ptr<RenderTexture> out = outputRenderTexture;
 
 	mainScene->Start();
 
@@ -223,7 +227,7 @@ int Engine::Run()
 		glViewport(0, 0, windowWidth, windowHeight); //Make sure to set viewport
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, out->GetTextureID());
+		glBindTexture(GL_TEXTURE_2D, outputRenderTexture->GetTextureID());
 		screenQuad->Draw(projection);
 		//////////////////////////////////////////////
 

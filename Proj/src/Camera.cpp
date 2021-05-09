@@ -3,7 +3,7 @@
 
 void Camera::Update(float deltaTime, std::shared_ptr<Input> input)
 {
-
+	//This function is mostly a placeholder. Used to do camera control here.
 }
 
 Camera::Camera(float vertFov, float _near, float _far, Transform tf)
