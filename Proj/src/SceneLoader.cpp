@@ -103,6 +103,7 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 	spinnerCube->SetScale(0.1f,0.2f,0.1f);
 	spinnerCube->Rotate(45.0f, glm::vec3(0,0,-1));
 	spinnerCube->model->meshes.at(0)->material->emissiveColour = glm::vec3(0,1,0);
+	spinnerCube->model->meshes.at(0)->material->dissolve = 0.6f;
 	spinnerCube->ID = 1;
 	////////////////////////
 
