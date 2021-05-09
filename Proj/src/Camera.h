@@ -5,6 +5,9 @@
 #include "glm/gtx/quaternion.hpp"
 #include <memory>
 
+/// <summary>
+/// Class containing camera information such as transform, field of view and, near & far plane distances
+/// </summary>
 class Camera 
 {
 public:

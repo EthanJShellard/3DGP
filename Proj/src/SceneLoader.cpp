@@ -57,7 +57,7 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 	dust2Obj->SetModel(dust2);
 	dust2Obj->Rotate(-90.0f, glm::vec3(1, 0, 0));
 	dust2Obj->SetPosition(0.0f, 1.0f, -2.0f);
-	dust2Obj->SetScale(0.1f, 0.1f, 0.1f);
+	dust2Obj->SetScale(0.3f, 0.3f, 0.3f);
 
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(dust2Obj);
@@ -94,9 +94,9 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 	std::shared_ptr<GameObjectOBJ> spinnerCube = std::make_shared<GameObjectOBJ>();
 	spinnerCube->SetModel(spinnerCubeModel);
 	spinnerCube->Translate(glm::vec3(0,-0.25,-4));
-	spinnerCube->SetScale(0.2f,0.2f,0.2f);
+	spinnerCube->SetScale(0.2f,0.3f,0.2f);
 	spinnerCube->Rotate(45.0f, glm::vec3(0,0,-1));
-	
+	spinnerCube->model->meshes.at(0)->material->emissiveColour = glm::vec3(0,1,0);
 	spinnerCube->ID = 1;
 
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);

@@ -4,9 +4,9 @@
 
 class GameObjectOBJ : public GameObject
 {
-private:
-	std::shared_ptr<OBJModel> model;
 public:
+	std::shared_ptr<OBJModel> model;
+
 	void SetModel(std::shared_ptr<OBJModel> newModel);
 
 	void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest) override;
