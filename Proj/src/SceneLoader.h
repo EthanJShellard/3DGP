@@ -4,6 +4,7 @@
 class Scene;
 class Input;
 
+//Class used in place of loading scenes from files - contains only static functions which return a shared pointer to a scene.
 class SceneLoader
 {
 private:

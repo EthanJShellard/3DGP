@@ -7,6 +7,7 @@
 
 #include <memory>
 
+//Wrapper for a quad which spans the entire screen - primarily used to draw render textures to the screen.
 class ScreenQuad
 {
 public:

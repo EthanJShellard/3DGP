@@ -122,9 +122,19 @@ VertexBuffer::VertexBuffer()
 	components = 0;
 	//Data yet to be uploaded
 	dirty = true;
+	dead = false;
+}
+
+VertexBuffer::~VertexBuffer()
+{
+	if (!dead) 
+	{
+		glDeleteBuffers(1, &id);
+	}
 }
 
 void VertexBuffer::Delete()
 {
 	glDeleteBuffers(1, &id);
+	dead = true;
 }

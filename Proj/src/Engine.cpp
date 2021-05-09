@@ -24,22 +24,6 @@
 #include "Scene.h"
 #include "SceneLoader.h"
 
-#include "scripted_objects/SpinningLight.h"
-
-/// <summary>
-/// Currently unused as it was found to be unnecessary - should be removed if this doesn't change
-/// </summary>
-/// <param name="target"></param>
-/// <returns></returns>
-int NearestPowerOf2(int target)
-{
-	int pow = 128;
-	while (pow < target)
-	{
-		pow *= 2;
-	}
-	return pow;
-}
 
 void Engine::Initialise()
 {
@@ -52,10 +36,6 @@ void Engine::Initialise()
 
 	std::cout << "Done!" << std::endl;
 	std::cout << "Initialize SDL Window..." << std::endl;
-
-	//Set multisample attributes to enable antialiasing
-	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
 
 	window = SDL_CreateWindow("Ethan Shellard OpenGL",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -132,10 +112,6 @@ void Engine::Update()
 	if (input->GetKey(SDLK_ESCAPE)) input->quit = true;
 }
 
-void Engine::Draw()
-{
-
-}
 
 int Engine::Run()
 {

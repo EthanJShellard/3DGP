@@ -36,13 +36,19 @@ private:
 	std::shared_ptr<RenderTexture> outputRenderTexture;
 
 	/// <summary>
-	/// Read the engine for operation. 
+	/// Ready the engine for operation. Creates the SDL2 and OpenGL environments. 
 	/// </summary>
 	void Initialise();
 
+	/// <summary>
+	/// Update engine information like input and window size
+	/// </summary>
 	void Update();
-	void Draw();
+
 public:
+	/// <summary>
+	/// Entry point for engine. Call this function to start the engine and game.
+	/// </summary>
 	int Run();
 
 	std::shared_ptr<Input> input;

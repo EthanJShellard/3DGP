@@ -12,9 +12,7 @@
 class Scene;
 struct LightManifest;
 
-/// <summary>
-/// Generic object. Intended as superclass, but intentionally not abstract.
-/// </summary>
+//Generic game object. Intended as superclass.
 class GameObject
 {
 public:
@@ -34,17 +32,13 @@ public:
 	glm::vec3 GetRotation();
 	glm::vec3 GetScale();
 
+	//Called after all objects in a scene are loaded and before the first update call
 	virtual void Start();
 
-	/// <summary>
-	/// Perform any update functionality here.
-	/// </summary>
-	/// <param name="deltaTime">Time since previous frame</param>
+	//Perform any update functionality here.
 	virtual void Update(float deltaTime, std::shared_ptr<Input> input);
 
-	/// <summary>
-	/// Update matrices and draw the renderable components of the object
-	/// </summary>
+	//Update matrices and draw the renderable components of the object
 	virtual void Draw(glm::mat4 projection, glm::mat4 invView, glm::vec3 camPos, LightManifest lightManifest);
 
 	GameObject();
@@ -64,6 +58,7 @@ protected:
 
 	bool dirty = true;
 
+	//Update this object's model matrix to reflect its position, rotation and scale
 	void UpdateModelMatrix();
 };
 

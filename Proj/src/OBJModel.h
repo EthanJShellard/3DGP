@@ -9,7 +9,7 @@
 #include "Mesh.h"
 
 /// <summary>
-/// Class extending the provided bugl file to allow the loading objects with multiple textures
+/// Class extending the provided bugl file to allow the loading objects with multiple textures.
 /// 
 /// Some useful info can be found at http://paulbourke.net/dataformats/mtl/
 /// </summary>

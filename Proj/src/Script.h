@@ -4,6 +4,7 @@
 class Scene;
 class Input;
 
+//Parent class for scripts which are to be run in a scene.
 class Script 
 {
 protected:

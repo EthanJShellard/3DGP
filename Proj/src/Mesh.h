@@ -5,7 +5,7 @@
 #include <iostream>
 
 /// <summary>
-/// Class containing mesh information and the material relevant to rendering
+/// Struct containing mesh information and the material relevant to rendering
 /// </summary>
 struct Mesh
 {

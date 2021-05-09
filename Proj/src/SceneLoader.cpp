@@ -5,7 +5,6 @@
 #include "Texture.h"
 #include "GameObjectOBJ.h"
 #include "LoneQuad.h"
-#include "scripted_objects/SpinningLight.h"
 #include "scripts/SpaceshipController.h"
 #include "scripts/ProjectileSpawner.h"
 #include "scripts/CameraController.h"

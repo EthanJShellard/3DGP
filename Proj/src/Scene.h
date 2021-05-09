@@ -10,6 +10,7 @@
 
 class GameObject;
 
+//Contains collections of objects and scripts necesary to run a scene. Will populate a light manifest and call start, update and draw functions on compatible objects.
 class Scene : public std::enable_shared_from_this<Scene>
 {
 private:

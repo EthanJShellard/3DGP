@@ -3,6 +3,7 @@
 #include <memory>
 #include "RenderTexture.h"
 
+//A render texture wrapper whose framebuffer texture is multisampled
 class MultisampleRenderTexture
 {
 private:

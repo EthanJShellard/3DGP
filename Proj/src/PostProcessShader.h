@@ -4,6 +4,7 @@
 
 class RenderTexture;
 
+//Wrapper for shader class which takes into account multitexturing used in postprocessing
 class PostProcessShader : public Shader
 {
 private:

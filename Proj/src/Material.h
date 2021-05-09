@@ -9,6 +9,7 @@
 
 struct LightManifest;
 
+//Contains information needed by shaders to properly display an object. Can be used to bind and apply material information to a shader.
 struct Material
 {
 	//Material properties
@@ -43,6 +44,7 @@ struct Material
 
 	std::shared_ptr<Texture> texture;
 	void SetShader(std::shared_ptr<Shader> newShader);
+	//Bind shader and pass material and lighting information into uniforms
 	void Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 view, glm::vec3 camPos, LightManifest lightManifest);
 
 	Material();

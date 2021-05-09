@@ -8,7 +8,7 @@
 //Forward Declaration
 class VertexBuffer;
 
-
+//Wrapper for vertex array objects. Will bind buffers lazily, when GetID() is called.
 class VertexArray 
 {
 public:
@@ -16,7 +16,7 @@ public:
 	/// Set a vertex buffer on this VBO. This will make the Vertex Array dirty
 	/// </summary>
 	void SetBuffer(std::shared_ptr<VertexBuffer> buffer, int position);
-	
+	//Bind buffers if they've changed and then return ID
 	GLuint GetID();
 	size_t GetVertCount();
 	void SetVertCount(size_t count);

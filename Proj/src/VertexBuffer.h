@@ -4,6 +4,7 @@
 
 #include <vector>
 
+//Wrapper for vertex buffer objects.
 class VertexBuffer 
 {
 public:
@@ -20,11 +21,13 @@ public:
 	GLuint GetID();
 
 	VertexBuffer();
+	~VertexBuffer();
 	void Delete();
 private:
 	GLuint id;
 	int components;
 	std::vector<GLfloat> data;
 	bool dirty; //Used to specify whether data is yet to be uploaded to GPU
+	bool dead;
 };
 

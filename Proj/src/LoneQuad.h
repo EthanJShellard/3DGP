@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+//Gameobject consisting of a single quad
 class LoneQuad : public GameObject
 {
 private:
@@ -15,6 +16,7 @@ private:
 	std::vector< std::shared_ptr<VertexBuffer> > buffers;
 	std::shared_ptr<Material> material;
 
+	//Create an array object containing vertex, texture coordinate and normal information
 	void BuildArrayObject();
 
 public:

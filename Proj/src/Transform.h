@@ -2,9 +2,9 @@
 #include "glm/glm.hpp"
 #include "glm/gtx/quaternion.hpp"
 
+//Struct containing position, orientation and scale information of some object. Also contains functions to modify these values
 struct Transform
 {
-
 	glm::vec3 position = glm::vec3(0);
 	glm::quat orientation = glm::quat(glm::vec3(0,0,0));
 	glm::vec3 scale = glm::vec3(1);
