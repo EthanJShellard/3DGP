@@ -9,6 +9,8 @@
 #include "scripts/SpaceshipController.h"
 #include "scripts/ProjectileSpawner.h"
 #include "scripts/CameraController.h"
+#include "scripts/PulsingLight.h"
+#include "scripts/Spinner.h"
 
 std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 {
@@ -88,11 +90,23 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 	demoStage->Translate(glm::vec3(0, -2, -5));
 	demoStage->SetModel(demo);
 
+	std::shared_ptr<OBJModel> spinnerCubeModel = std::make_shared<OBJModel>("assets/models/Demo/spinner_cube.obj", program);
+	std::shared_ptr<GameObjectOBJ> spinnerCube = std::make_shared<GameObjectOBJ>();
+	spinnerCube->SetModel(spinnerCubeModel);
+	spinnerCube->Translate(glm::vec3(0,-0.25,-4));
+	spinnerCube->SetScale(0.2f,0.2f,0.2f);
+	spinnerCube->Rotate(45.0f, glm::vec3(0,0,-1));
+	
+	spinnerCube->ID = 1;
+
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(demoStage);
 	mainScene->AddObject(navigationPanel);
+	mainScene->AddObject(spinnerCube);
 	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, 5), glm::vec3(1, 1, 1), -.5f));
 	mainScene->AddScript(std::make_shared<CameraController>());
+	mainScene->AddScript(std::make_shared<Spinner>(90, glm::vec3(spinnerCube->transform.Right()), 1));
+	mainScene->AddScript(std::make_shared<Spinner>(-45, glm::vec3(spinnerCube->transform.Up()), 1));
 
 	return mainScene;
 }
@@ -111,8 +125,11 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 
 	std::shared_ptr<OBJModel> curuthersModel = std::make_shared<OBJModel>("assets/models/curuthers/triangulated.obj", program);
 	std::shared_ptr<GameObjectOBJ> curuthers = std::make_shared<GameObjectOBJ>();
+	std::shared_ptr<GameObjectOBJ> giantCuruthers = std::make_shared<GameObjectOBJ>();
 	curuthers->SetModel(curuthersModel);
+	giantCuruthers->SetModel(curuthersModel);
 	curuthers->SetPosition(glm::vec3(1,1,-5));
+	giantCuruthers->SetPosition(glm::vec3(-1,3,-20));
 	curuthers->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
 
 	std::shared_ptr<OBJModel> streetLamp = std::make_shared<OBJModel>("assets/models/StreetLamp/Triangulated.obj", program);
@@ -130,12 +147,14 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddScript(std::make_shared<CameraController>());
+	mainScene->AddScript(std::make_shared<PulsingLight>(.0f, 10.0f, 2.0f, glm::vec3(4,2,-20), glm::vec3(0.8,0,0)));
 	mainScene->AddObject(lamp1);
 	mainScene->AddObject(lamp2);
 	mainScene->AddLight(light1);
 	mainScene->AddLight(light2);
 	mainScene->AddObject(potatoFloor);
 	mainScene->AddObject(curuthers);
+	mainScene->AddObject(giantCuruthers);
 	mainScene->SetAmbientBrightness(0.0f);
 
 	mainScene->mainCamera.transform.Translate(glm::vec3(0,2,0));

@@ -165,6 +165,11 @@ void OBJModel::LoadMaterials(const std::string& path, std::string &currentLine, 
 			currentMaterial->texture = std::make_shared<Texture>(newPath.c_str());
 		}
 	}
+
+	if (!currentMaterial->texture) 
+	{
+		currentMaterial->texture = std::make_shared<Texture>("assets/models/Demo/WhiteSquare.png");
+	}
 }
 
 void OBJModel::loadModel(const std::string& objPath, std::string& currentLine)
