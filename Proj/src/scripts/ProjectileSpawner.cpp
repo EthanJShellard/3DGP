@@ -67,7 +67,7 @@ void ProjectileSpawner::Update(float deltaTs, std::shared_ptr<Input> input)
 				}
 			}
 			//Make sure respective light is following projectile
-			lightPtr->transform->position = pro->GetPosition();
+			lightPtr->transform.position = pro->GetPosition();
 		}
 		
 	}

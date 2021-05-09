@@ -34,9 +34,9 @@ void LightManifest::Update(std::vector<std::shared_ptr<Light>> lights)
 	for (int i = 0; i < count; i++) 
 	{
 		//Position
-		lightPositions.push_back(lights.at(i)->transform->position.x);
-		lightPositions.push_back(lights.at(i)->transform->position.y);
-		lightPositions.push_back(lights.at(i)->transform->position.z);
+		lightPositions.push_back(lights.at(i)->transform.position.x);
+		lightPositions.push_back(lights.at(i)->transform.position.y);
+		lightPositions.push_back(lights.at(i)->transform.position.z);
 		//Colour
 		lightColours.push_back(lights.at(i)->colour.x);
 		lightColours.push_back(lights.at(i)->colour.y);

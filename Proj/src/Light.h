@@ -6,7 +6,7 @@
 struct Light 
 {
 	uint32_t ID;
-	std::shared_ptr<Transform> transform;
+	Transform transform;
 	glm::vec3 colour;
 	float intensity;
 

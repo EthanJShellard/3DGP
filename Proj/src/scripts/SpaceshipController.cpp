@@ -23,8 +23,8 @@ void SpaceshipConrtoller::Update(float deltaTs, std::shared_ptr<Input> input)
 	/////////////////////
 
 	//Update light positions
-	leftThrusterLight->transform->position = pos + leftThrusterPos;
-	rightThrusterLight->transform->position = pos + rightThrusterPos;
+	leftThrusterLight->transform.position = pos + leftThrusterPos;
+	rightThrusterLight->transform.position = pos + rightThrusterPos;
 
 	//Flicker logic
 	counter += deltaTs;
