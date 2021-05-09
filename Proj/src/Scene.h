@@ -30,6 +30,7 @@ public:
 	void AddObject(std::shared_ptr<GameObject> go);
 	void AddScript(std::shared_ptr<Script> sc);
 	void AddLight(std::shared_ptr<Light> light);
+	void SetAmbientBrightness(float amb);
 	std::shared_ptr<GameObject> FindObjectByID(Uint32 ID);
 	std::shared_ptr<Light> FindLightByID(Uint32 ID);
 	std::vector< std::shared_ptr<Light> > GetLights();

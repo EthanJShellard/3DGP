@@ -5,6 +5,7 @@
 LightManifest::LightManifest()
 {
 	count = 0;
+	ambientBrightness = 0.02;
 }
 
 void LightManifest::Update(std::vector<std::shared_ptr<Light>> lights)

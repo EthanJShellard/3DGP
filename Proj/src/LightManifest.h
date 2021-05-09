@@ -11,7 +11,7 @@ struct LightManifest
 	std::vector<float> lightPositions;
 	std::vector<float> lightColours;
 	std::vector<float> lightIntensities;
-
+	float ambientBrightness;
 	int count;
 
 	LightManifest();

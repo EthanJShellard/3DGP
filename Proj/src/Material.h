@@ -39,6 +39,7 @@ struct Material
 	GLint lightCountLocation;
 	GLint textureLocation;
 	GLint camPositionLocation;
+	GLint ambientBrightnessLocation;
 
 	std::shared_ptr<Texture> texture;
 	void SetShader(std::shared_ptr<Shader> newShader);

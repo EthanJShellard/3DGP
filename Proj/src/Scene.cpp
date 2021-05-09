@@ -64,6 +64,12 @@ void Scene::AddLight(std::shared_ptr<Light> light)
 	lights.push_back(light);
 }
 
+void Scene::SetAmbientBrightness(float amb)
+{
+	//Clamp [0,1]
+	lightManifest.ambientBrightness = amb;
+}
+
 std::shared_ptr<GameObject> Scene::FindObjectByID(Uint32 ID)
 {
 	for (int i = 0; i < gameObjects.size(); i++) 

@@ -10,6 +10,7 @@ uniform vec3 u_lightColors[10];
 uniform float u_dissolve;
 uniform float u_specularHighlight;
 uniform vec3 u_emissiveColour;
+uniform float u_ambientBrightness;
 
 varying vec2 v_TexCoord;
 varying vec3 v_Normal;
@@ -69,8 +70,7 @@ void main()
     
 
     //Ambient lighting setup
-    float ambientStrength = 0.02;
-    vec3 ambient = ambientStrength * ambientColor;
+    vec3 ambient = u_ambientBrightness * ambientColor;
 
     //Texture read
     vec4 tex = texture2D(u_Texture, v_TexCoord);

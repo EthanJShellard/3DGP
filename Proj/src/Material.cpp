@@ -22,6 +22,7 @@ void Material::SetShader(std::shared_ptr<Shader> newShader)
 	dissolveLocation = glGetUniformLocation(shader->GetID(), "u_dissolve");
 	specularHighlightLocation = glGetUniformLocation(shader->GetID(), "u_specularHighlight");
 	emissiveColourLocation = glGetUniformLocation(shader->GetID(), "u_emissiveColour");
+	ambientBrightnessLocation = glGetUniformLocation(shader->GetID(), "u_ambientBrightness");
 
 	if (
 		textureLocation == -1 ||
@@ -65,6 +66,7 @@ void Material::Apply(glm::mat4 model, glm::mat4 projection, glm::mat4 iView, glm
 		glUniform1fv(lightIntensitiesLocation, manifest.count, &manifest.lightIntensities.at(0));
 	}
 	glUniform1i(lightCountLocation, manifest.count);
+	glUniform1f(ambientBrightnessLocation, manifest.ambientBrightness);
 
 	glUniform1f(dissolveLocation, dissolve);
 	glUniform1f(specularHighlightLocation, specularHighlights);

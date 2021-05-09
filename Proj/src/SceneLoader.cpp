@@ -60,10 +60,11 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(dust2Obj);
 
-	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, -2.0f), glm::vec3(1, 1, 1), -.7f));
+	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, -2.0f), glm::vec3(1, 1, 1), -.6f));
 	mainScene->AddScript(std::make_shared<CameraController>());
 	mainScene->mainCamera.transform.Rotate(-45.0f, mainScene->mainCamera.transform.Right());
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 10, 0));
+	mainScene->SetAmbientBrightness(0.1f);
 
 	return mainScene;
 }
@@ -105,8 +106,8 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 	program->BindAttribute(2, "a_Normal");
 
 	std::shared_ptr<LoneQuad> potatoFloor = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
-	potatoFloor->SetScale(glm::vec3(10,10,10));
-	potatoFloor->SetPosition(glm::vec3(-5, 0.5f,-10));
+	potatoFloor->SetScale(glm::vec3(20,20,20));
+	potatoFloor->SetPosition(glm::vec3(-10, 0.5f,-10));
 
 	std::shared_ptr<OBJModel> curuthersModel = std::make_shared<OBJModel>("assets/models/curuthers/triangulated.obj", program);
 	std::shared_ptr<GameObjectOBJ> curuthers = std::make_shared<GameObjectOBJ>();
@@ -135,6 +136,7 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 	mainScene->AddLight(light2);
 	mainScene->AddObject(potatoFloor);
 	mainScene->AddObject(curuthers);
+	mainScene->SetAmbientBrightness(0.0f);
 
 	mainScene->mainCamera.transform.Translate(glm::vec3(0,2,0));
 	return mainScene;
