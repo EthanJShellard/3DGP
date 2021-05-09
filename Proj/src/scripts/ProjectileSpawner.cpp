@@ -26,8 +26,9 @@ void ProjectileSpawner::Update(float deltaTs, std::shared_ptr<Input> input)
 			lckPtr->SetPosition(glm::vec3(std::rand() % 6 - 3.0f, 0.0f, -35.0f));
 			//Adjust game speed and reset timer
 			timer = 0.0f;
-			speed *= 1.015f;
+			if (speed < 30) speed *= 1.015f;
 			period *= .99f;
+			
 		}
 	}
 

@@ -51,13 +51,6 @@ void GameObject::Rotate(float angle, glm::vec3 axis)
 	dirty = true;
 }
 
-void GameObject::RotateAround(float angle, glm::vec3 axis, glm::vec3 centre)
-{
-	transform.RotateAround(angle, axis, centre);
-	rotationMatrix = glm::toMat4(transform.GetQuaternionRotation());
-	translationMatrix = glm::translate(glm::mat4(), transform.GetPosition());
-}
-
 void GameObject::Translate(glm::vec3 move)
 {
 	transform.Translate(move);

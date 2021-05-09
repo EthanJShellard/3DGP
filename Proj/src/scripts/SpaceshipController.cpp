@@ -9,6 +9,7 @@ void SpaceshipConrtoller::Update(float deltaTs, std::shared_ptr<Input> input)
 	glm::vec3 pos = spaceShip->GetPosition();
 	float posX = pos.x;
 
+	//Left-Right movement
 	if (input->GetKey(SDLK_a)) 
 	{
 		posX = std::max(posX -= speed * deltaTs, leftBound);
@@ -19,10 +20,13 @@ void SpaceshipConrtoller::Update(float deltaTs, std::shared_ptr<Input> input)
 	}
 
 	pos.x = posX;
+	/////////////////////
 
+	//Update light positions
 	leftThrusterLight->transform->position = pos + leftThrusterPos;
 	rightThrusterLight->transform->position = pos + rightThrusterPos;
 
+	//Flicker logic
 	counter += deltaTs;
 	float flicker = std::sin(counter);
 
@@ -31,6 +35,7 @@ void SpaceshipConrtoller::Update(float deltaTs, std::shared_ptr<Input> input)
 	leftThrusterLight->colour = colour;
 	rightThrusterLight->intensity = colour.x;
 	rightThrusterLight->colour = colour;
+	////////////////
 
 	spaceShip->SetPosition(pos);
 }
@@ -39,6 +44,7 @@ void SpaceshipConrtoller::Start()
 {
 	if (auto scPtr = scene.lock()) 
 	{
+		//Get spaceship game object
 		spaceShip = scPtr->FindObjectByID(1);
 
 		leftBound = -3.0f;
@@ -46,9 +52,10 @@ void SpaceshipConrtoller::Start()
 		speed = 3.0f;
 		counter = 0;
 
+		//Set up light positions
 		leftThrusterPos = spaceShip->GetScale() * glm::vec3(-1.0f, 0.0f, 3.0f);
 		rightThrusterPos = spaceShip->GetScale() * glm::vec3(1.0f, 0.0f, 3.0f);
-
+		//Create lights
 		leftThrusterLight = std::make_shared<Light>(spaceShip->GetPosition() + leftThrusterPos, glm::vec3(1, 0.1, 0), .5f);
 		rightThrusterLight = std::make_shared<Light>(spaceShip->GetPosition() + rightThrusterPos, glm::vec3(1, 0.1, 0), .5f);
 

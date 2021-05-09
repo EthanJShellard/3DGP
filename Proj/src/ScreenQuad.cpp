@@ -65,6 +65,7 @@ void ScreenQuad::Draw(glm::mat4 projectionMat)
 
 	glm::mat4 identity = glm::mat4(1);
 
+	//Generate and upload matrices
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(identity));
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(identity));
 	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projectionMat));

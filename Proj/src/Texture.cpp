@@ -23,9 +23,6 @@ unsigned char* Texture::LoadTextureData(const char* file, int* width, int* heigh
 	return data;
 }
 
-/// <summary>
-/// Generates a texture in the context of opengl
-/// </summary>
 GLuint Texture::CreateTexture(unsigned char* data, int width, int height)
 {
 	//Create and bind texture

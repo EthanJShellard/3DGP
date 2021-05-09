@@ -26,7 +26,6 @@ struct Transform
 	glm::vec3 Forward();
 
 	void Rotate(float angle, glm::vec3 axis);
-	void RotateAround(float angle, glm::vec3 axis, glm::vec3 centre);
 	void Translate(glm::vec3 move);
 
 	static glm::quat RotFromTo(glm::vec3 begin, glm::vec3 dest);

@@ -111,8 +111,7 @@ GLuint VertexBuffer::GetID()
 
 VertexBuffer::VertexBuffer()
 {
-	//Create a new VBO on the GPU and bind it (Gives us a 'reference' in positionsVboId)
-	//1 is number of buffers to initialise - usually just use 1
+	//Create a new VBO
 	glGenBuffers(1, &id);
 	if (!id)
 	{
@@ -122,6 +121,7 @@ VertexBuffer::VertexBuffer()
 	components = 0;
 	//Data yet to be uploaded
 	dirty = true;
+	//Not deleted yet
 	dead = false;
 }
 

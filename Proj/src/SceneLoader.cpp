@@ -13,13 +13,15 @@
 
 std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 {
-	//Create Shader program
+	//Create Shader programs
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
 	program->BindAttribute(0, "a_Position");
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
 	std::shared_ptr<Shader> fullbrightShader = std::make_shared<Shader>("assets/shaders/FullbrightVert.txt", "assets/shaders/FullbrightFrag.txt");
+	////////////////////////
 
+	//Create SpaceShip game object
 	std::shared_ptr<OBJModel> spaceShip = std::make_shared<OBJModel>("assets/models/Spaceship/Intergalactic_Spaceship-(Wavefront).obj", program);
 	std::shared_ptr<GameObjectOBJ> spaceShipObject = std::make_shared<GameObjectOBJ>();
 	spaceShipObject->ID = 1;
@@ -27,17 +29,17 @@ std::shared_ptr<Scene> SceneLoader::LoadShmupScene(std::shared_ptr<Input> input)
 	spaceShipObject->SetScale(glm::vec3(0.3,0.3,0.3));
 	spaceShipObject->SetPosition(glm::vec3(-0.1,0,-5));
 	spaceShipObject->Rotate(180.0f, spaceShipObject->transform.Up());
+	//////////////////////////////
 
 	std::shared_ptr<Texture> texture = std::make_shared<Texture>("assets/textures/corcle.png");
 
+	//Set up Scene
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(spaceShipObject);
 	mainScene->AddScript(std::make_shared<SpaceshipConrtoller>());
 	mainScene->AddScript(std::make_shared<ProjectileSpawner>(texture, fullbrightShader));
-
 	mainScene->mainCamera.transform.SetPosition(glm::vec3(0, 2, 1));
 	mainScene->mainCamera.transform.Rotate(-10.0f, mainScene->mainCamera.transform.Right());
-	//mainScene->AddLight(std::make_shared<Light>(glm::vec3(-5, 0, 0), glm::vec3(1, 1, 1), 1.0f));
 
 
 	return mainScene;
@@ -50,17 +52,20 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 	program->BindAttribute(0, "a_Position");
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
+	///////////////////////
 
+	//Create Dust 2 game object
 	std::shared_ptr<OBJModel> dust2 = std::make_shared<OBJModel>("assets/models/dust 2/triangulated.obj", program);
 	std::shared_ptr<GameObjectOBJ> dust2Obj = std::make_shared<GameObjectOBJ>();
 	dust2Obj->SetModel(dust2);
 	dust2Obj->Rotate(-90.0f, glm::vec3(1, 0, 0));
 	dust2Obj->SetPosition(0.0f, 1.0f, -2.0f);
 	dust2Obj->SetScale(0.3f, 0.3f, 0.3f);
+	///////////////////////////
 
+	//Set up scene
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(dust2Obj);
-
 	mainScene->AddLight(std::make_shared<Light>(glm::vec3(0, 20, -2.0f), glm::vec3(1, 1, 1), -.6f));
 	mainScene->AddScript(std::make_shared<CameraController>());
 	mainScene->mainCamera.transform.Rotate(-45.0f, mainScene->mainCamera.transform.Right());
@@ -72,13 +77,15 @@ std::shared_ptr<Scene> SceneLoader::LoadDust2Scene(std::shared_ptr<Input> input)
 
 std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> input)
 {
-	//Create Shader program
+	//Create Shader programs
 	std::shared_ptr<Shader> program = std::make_shared<Shader>("assets/shaders/main/vert.txt", "assets/shaders/main/frag.txt");
 	program->BindAttribute(0, "a_Position");
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
-
 	std::shared_ptr<Shader> fullbrightShader = std::make_shared<Shader>("assets/shaders/FullbrightVert.txt", "assets/shaders/FullbrightFrag.txt");
+	////////////////////////
+
+	//Create game objects
 	std::shared_ptr<LoneQuad> navigationPanel = std::make_shared<LoneQuad>("assets/textures/Navigation.png", fullbrightShader);
 	navigationPanel->SetPosition(-0.7, 1, -5.2);
 	navigationPanel->Rotate(90.0f, glm::vec3(1, 0, 0));
@@ -93,11 +100,13 @@ std::shared_ptr<Scene> SceneLoader::LoadBloomDemoScene(std::shared_ptr<Input> in
 	std::shared_ptr<GameObjectOBJ> spinnerCube = std::make_shared<GameObjectOBJ>();
 	spinnerCube->SetModel(spinnerCubeModel);
 	spinnerCube->Translate(glm::vec3(0,-0.25,-4));
-	spinnerCube->SetScale(0.2f,0.3f,0.2f);
+	spinnerCube->SetScale(0.1f,0.2f,0.1f);
 	spinnerCube->Rotate(45.0f, glm::vec3(0,0,-1));
 	spinnerCube->model->meshes.at(0)->material->emissiveColour = glm::vec3(0,1,0);
 	spinnerCube->ID = 1;
+	////////////////////////
 
+	//Set up scene
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddObject(demoStage);
 	mainScene->AddObject(navigationPanel);
@@ -117,7 +126,9 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 	program->BindAttribute(0, "a_Position");
 	program->BindAttribute(1, "a_TexCoord");
 	program->BindAttribute(2, "a_Normal");
+	///////////////////////
 
+	//Create game objects
 	std::shared_ptr<LoneQuad> potatoFloor = std::make_shared<LoneQuad>("assets/textures/Potato.jpg", program);
 	potatoFloor->SetScale(glm::vec3(20,20,20));
 	potatoFloor->SetPosition(glm::vec3(-10, 0.5f,-10));
@@ -140,10 +151,13 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 	lamp2->SetPosition(glm::vec3(-2.5, 0.5f, -5));
 	lamp1->SetScale(glm::vec3(0.2f,0.2f,0.2f));
 	lamp2->SetScale(glm::vec3(0.2f,0.2f,0.2f));
+	/////////////////////
 
+	//Create lights
 	std::shared_ptr<Light> light1 = std::make_shared<Light>(lamp1->GetPosition() + glm::vec3(0, 1.25f,0), glm::vec3(1,0.6,0), 1.0f);
 	std::shared_ptr<Light> light2 = std::make_shared<Light>(lamp2->GetPosition() + glm::vec3(0, 1.25f, 0), glm::vec3(1, 0.6, 0), 1.0f);
 
+	//Set up scene
 	std::shared_ptr<Scene> mainScene = std::make_shared<Scene>(input);
 	mainScene->AddScript(std::make_shared<CameraController>());
 	mainScene->AddScript(std::make_shared<PulsingLight>(.0f, 10.0f, 2.0f, glm::vec3(4,2,-20), glm::vec3(0.8,0,0)));
@@ -155,8 +169,8 @@ std::shared_ptr<Scene> SceneLoader::LoadPointLightingDemo(std::shared_ptr<Input>
 	mainScene->AddObject(curuthers);
 	mainScene->AddObject(giantCuruthers);
 	mainScene->SetAmbientBrightness(0.0f);
-
 	mainScene->mainCamera.transform.Translate(glm::vec3(0,2,0));
+
 	return mainScene;
 }
 

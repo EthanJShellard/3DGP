@@ -25,7 +25,6 @@ public:
 	void SetScene(std::shared_ptr<Scene> parentScene);
 
 	void Rotate(float angle, glm::vec3 axis);
-	void RotateAround(float angle, glm::vec3 axis, glm::vec3 centre);
 	void Translate(glm::vec3 move);
 
 	glm::vec3 GetPosition();

@@ -37,19 +37,6 @@ void  Transform::Rotate(float angle, glm::vec3 axis)
 	orientation = glm::angleAxis(glm::radians(angle), axis) * orientation;
 }
 
-void Transform::RotateAround(float angle, glm::vec3 axis, glm::vec3 centre)
-{
-	//Create matrix translating to centre around 0
-	glm::mat4 posMat = glm::mat4();
-	posMat = glm::translate(posMat, position-centre);
-	//Rotate around 0
-	posMat = glm::rotate(glm::radians(angle), axis) * posMat;
-	//Translate back
-	posMat = glm::translate(posMat, centre);
-	//Recreate position vector
-	position = glm::vec3(posMat * glm::vec4(0,0,0,1));
-}
-
 void  Transform::Translate(glm::vec3 move)
 {
 	position += move;
@@ -84,7 +71,7 @@ glm::vec3 Transform::Up()
 
 glm::vec3 Transform::Forward()
 {
-	return glm::vec3(0,0,1);
+	return orientation * glm::vec3(0,0,1);
 }
 
 glm::quat Transform::RotFromTo(glm::vec3 begin, glm::vec3 dest)

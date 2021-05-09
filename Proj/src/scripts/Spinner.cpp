@@ -2,6 +2,7 @@
 
 void Spinner::Update(float deltaTs, std::shared_ptr<Input> input)
 {
+	//Rotate target object
 	if (auto targetPtr = targetObject.lock()) 
 	{
 		targetPtr->Rotate(speed * deltaTs, axis);
@@ -11,6 +12,7 @@ void Spinner::Update(float deltaTs, std::shared_ptr<Input> input)
 
 void Spinner::Start()
 {
+	//Get target object
 	if (auto scPtr = scene.lock()) 
 	{
 		targetObject = scPtr->FindObjectByID(targetID);
