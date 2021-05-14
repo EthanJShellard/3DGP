@@ -25,7 +25,7 @@ private:
 
 	std::vector < std::weak_ptr<LoneQuad> > m_activeProjectiles;
 public:
-	ProjectileSpawner(std::shared_ptr<Texture> m_texture, std::shared_ptr<Shader> m_shader);
-	void Update(float m_deltaTs, std::shared_ptr<Input> m_input) override;
+	ProjectileSpawner(std::shared_ptr<Texture> _texture, std::shared_ptr<Shader> _shader);
+	void Update(float m_deltaTs, std::shared_ptr<Input> _input) override;
 	void Start() override;
 };

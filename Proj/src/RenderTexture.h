@@ -18,7 +18,7 @@ private:
 	int m_height;
 
 public:
-	void Resize(int m_width, int m_height);
+	void Resize(int _width, int _height);
 	void Bind();
 	void Unbind();
 	GLuint GetTextureID();

@@ -43,7 +43,7 @@ struct Material
 	GLint m_ambientBrightnessLocation;
 
 	std::shared_ptr<Texture> m_texture;
-	void SetShader(std::shared_ptr<Shader> m_newShader);
+	void SetShader(std::shared_ptr<Shader> _newShader);
 	//Bind shader and pass material and lighting information into uniforms
 	void Apply(glm::mat4 _model, glm::mat4 _projection, glm::mat4 _view, glm::vec3 _camPos, LightManifest _lightManifest);
 
